@@ -7,18 +7,30 @@ on:
       - RED-364_init
 
 jobs:
-  release:
-    name: npm publish
-    runs-on: "ubuntu-latest"
+  build:
+    runs-on: ubuntu-latest
     steps:
-      - name: checkout
+      - name: build checkout
         uses: actions/checkout@v3.3.0
-      - name: node
+      - name: build node
         uses: actions/setup-node@v3.6.0
         with:
           node-version: 16
-          registry-url: https://registry.npmjs.org
-      - name: npm publish
+      - run: npm ci
+      - run: npm test
+
+  publish-npm:
+    name: npm publish
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: publish checkout
+        uses: actions/checkout@v3.3.0
+      - name: publish node
+        uses: actions/setup-node@v3.6.0
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - name: publish
         run: npm publish --access public
         env:
           NPM_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
