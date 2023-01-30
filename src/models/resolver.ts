@@ -1,7 +1,7 @@
 import type { ResolverModel } from "@/models/types"
 import { Chain } from "@/models/types";
 
-class Resolver implements ResolverModel {
+export class Resolver implements ResolverModel {
     getAliasAddresses(alias: string) {
         return [];
     }
@@ -9,4 +9,3 @@ class Resolver implements ResolverModel {
         return [];
     }
 }
-export const resolver = new Resolver();

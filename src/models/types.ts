@@ -9,3 +9,9 @@ export interface ResolverModel {
     
     getAddressAliases(address: string, chain: Chain): string[];
 }
+
+export type SetAddressOptions = {
+    from: string,
+    gasPrice?: string,
+    gas?: string,
+}

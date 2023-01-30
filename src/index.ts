@@ -1,2 +1,2 @@
-export { resolver } from "@/models/resolver";
+export { Resolver } from "@/models/resolver";
 export { Chain } from "@/models/types";

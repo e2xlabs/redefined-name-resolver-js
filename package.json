@@ -11,9 +11,9 @@
     "registry": "https://registry.npmjs.org"
   },
   "author": "Cifrex",
-  "type": "module",
   "scripts": {
     "commit": "git-cz",
+    "start": "del-cli --force dist && tsc && node dist/index.js",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "semantic-release": "semantic-release"
