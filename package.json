@@ -8,7 +8,7 @@
     "url": "git+https://github.com/e2xlabs/redefined-name-resolver-js.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://npm.pkg.github.com"
   },
   "author": "Cifrex",
   "type": "module",
