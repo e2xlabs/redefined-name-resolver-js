@@ -1,7 +1,13 @@
 {
   "name": "redefined-name-resolver-js",
   "version": "0.0.1",
-  "private": true,
+  "description": "JS lib to resolve crypto names",
+  "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e2xlabs/redefined-name-resolver-js.git"
+  },
+  "author": "Cifrex",
   "type": "module",
   "scripts": {
     "build": "tsc --build",
