@@ -31,6 +31,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+      - name: run ci
+        run: npm ci
       - name: publish
         run: npm run semantic-release
         env:
