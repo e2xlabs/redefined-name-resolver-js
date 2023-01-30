@@ -13,6 +13,7 @@
   "author": "Cifrex",
   "type": "module",
   "scripts": {
+    "commit": "git-cz",
     "build": "tsc --build",
     "clean": "tsc --build --clean",
     "semantic-release": "semantic-release"
@@ -24,8 +25,14 @@
     "web3": "^1.8.1"
   },
   "devDependencies": {
-    "@types/web3": "^1.2.2",
     "@types/lodash": "^4.14.184",
+    "@types/web3": "^1.2.2",
+    "cz-conventional-changelog": "^3.3.0",
     "semantic-release": "^20.1.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
