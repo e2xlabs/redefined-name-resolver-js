@@ -7,20 +7,6 @@ on:
       - RED-364_init
 
 jobs:
-  build:
-    runs-on: "ubuntu-latest"
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3
-      - name: node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: run ci
-        run: npm ci
-      - name: run build
-        run: npm run build
-
   publish:
     needs: [build]
     runs-on: "ubuntu-latest"
@@ -30,7 +16,7 @@ jobs:
       - name: node
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - name: run ci
         run: npm ci
       - name: publish
