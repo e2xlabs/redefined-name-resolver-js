@@ -7,29 +7,17 @@ on:
       - RED-364_init
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: checkout
-        uses: actions/checkout@v3.3.0
-      - name: node
-        uses: actions/setup-node@v3.6.0
-        with:
-          node-version: 16
-      - run: npm ci
-      - run: npm run build
-
-  publish-npm:
+  publish:
     needs: build
     runs-on: "ubuntu-latest"
     steps:
       - name: checkout
-        uses: actions/checkout@v3.3.0
+        uses: actions/checkout@v3
       - name: node
-        uses: actions/setup-node@v3.6.0
+        uses: actions/setup-node@v3
         with:
           node-version: 16
-          registry-url: https://registry.npmjs.org/
+          registry-url: https://registry.npmjs.org
       - name: publish
         run: npm publish --access public
         env:
