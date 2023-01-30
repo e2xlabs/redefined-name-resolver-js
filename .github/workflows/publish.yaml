@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-      - RED-364_init
 
 jobs:
   publish:
+    if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: "ubuntu-latest"
     steps:
       - name: checkout
@@ -21,5 +21,5 @@ jobs:
       - name: publish
         run: npm run semantic-release
         env:
-          NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
