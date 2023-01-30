@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - RED-364_init
 
 jobs:
   release:
