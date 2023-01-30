@@ -5,7 +5,7 @@
   "main": "index.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/e2xlabs/redefined-name-resolver-js.git"
+    "url": "https://github.com/e2xlabs/redefined-name-resolver-js.git"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
@@ -14,7 +14,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc --build",
-    "clean": "tsc --build --clean"
+    "clean": "tsc --build --clean",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "@solana/web3.js": "^1.73.0",
@@ -24,6 +25,7 @@
   },
   "devDependencies": {
     "@types/web3": "^1.2.2",
-    "@types/lodash": "^4.14.184"
+    "@types/lodash": "^4.14.184",
+    "semantic-release": "^20.1.0"
   }
 }
