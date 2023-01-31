@@ -13,7 +13,7 @@ export enum ResolverServices {
 
 export type ResolverOptions = {
     // by default, we use all services
-    usedServices?: ResolverServices[],
+    servicesToResolveDomains?: ResolverServices[],
 }
 
 export interface Resolver {

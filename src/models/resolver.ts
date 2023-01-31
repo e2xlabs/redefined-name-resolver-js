@@ -12,18 +12,18 @@ const unstoppableResolverService = new UnstoppableResolverService();
 
 export class Resolver implements ResolverI {
 
-    private services: ResolverService[];
+    private servicesToResolveDomains: ResolverService[];
 
     constructor(
       public options: ResolverOptions
     ) {
-        const usedServices = this.options.usedServices;
+        const usedServices = this.options.servicesToResolveDomains;
 
         if (usedServices && !usedServices.length) {
             throw Error("You need to provide the services you want to use or provide nothing!")
         }
 
-        this.services = !usedServices
+        this.servicesToResolveDomains = !usedServices
             ? [ redefinedResolverService, ensResolverService, unstoppableResolverService ]
             : [
               usedServices.some(it => it === ResolverServices.REDEFINED) && redefinedResolverService,
@@ -33,7 +33,7 @@ export class Resolver implements ResolverI {
     }
 
     async getAddresses(domain: string, chain: Chain): Promise<string[]> {
-        return flatten(await Promise.all(this.services.map(resolver => resolver.getAddresses(domain, chain))));
+        return flatten(await Promise.all(this.servicesToResolveDomains.map(resolver => resolver.getAddresses(domain, chain))));
     }
 
     async getDomains(address: string, chain: Chain): Promise<string[]> {

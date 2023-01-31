@@ -14,26 +14,18 @@ describe('unstoppable-resolver.service', () => {
         expect(await unstoppableResolverService.getAddresses("hui.crypto", Chain.ETH)).toEqual(["0x123"]);
     });
 
-    test('SHOULD get Error for unsupported chains', async () => {
+    test('SHOULD get empty response for unsupported chains', async () => {
         const chains = [Chain.SOL];
         const callTest = async (chain: Chain) => {
-            try {
-                await unstoppableResolverService.getAddresses('brad.crypto', Chain.ETH)
-            } catch (e) {
-                expect(e.message).toEqual(`${chain} not supported for Unstoppable.`);
-            }
+            expect(await unstoppableResolverService.getAddresses("hui.crypto", chain)).toEqual([]);
         };
 
         await Promise.all(chains.map(callTest));
     });
 
-    test('SHOULD get Error for domain IF it is not registered', async () => {
+    test('SHOULD get empty response for domain IF it is not registered', async () => {
         resolution.isRegistered = jest.fn(async (domain: string) => false);
 
-        try {
-            await unstoppableResolverService.getAddresses('brad.crypto', Chain.ETH)
-        } catch (e) {
-            expect(e.message).toEqual("brad.crypto not registered at Unstoppable.");
-        }
+        expect(await unstoppableResolverService.getAddresses("hui.crypto", Chain.ETH)).toEqual([]);
     });
 });
