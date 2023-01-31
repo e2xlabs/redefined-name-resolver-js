@@ -23,7 +23,7 @@ export interface Resolver {
 
     getDomains(address: string, chain: Chain): Promise<string[]>;
 
-    setAddress(domain: string, options: SetAddressOptions): Promise<any>;
+    register(domain: string, options: SetAddressOptions): Promise<any>;
 }
 
 export type SetAddressOptions = {

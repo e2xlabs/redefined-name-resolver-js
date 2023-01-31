@@ -4,7 +4,7 @@ import Resolution from "@unstoppabledomains/resolution";
 
 const resolution = new Resolution();
 
-class UnstoppableResolverService implements ResolverService {
+export class UnstoppableResolverService implements ResolverService {
     supportedChains = [Chain.ETH, Chain.BSC, Chain.ZIL]
 
     async getAddresses(domain: string, chain: Chain): Promise<string[]> {
@@ -25,9 +25,4 @@ class UnstoppableResolverService implements ResolverService {
             return [];
         }
     }
-}
-
-export {
-    resolution,
-    UnstoppableResolverService,
 }

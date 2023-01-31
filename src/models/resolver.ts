@@ -40,7 +40,7 @@ export class Resolver implements ResolverI {
         return redefinedResolverService.getDomains(address);
     }
 
-    async setAddress(domain: string, options: SetAddressOptions): Promise<any> {
-        return redefinedResolverService.setAddress(domain, options);
+    async register(domain: string, options: SetAddressOptions): Promise<any> {
+        return redefinedResolverService.register(domain, options);
     }
 }
