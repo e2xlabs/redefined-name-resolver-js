@@ -1,5 +1,5 @@
-import EvmWeb3Service from "../../../../services/web3/evm-web3.service";
-import { Chain } from "../../../../models/types";
+import EvmWeb3Service from "@/services/web3/evm-web3.service";
+import { Chain } from "@/models/types";
 
 describe('evm-web3.service', () => {
   test('SHOULD get web3 provider', () => {

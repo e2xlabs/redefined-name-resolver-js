@@ -4,7 +4,7 @@ import { Chain, SetAddressOptions } from "@/models/types";
 
 const web3 = EvmWeb3Service.getWeb3(Chain.ETH);
 
-export class EncResolverService implements ResolverService {
+export class EnsResolverService implements ResolverService {
     // async resolver(alias: string) {
     //    return  web3.eth.ens.resolver(alias).then(function (contract) {
     //         console.log("resolver", contract);
@@ -13,9 +13,14 @@ export class EncResolverService implements ResolverService {
     // }
 
     async getAddresses(alias: string): Promise<string[]> {
-        return web3.eth.ens.getAddress(alias).then(function (address) {
-            console.log("getAddress", address);
-            return [address];
+        console.log(`Get ENC address for ${alias}`);
+        return web3.eth.ens.getAddress(alias)
+          .then((address) => {
+              return [address];
+          })
+          .catch(e => {
+              console.error("ENC getAddresses Error", e);
+            return []
         })
     }
 
