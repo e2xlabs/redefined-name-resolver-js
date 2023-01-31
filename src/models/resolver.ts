@@ -10,34 +10,36 @@ const redefinedResolverService = new RedefinedResolverService();
 const ensResolverService = new EnsResolverService();
 const unstoppableResolverService = new UnstoppableResolverService();
 
+const resolversByType: { [key in keyof typeof ResolverServices]: ResolverService } = {
+    [ResolverServices.REDEFINED]: redefinedResolverService,
+    [ResolverServices.ENS]: ensResolverService,
+    [ResolverServices.UNSTOPPABLE]: unstoppableResolverService,
+}
+
 export class Resolver implements ResolverI {
 
-    private servicesToResolveDomains: ResolverService[];
+    private resolvers: ResolverService[];
 
     constructor(
-      public options: ResolverOptions
+      public options?: ResolverOptions
     ) {
-        const usedServices = this.options.servicesToResolveDomains;
+        const resolvers = this.options?.resolvers;
 
-        if (usedServices && !usedServices.length) {
-            throw Error("You need to provide the services you want to use or provide nothing!")
+        if (resolvers && !resolvers.length) {
+            throw Error("You need to provide the resolvers you want to use or provide nothing!")
         }
 
-        this.servicesToResolveDomains = !usedServices
-            ? [ redefinedResolverService, ensResolverService, unstoppableResolverService ]
-            : [
-              usedServices.some(it => it === ResolverServices.REDEFINED) && redefinedResolverService,
-              usedServices.some(it => it === ResolverServices.ENS) && ensResolverService,
-              usedServices.some(it => it === ResolverServices.UNSTOPPABLE) && unstoppableResolverService,
-            ].filter(it => it);
+        this.resolvers = resolvers
+            ? resolvers.map(it => resolversByType[it])
+            : [ redefinedResolverService, ensResolverService, unstoppableResolverService ];
     }
 
-    async getAddresses(domain: string, chain: Chain): Promise<string[]> {
-        return flatten(await Promise.all(this.servicesToResolveDomains.map(resolver => resolver.getAddresses(domain, chain))));
+    async resolve(domain: string, chain: Chain): Promise<string[]> {
+        return flatten(await Promise.all(this.resolvers.map(resolver => resolver.resolve(domain, chain))));
     }
 
-    async getDomains(address: string, chain: Chain): Promise<string[]> {
-        return redefinedResolverService.getDomains(address);
+    async reverse(address: string, chain: Chain): Promise<string[]> {
+        return redefinedResolverService.reverse(address);
     }
 
     async register(domain: string, options: SetAddressOptions): Promise<any> {

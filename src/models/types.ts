@@ -12,16 +12,16 @@ export enum ResolverServices {
 }
 
 export type ResolverOptions = {
-    // by default, we use all services
-    servicesToResolveDomains?: ResolverServices[],
+    // by default, we use all resolvers
+    resolvers?: ResolverServices[],
 }
 
 export interface Resolver {
-    options: ResolverOptions;
+    options?: ResolverOptions;
 
-    getAddresses(domain: string, chain: Chain): Promise<string[]>;
+    resolve(domain: string, chain: Chain): Promise<string[]>;
 
-    getDomains(address: string, chain: Chain): Promise<string[]>;
+    reverse(address: string, chain: Chain): Promise<string[]>;
 
     register(domain: string, options: SetAddressOptions): Promise<any>;
 }
