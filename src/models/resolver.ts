@@ -1,5 +1,5 @@
-import type { ResolverModel } from "@/models/types";
-import { Chain, ResolverOptions, ResolverServices } from "@/models/types";
+import type { Resolver as ResolverI } from "@/models/types";
+import { Chain, ResolverOptions, ResolverServices, SetAddressOptions } from "@/models/types";
 import { ResolverService } from "@/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@/services/resolvers/redefined-resolver.service";
 import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
@@ -10,7 +10,7 @@ const redefinedResolverService = new RedefinedResolverService();
 const ensResolverService = new EnsResolverService();
 const unstoppableResolverService = new UnstoppableResolverService();
 
-export class Resolver implements ResolverModel {
+export class Resolver implements ResolverI {
 
     private services: ResolverService[];
 
@@ -32,11 +32,15 @@ export class Resolver implements ResolverModel {
             ].filter(it => it);
     }
 
-    async getAddresses(domain: string, chain: Chain) {
+    async getAddresses(domain: string, chain: Chain): Promise<string[]> {
         return flatten(await Promise.all(this.services.map(resolver => resolver.getAddresses(domain, chain))));
     }
 
-    async getDomains(address: string, chain: Chain) {
-        return [];
+    async getDomains(address: string, chain: Chain): Promise<string[]> {
+        return redefinedResolverService.getDomains(address);
+    }
+
+    async setAddress(domain: string, options: SetAddressOptions): Promise<any> {
+        return redefinedResolverService.setAddress(domain, options);
     }
 }

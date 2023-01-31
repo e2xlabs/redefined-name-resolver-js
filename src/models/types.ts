@@ -1,22 +1,8 @@
 export enum Chain {
     ETH = "ETH",
     BSC = "BSC",
-    ZIL = "ZIL",
     SOL = "SOL",
-}
-
-export interface ResolverModel {
-    options: ResolverOptions;
-
-    getAddresses(domain: string, chain: Chain): Promise<string[]>;
-
-    getDomains(address: string, chain: Chain): Promise<string[]>;
-}
-
-export type SetAddressOptions = {
-    from: string,
-    gasPrice?: string,
-    gas?: string,
+    ZIL = "ZIL",
 }
 
 export enum ResolverServices {
@@ -28,4 +14,20 @@ export enum ResolverServices {
 export type ResolverOptions = {
     // by default, we use all services
     usedServices?: ResolverServices[],
+}
+
+export interface Resolver {
+    options: ResolverOptions;
+
+    getAddresses(domain: string, chain: Chain): Promise<string[]>;
+
+    getDomains(address: string, chain: Chain): Promise<string[]>;
+
+    setAddress(domain: string, options: SetAddressOptions): Promise<any>;
+}
+
+export type SetAddressOptions = {
+    from: string,
+    gasPrice?: string,
+    gas?: string,
 }
