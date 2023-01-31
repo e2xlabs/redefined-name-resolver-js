@@ -1,7 +1,9 @@
-import { SetAddressOptions } from "@/models/types";
+import { Chain, SetAddressOptions } from "@/models/types";
 
 export interface ResolverService {
-    getAddresses(alias: string): Promise<string[]>;
+    supportedChains: Chain[];
+
+    getAddresses(alias: string, chain?: Chain): Promise<string[]>;
 
     setAddress(alias: string, address: string, options: SetAddressOptions);
 }

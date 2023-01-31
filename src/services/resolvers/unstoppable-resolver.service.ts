@@ -1,16 +1,37 @@
 import { ResolverService } from "@/services/resolvers/resolver.service";
-import EvmWeb3Service from "@/services/web3/evm-web3.service";
 import { Chain, SetAddressOptions } from "@/models/types";
+import Resolution from "@unstoppabledomains/resolution";
 
-const web3 = EvmWeb3Service.getWeb3(Chain.ETH);
+const resolution = new Resolution();
 
-export class UnstoppableResolverService implements ResolverService {
-    async getAddresses(alias: string): Promise<string[]> {
-        console.log(`Get redefined address for ${alias}`);
-        return [];
+class UnstoppableResolverService implements ResolverService {
+    supportedChains = [Chain.ETH, Chain.BSC, Chain.ZIL]
+
+    async getAddresses(domain: string): Promise<string[]> {
+        if (!(await resolution.isRegistered(domain))) {
+            console.log(`${domain} not registered at Unstoppable.`);
+            return [];
+        }
+
+        if (!(await resolution.isAvailable(domain))) {
+            console.log(`${domain} not available at Unstoppable.`);
+            return [];
+        }
+
+        try {
+            return [await resolution.resolver(domain)];
+        } catch (e) {
+            console.error("Unstoppable Error", e);
+            return [];
+        }
     }
 
-    async setAddress(alias: string, address: string, options: SetAddressOptions): Promise<boolean> {
+    async setAddress(domain: string, address: string, options: SetAddressOptions): Promise<boolean> {
         return true;
     }
+}
+
+export {
+    resolution,
+    UnstoppableResolverService,
 }

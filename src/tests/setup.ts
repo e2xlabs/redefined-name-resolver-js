@@ -1,1 +1,1 @@
-import "@/tests/unit/moks/mock-web3";
+import "@/tests/unit/moks/web3";

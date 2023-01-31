@@ -32,11 +32,11 @@ export class Resolver implements ResolverModel {
             ].filter(it => it);
     }
 
-    async getAddresses(alias: string) {
-        return flatten(await Promise.all(this.services.map(resolver => resolver.getAddresses(alias))));
+    async getAddresses(domain: string, chain: Chain) {
+        return flatten(await Promise.all(this.services.map(resolver => resolver.getAddresses(domain, chain))));
     }
 
-    async getAliases(address: string, chain: Chain) {
+    async getDomains(address: string, chain: Chain) {
         return [];
     }
 }

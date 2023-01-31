@@ -4,7 +4,7 @@ const ensResolverService = new EnsResolverService();
 
 describe('ens-resolver.service', () => {
 
-    test('SHOULD get alias addresses', async () => {
+    test('SHOULD get addresses for domain', async () => {
         expect(await ensResolverService.getAddresses('hui.eth')).toEqual(["0x123"]);
     });
 });

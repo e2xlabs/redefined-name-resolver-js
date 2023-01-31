@@ -1,17 +1,16 @@
-import { ResolverService } from "@/services/resolvers/resolver.service";
-
 export enum Chain {
     ETH = "ETH",
     BSC = "BSC",
+    ZIL = "ZIL",
     SOL = "SOL",
 }
 
 export interface ResolverModel {
     options: ResolverOptions;
 
-    getAddresses(alias: string): Promise<string[]>;
+    getAddresses(domain: string, chain: Chain): Promise<string[]>;
 
-    getAliases(address: string, chain: Chain): Promise<string[]>;
+    getDomains(address: string, chain: Chain): Promise<string[]>;
 }
 
 export type SetAddressOptions = {

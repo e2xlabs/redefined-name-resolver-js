@@ -21,6 +21,7 @@
   },
   "dependencies": {
     "@solana/web3.js": "^1.73.0",
+    "@unstoppabledomains/resolution": "^8.4.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "typescript": "^4.5.2",
