@@ -2,8 +2,6 @@ import { UnstoppableResolverService } from "@/services/resolvers/unstoppable-res
 import { Chain } from "@/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 
-// jest.mock("@unstoppabledomains/resolution");
-
 describe('unstoppable-resolver.service', () => {
     beforeEach(() => {
         jest.spyOn(Resolution.prototype, 'isRegistered').mockImplementation(async () => true);
