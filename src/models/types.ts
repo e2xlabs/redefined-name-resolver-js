@@ -12,8 +12,14 @@ export enum ResolverServices {
 }
 
 export type ResolverOptions = {
-    // by default, we use all resolvers
-    resolvers?: ResolverServices[],
+    // by default, we use all services
+    resolverServices?: ResolverServices[],
+}
+
+export type SetAddressOptions = {
+    from: string,
+    gasPrice?: string,
+    gas?: string,
 }
 
 export interface Resolver {
@@ -24,10 +30,4 @@ export interface Resolver {
     reverse(address: string, chain: Chain): Promise<string[]>;
 
     register(domain: string, options: SetAddressOptions): Promise<any>;
-}
-
-export type SetAddressOptions = {
-    from: string,
-    gasPrice?: string,
-    gas?: string,
 }

@@ -9,7 +9,7 @@ export class EnsResolverService implements ResolverService {
 
     async resolve(domain: string, chain: Chain): Promise<string[]> {
         if (!this.supportedChains.some(it => it === chain)) {
-          console.log(`${chain} not supported for Ens.`);
+          console.log(`${chain} not supported by Ens.`);
           return [];
         }
 

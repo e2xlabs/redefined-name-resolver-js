@@ -10,12 +10,12 @@ export class UnstoppableResolverService implements ResolverService {
 
     async resolve(domain: string, chain: Chain): Promise<string[]> {
         if (!this.supportedChains.some(it => it === chain)) {
-            console.log(`${chain} not supported for Unstoppable.`);
+            console.log(`${chain} not supported by Unstoppable.`);
             return [];
         }
 
         if (!(await resolution.isRegistered(domain))) {
-            console.log(`${domain} not registered at Unstoppable.`);
+            console.log(`${domain} not registered with Unstoppable.`);
             return [];
         }
 
