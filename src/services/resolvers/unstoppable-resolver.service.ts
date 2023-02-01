@@ -1,5 +1,5 @@
 import { ResolverService } from "@/services/resolvers/resolver.service";
-import { Network, ResolvedAddress } from "@/models/types";
+import { Network, Account } from "@/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 
 const resolution = new Resolution();
@@ -8,7 +8,7 @@ export class UnstoppableResolverService implements ResolverService {
 
     supportedNetworks = [Network.ETH, Network.BSC, Network.ZIL]
 
-    async resolve(domain: string, network: Network): Promise<ResolvedAddress[]> {
+    async resolve(domain: string, network: Network): Promise<Account[]> {
         if (!this.supportedNetworks.some(it => it === network)) {
             console.log(`${network} not supported by Unstoppable.`);
             return [];

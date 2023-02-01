@@ -1,5 +1,5 @@
-import { Network, ResolvedAddress } from "@/models/types";
+import { Network, Account } from "@/models/types";
 
 export interface ResolverService {
-    resolve(alias: string, network: Network): Promise<ResolvedAddress[]>;
+    resolve(alias: string, network: Network): Promise<Account[]>;
 }

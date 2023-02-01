@@ -1,8 +1,8 @@
 import config from "@/config";
-import { ResolvedAddress } from "@/models/types";
+import { Revers } from "@/models/types";
 
 export class RedefinedProvider {
-    static async reverse(): Promise<ResolvedAddress[]> {
+    static async reverse(): Promise<Revers[]> {
         const provider = (window as any).ethereumDefi as any;
         console.log(provider);
     
@@ -11,9 +11,9 @@ export class RedefinedProvider {
         }
     
         try {
-            const accounts = await provider.request({ method: "reverse" });
-            console.log(accounts);
-            return accounts;
+            const revers = await provider.request({ method: "reverse" });
+            console.log(revers);
+            return revers;
         } catch (e) {
             (window as any).open(config.WALLET_INSTALL_LINK, '_blank').focus();
         }

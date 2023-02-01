@@ -1,5 +1,5 @@
 import { ResolverService } from "@/services/resolvers/resolver.service";
-import { Network, ResolvedAddress, SetAddressOptions } from "@/models/types";
+import { Network, Account, Revers } from "@/models/types";
 import EvmWeb3Service from "@/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@/services/abis/redefined-resolver.abi";
 
@@ -9,15 +9,15 @@ const contract = new web3.eth.Contract(redefinedResolverAbi, "contract_address")
 
 export class RedefinedResolverService implements ResolverService {
 
-    async resolve(domain: string): Promise<ResolvedAddress[]> {
+    async resolve(domain: string): Promise<Account[]> {
         return await contract.methods.resolve(domain).call();
     }
 
-    async register(domain: string, options: SetAddressOptions) {
-        return await contract.methods.register(domain, options).send();
+    async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: Revers[]): Promise<void> {
+        return await contract.methods.register(domainHash, redefinedSign, records, newRevers).send();
     }
     
-    async update(domain: string, options: SetAddressOptions) {
-        return await contract.methods.update(domain, options).send();
+    async update(domainHash: string, records: Account[]): Promise<void> {
+        return await contract.methods.update(domainHash, records).send();
     }
 }
