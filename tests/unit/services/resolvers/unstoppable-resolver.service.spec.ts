@@ -13,7 +13,7 @@ describe('unstoppable-resolver.service', () => {
     
         const networks: Network[] = ["eth", "bsc", "zil"];
         const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("hui.crypto", network)).toEqual([{ address: "0x123", network, }]);
+            expect(await unstoppableResolverService.resolve("cifrex.crypto", network)).toEqual([{ address: "0x123", network, }]);
         };
     
         await Promise.all(networks.map(callTest));
@@ -24,7 +24,7 @@ describe('unstoppable-resolver.service', () => {
 
         const networks: Network[] = ["sol"];
         const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("hui.crypto", network)).toEqual([]);
+            expect(await unstoppableResolverService.resolve("cifrex.crypto", network)).toEqual([]);
         };
 
         await Promise.all(networks.map(callTest));
@@ -34,6 +34,6 @@ describe('unstoppable-resolver.service', () => {
         const unstoppableResolverService = new UnstoppableResolverService();
         jest.spyOn(Resolution.prototype, 'isRegistered').mockImplementation(async () => false);
 
-        expect(await unstoppableResolverService.resolve("hui.crypto", "eth")).toEqual([]);
+        expect(await unstoppableResolverService.resolve("cifrex.crypto", "eth")).toEqual([]);
     });
 });
