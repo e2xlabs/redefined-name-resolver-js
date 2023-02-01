@@ -1,2 +1,2 @@
 export { RedefinedResolver } from "@/redefined.resolver";
-export { Chain } from "@/models/types";
+export { Network } from "@/models/types";

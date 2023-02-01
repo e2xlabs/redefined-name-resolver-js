@@ -1,16 +1,16 @@
 import { ResolverService } from "@/services/resolvers/resolver.service";
-import { Chain } from "@/models/types";
+import { Network, ResolvedAddress } from "@/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 
 const resolution = new Resolution();
 
 export class UnstoppableResolverService implements ResolverService {
 
-    supportedChains = [Chain.ETH, Chain.BSC, Chain.ZIL]
+    supportedNetworks = [Network.ETH, Network.BSC, Network.ZIL]
 
-    async resolve(domain: string, chain: Chain): Promise<string[]> {
-        if (!this.supportedChains.some(it => it === chain)) {
-            console.log(`${chain} not supported by Unstoppable.`);
+    async resolve(domain: string, network: Network): Promise<ResolvedAddress[]> {
+        if (!this.supportedNetworks.some(it => it === network)) {
+            console.log(`${network} not supported by Unstoppable.`);
             return [];
         }
 
@@ -20,7 +20,10 @@ export class UnstoppableResolverService implements ResolverService {
         }
 
         try {
-            return [await resolution.addr(domain, chain)];
+            return [{
+                address: await resolution.addr(domain, network),
+                network: network,
+            }];
         } catch (e) {
             console.error("Unstoppable Error", e);
             return [];

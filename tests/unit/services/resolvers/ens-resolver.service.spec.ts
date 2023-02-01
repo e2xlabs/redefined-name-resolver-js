@@ -1,24 +1,26 @@
 import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
-import { Chain } from "@/models/types";
+import { Network } from "@/models/types";
 
 const ensResolverService = new EnsResolverService();
 
 describe('ens-resolver.service', () => {
 
-    test('SHOULD get addresses for domain with ETH', async () => {
-        expect(await ensResolverService.resolve('hui.eth', Chain.ETH)).toEqual(["0x123"]);
-    });
-    
-    test('SHOULD get addresses for domain BSC', async () => {
-        expect(await ensResolverService.resolve('hui.eth', Chain.BSC)).toEqual(["0x123"]);
-    });
-    
-    test('SHOULD get empty response for unsupported chains', async () => {
-        const chains = [Chain.SOL, Chain.ZIL];
-        const callTest = async (chain: Chain) => {
-            expect(await ensResolverService.resolve("hui.crypto", chain)).toEqual([]);
+    test('SHOULD get addresses for domain with network IF networks supported', async () => {
+        
+        const networks = [Network.ETH, Network.BSC];
+        const callTest = async (network: Network) => {
+            expect(await ensResolverService.resolve("hui.crypto", network)).toEqual([{ address: "0x123", network, }]);
         };
         
-        await Promise.all(chains.map(callTest));
+        await Promise.all(networks.map(callTest));
+    });
+    
+    test('SHOULD get empty response IF networks unsupported', async () => {
+        const networks = [Network.SOL, Network.ZIL];
+        const callTest = async (network: Network) => {
+            expect(await ensResolverService.resolve("hui.crypto", network)).toEqual([]);
+        };
+        
+        await Promise.all(networks.map(callTest));
     });
 });

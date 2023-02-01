@@ -1,18 +1,26 @@
 import EvmWeb3Service from "@/services/web3/evm-web3.service";
 import SolWeb3Service from "@/services/web3/sol-web3.service";
-import { Chain } from "@/models/types";
+import { Network } from "@/models/types";
 
 EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
-  (chain: Chain) => ({
+  (network: Network) => ({
     eth: {
       ens: {
-        async getAddress(alias: string): Promise<string> {
+        async getAddress(domain: string): Promise<string> {
           return "0x123"
         }
+      },
+      Contract: class Contract {
+          methods = {
+              resolve(domain: string) { return []; },
+              reverse(address: string) { return []; },
+              register(domain: string) { return []; },
+              update(domain: string) { return []; },
+          }
       }
     }
   }),
 );
 SolWeb3Service.getWeb3 = jest.fn().mockImplementation(
-  (chain: Chain) => ({ }),
+  (network: Network) => ({ }),
 );

@@ -1,7 +1,7 @@
 import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@/services/resolvers/unstoppable-resolver.service";
 import { RedefinedResolverService } from "@/services/resolvers/redefined-resolver.service";
-import { Chain, ResolverServices } from "@/models/types";
+import { Network, ResolverServices } from "@/models/types";
 import { RedefinedResolver } from "@/redefined.resolver";
 
 describe('redefined.resolver', () => {
@@ -13,9 +13,9 @@ describe('redefined.resolver', () => {
     spyRedefinedResolve.mockClear();
     spyEncResolve.mockClear();
     spyUnsResolve.mockClear();
-    spyRedefinedResolve.mockImplementation(async () => ["0x123"]);
-    spyEncResolve.mockImplementation(async () => ["0x123"]);
-    spyUnsResolve.mockImplementation(async () => ["0x123"]);
+    spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: Network.ETH }]);
+    spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: Network.ETH }]);
+    spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: Network.ETH }]);
   })
 
   test('SHOULD use provided resolvers IF exists', async () => {
@@ -39,7 +39,7 @@ describe('redefined.resolver', () => {
       resolverServices: [ResolverServices.REDEFINED, ResolverServices.ENS]
     })
 
-    await resolver.resolve("hui.evm", Chain.ETH);
+    await resolver.resolve("hui.evm", Network.ETH);
 
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
@@ -49,7 +49,7 @@ describe('redefined.resolver', () => {
   test('SHOULD call all resolvers IF none are provided', async () => {
     const resolver = new RedefinedResolver();
 
-    await resolver.resolve("hui.evm", Chain.ETH);
+    await resolver.resolve("hui.evm", Network.ETH);
 
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()

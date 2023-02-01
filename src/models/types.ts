@@ -1,4 +1,4 @@
-export enum Chain {
+export enum Network {
     ETH = "ETH",
     BSC = "BSC",
     SOL = "SOL",
@@ -22,12 +22,18 @@ export type SetAddressOptions = {
     gas?: string,
 }
 
+
+export type ResolvedAddress = {
+    address: string,
+    network: Network,
+}
+
 export interface Resolver {
     options?: ResolverOptions;
 
-    resolve(domain: string, chain: Chain): Promise<string[]>;
+    resolve(domain: string, network: Network): Promise<ResolvedAddress[]>;
 
-    reverse(address: string, chain: Chain): Promise<string[]>;
+    reverse(address: string, network: Network): Promise<string[]>;
 
     register(domain: string, options: SetAddressOptions): Promise<any>;
 }

@@ -1,5 +1,5 @@
-import { Chain } from "@/models/types";
+import { Network, ResolvedAddress } from "@/models/types";
 
 export interface ResolverService {
-    resolve(alias: string, chain?: Chain): Promise<string[]>;
+    resolve(alias: string, network: Network): Promise<ResolvedAddress[]>;
 }

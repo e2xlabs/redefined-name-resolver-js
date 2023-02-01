@@ -1,10 +1,10 @@
-import { Chain as ChainKey } from "@/models/types";
+import { Network } from "@/models/types";
 import { keyBy } from "lodash";
 
 export type Chain = {
   config: any
   chainId: string | undefined
-  chain: ChainKey,
+  network: Network,
 }
 
 export const networks = keyBy([
@@ -13,14 +13,14 @@ export const networks = keyBy([
       url: "https://mainnet.infura.io/v3/3d11b13de76d49bb92533d4843e35383"
     },
     chainId: "0x1",
-    chain: ChainKey.ETH,
+    network: Network.ETH,
   },
   {
     config: {
       cluster: "mainnet-beta"
     },
     chainId: undefined,
-    chain: ChainKey.SOL
+    network: Network.SOL
   },
   {
     config: {
@@ -28,6 +28,6 @@ export const networks = keyBy([
       chainID: '0x38',
     },
     chainId: "0x38",
-    chain: ChainKey.BSC
+    network: Network.BSC
   }
-], "chain");
+] as Chain[], "network");
