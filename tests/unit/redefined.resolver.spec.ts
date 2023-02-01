@@ -2,16 +2,20 @@ import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@/services/resolvers/unstoppable-resolver.service";
 import { RedefinedResolverService } from "@/services/resolvers/redefined-resolver.service";
 import { RedefinedResolver } from "@/redefined.resolver";
+import config from "@/config";
+import EvmWeb3Service from "@/services/web3/evm-web3.service";
+import { Network } from "@/models/types";
 
 describe('redefined.resolver', () => {
   const spyRedefinedResolve = jest.spyOn(RedefinedResolverService.prototype, 'resolve');
   const spyEncResolve = jest.spyOn(EnsResolverService.prototype, 'resolve');
   const spyUnsResolve = jest.spyOn(UnstoppableResolverService.prototype, 'resolve');
-
+  
   beforeEach(() => {
     spyRedefinedResolve.mockClear();
     spyEncResolve.mockClear();
     spyUnsResolve.mockClear();
+    
     spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
     spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
     spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
@@ -53,5 +57,47 @@ describe('redefined.resolver', () => {
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
     expect(spyUnsResolve).toHaveBeenCalled()
+  });
+  
+  test('SHOULD use preinstalled nodes IF none are provided', async () => {
+    const resolver = new RedefinedResolver();
+    expect(resolver["nodes"]).toEqual({
+      eth: config.ETH_NODE,
+      bsc: config.BSC_NODE,
+      sol: config.SOL_NODE,
+    })
+  });
+  
+  test('SHOULD use nodes IF provided', async () => {
+    const resolver = new RedefinedResolver({
+      nodes: { eth: "eth_node" }
+    });
+
+    expect(resolver["nodes"]).toEqual({ eth: "eth_node" });
+  });
+  
+  test('SHOULD call web3 in resolver with target node IF provided', async () => {
+    const spyGetEvmWeb3 = jest.spyOn(EvmWeb3Service, "getWeb3")
+    spyEncResolve.mockImplementation(async (domain: string, network: Network, nodeLink: string) => {
+      EvmWeb3Service.getWeb3(nodeLink);
+      return [];
+    });
+    
+    const resolver = new RedefinedResolver({
+      resolverServices: ["ens"],
+      nodes: { eth: "eth_node" }
+    });
+    
+    await resolver.resolve("hui.eth", "eth");
+    
+    expect(spyGetEvmWeb3).toHaveBeenCalledWith("eth_node");
+  });
+  
+  test('SHOULD show error on create instance IF nodes exists but provided nothing', async () => {
+    try {
+      new RedefinedResolver({ nodes: {} })
+    } catch (e) {
+      expect(e.message).toBe("You need to provide the nodes you want to use or provide nothing!")
+    }
   });
 });
