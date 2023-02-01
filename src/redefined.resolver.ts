@@ -40,6 +40,7 @@ export class RedefinedResolver implements Resolver {
         if (nodes && !Object.keys(nodes).length) {
             throw Error("You need to provide the nodes you want to use or provide nothing!")
         }
+
         if (resolverServices) {
             this.resolverServices = resolverServices.map(it => resolverServicesByType[it]);
         }
