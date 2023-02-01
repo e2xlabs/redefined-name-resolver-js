@@ -5,6 +5,7 @@ import { RedefinedResolverService } from "@/services/resolvers/redefined-resolve
 import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
+import { RedefinedProvider } from "@/services/providers/redefined.provider";
 
 const redefinedResolverService = new RedefinedResolverService();
 const ensResolverService = new EnsResolverService();
@@ -38,8 +39,8 @@ export class RedefinedResolver implements Resolver {
         return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network))));
     }
 
-    async reverse(address: string, network: Network): Promise<string[]> {
-        return redefinedResolverService.reverse(address);
+    async reverse(): Promise<ResolvedAddress[]> {
+        return RedefinedProvider.reverse();
     }
 
     async register(domain: string, options: SetAddressOptions): Promise<any> {

@@ -13,10 +13,6 @@ export class RedefinedResolverService implements ResolverService {
         return await contract.methods.resolve(domain).call();
     }
 
-    async reverse(address: string): Promise<string[]> {
-        return await contract.methods.reverse(address).call();
-    }
-
     async register(domain: string, options: SetAddressOptions) {
         return await contract.methods.register(domain, options).send();
     }

@@ -13,7 +13,6 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
       Contract: class Contract {
           methods = {
               resolve(domain: string) { return []; },
-              reverse(address: string) { return []; },
               register(domain: string) { return []; },
               update(domain: string) { return []; },
           }

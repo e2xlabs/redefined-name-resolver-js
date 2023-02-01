@@ -33,7 +33,7 @@ export interface Resolver {
 
     resolve(domain: string, network: Network): Promise<ResolvedAddress[]>;
 
-    reverse(address: string, network: Network): Promise<string[]>;
+    reverse(): Promise<ResolvedAddress[]>;
 
     register(domain: string, options: SetAddressOptions): Promise<any>;
 }
