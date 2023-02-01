@@ -1,5 +1,5 @@
 import type { Account, Resolver } from "@/models/types";
-import { Network, ResolverOptions, ResolverServices, Revers } from "@/models/types";
+import { Network, ResolverOptions, ResolverServices, RedefinedRevers } from "@/models/types";
 import { ResolverService } from "@/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@/services/resolvers/redefined-resolver.service";
 import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
@@ -11,10 +11,10 @@ const redefinedResolverService = new RedefinedResolverService();
 const ensResolverService = new EnsResolverService();
 const unstoppableResolverService = new UnstoppableResolverService();
 
-const resolverServicesByType: { [key in keyof typeof ResolverServices]: ResolverService } = {
-    [ResolverServices.REDEFINED]: redefinedResolverService,
-    [ResolverServices.ENS]: ensResolverService,
-    [ResolverServices.UNSTOPPABLE]: unstoppableResolverService,
+const resolverServicesByType: { [key in ResolverServices]: ResolverService } = {
+    redefined: redefinedResolverService,
+    ens: ensResolverService,
+    unstoppable: unstoppableResolverService,
 }
 
 export class RedefinedResolver implements Resolver {
@@ -39,11 +39,12 @@ export class RedefinedResolver implements Resolver {
         return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network))));
     }
 
-    async reverse(): Promise<Revers[]> {
-        return RedefinedProvider.reverse();
+    async reverse(): Promise<string[]> {
+        const reverse = await RedefinedProvider.reverse();
+        return [];
     }
 
-    async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: Revers[]): Promise<void> {
+    async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void> {
         return redefinedResolverService.register(domainHash, redefinedSign, records, newRevers);
     }
     

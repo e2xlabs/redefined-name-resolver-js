@@ -1,15 +1,6 @@
-export enum Network {
-    ETH = "ETH",
-    BSC = "BSC",
-    SOL = "SOL",
-    ZIL = "ZIL",
-}
+export type Network = "eth" | "bsc" | "sol" | "zil";
 
-export enum ResolverServices {
-    REDEFINED = "REDEFINED",
-    ENS = "ENS",
-    UNSTOPPABLE = "UNSTOPPABLE",
-}
+export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
 export type ResolverOptions = {
     // by default, we use all services
@@ -21,7 +12,7 @@ export type Account = {
     network: Network,
 }
 
-export type Revers = {
+export type RedefinedRevers = {
     version: number,
     data: string,
 }
@@ -31,9 +22,9 @@ export interface Resolver {
 
     resolve(domain: string, network: Network): Promise<Account[]>;
 
-    reverse(): Promise<Revers[]>;
+    reverse(): Promise<string[]>;
     
-    register(domainHash: string, redefinedSign: string, records: Account[], newRevers: Revers[]): Promise<void>;
+    register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void>;
     
     update(domainHash: string, records: Account[]): Promise<void>;
 }

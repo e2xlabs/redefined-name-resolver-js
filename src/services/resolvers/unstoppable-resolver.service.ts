@@ -6,7 +6,7 @@ const resolution = new Resolution();
 
 export class UnstoppableResolverService implements ResolverService {
 
-    supportedNetworks = [Network.ETH, Network.BSC, Network.ZIL]
+    supportedNetworks: Network[] = ["eth", "bsc", "zil"]
 
     async resolve(domain: string, network: Network): Promise<Account[]> {
         if (!this.supportedNetworks.some(it => it === network)) {

@@ -7,20 +7,20 @@ export type Chain = {
   network: Network,
 }
 
-export const networks = keyBy([
+const chains: Chain[] = [
   {
     config: {
       url: "https://mainnet.infura.io/v3/3d11b13de76d49bb92533d4843e35383"
     },
     chainId: "0x1",
-    network: Network.ETH,
+    network: "eth",
   },
   {
     config: {
       cluster: "mainnet-beta"
     },
     chainId: undefined,
-    network: Network.SOL
+    network: "sol"
   },
   {
     config: {
@@ -28,6 +28,8 @@ export const networks = keyBy([
       chainID: '0x38',
     },
     chainId: "0x38",
-    network: Network.BSC
+    network: "bsc"
   }
-] as Chain[], "network");
+];
+
+export const networks = keyBy(chains, "network");

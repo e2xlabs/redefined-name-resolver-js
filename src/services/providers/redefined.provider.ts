@@ -1,21 +1,39 @@
 import config from "@/config";
-import { Revers } from "@/models/types";
+import { RedefinedRevers } from "@/models/types";
 
 export class RedefinedProvider {
-    static async reverse(): Promise<Revers[]> {
+    static async reverse(): Promise<RedefinedRevers[]> {
         const provider = (window as any).ethereumDefi as any;
-        console.log(provider);
+        console.log("---- reverse provider",provider);
     
         if (provider && !provider.isDefi) {
-            throw Error("No redefined provider!");
-        }
-    
-        try {
-            const revers = await provider.request({ method: "reverse" });
-            console.log(revers);
-            return revers;
-        } catch (e) {
             (window as any).open(config.WALLET_INSTALL_LINK, '_blank').focus();
         }
+    
+        const revers = await provider.request({ method: "reverse" });
+        console.log(revers);
+        return revers;
+    }
+    
+    private static async encrypt(data: string) {
+        const provider = (window as any).ethereumDefi as any;
+    
+        if (provider && !provider.isDefi) {
+            (window as any).open(config.WALLET_INSTALL_LINK, '_blank').focus();
+        }
+        const encrypt = await provider.request({ method: "reverse" });
+        console.log(encrypt);
+        return encrypt;
+    }
+    
+    private static async decrypt(data: string) {
+        const provider = (window as any).ethereumDefi as any;
+        
+        if (provider && !provider.isDefi) {
+            (window as any).open(config.WALLET_INSTALL_LINK, '_blank').focus();
+        }
+        const decrypt = await provider.request({ method: "eth_decrypt" });
+        console.log(decrypt);
+        return decrypt;
     }
 }

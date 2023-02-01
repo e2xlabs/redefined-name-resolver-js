@@ -5,7 +5,7 @@ import { Network, Account } from "@/models/types";
 
 export class EnsResolverService implements ResolverService {
 
-    supportedNetworks = [Network.ETH, Network.BSC]
+    supportedNetworks: Network[] = ["eth", "bsc"]
 
     async resolve(domain: string, network: Network): Promise<Account[]> {
         if (!this.supportedNetworks.some(it => it === network)) {

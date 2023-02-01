@@ -1,7 +1,6 @@
 import { EnsResolverService } from "@/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@/services/resolvers/unstoppable-resolver.service";
 import { RedefinedResolverService } from "@/services/resolvers/redefined-resolver.service";
-import { Network, ResolverServices } from "@/models/types";
 import { RedefinedResolver } from "@/redefined.resolver";
 
 describe('redefined.resolver', () => {
@@ -13,14 +12,14 @@ describe('redefined.resolver', () => {
     spyRedefinedResolve.mockClear();
     spyEncResolve.mockClear();
     spyUnsResolve.mockClear();
-    spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: Network.ETH }]);
-    spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: Network.ETH }]);
-    spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: Network.ETH }]);
+    spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
+    spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
+    spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
   })
 
   test('SHOULD use provided resolvers IF exists', async () => {
     const resolver = new RedefinedResolver({
-      resolverServices: [ResolverServices.REDEFINED]
+      resolverServices: ["redefined"]
     })
     // to bypass privacy
     expect(resolver["resolverServices"]).toEqual([RedefinedResolverService.prototype]);
@@ -36,10 +35,10 @@ describe('redefined.resolver', () => {
 
   test('SHOULD call resolvers IF provided', async () => {
     const resolver = new RedefinedResolver({
-      resolverServices: [ResolverServices.REDEFINED, ResolverServices.ENS]
+      resolverServices: ["redefined", "ens"]
     })
 
-    await resolver.resolve("hui.evm", Network.ETH);
+    await resolver.resolve("hui.evm", "eth");
 
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
@@ -49,7 +48,7 @@ describe('redefined.resolver', () => {
   test('SHOULD call all resolvers IF none are provided', async () => {
     const resolver = new RedefinedResolver();
 
-    await resolver.resolve("hui.evm", Network.ETH);
+    await resolver.resolve("hui.evm", "eth");
 
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
