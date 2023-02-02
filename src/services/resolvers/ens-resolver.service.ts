@@ -13,15 +13,13 @@ export class EnsResolverService implements ResolverService {
           return [];
         }
 
-        console.log(domain, network, nodeLink);
-
         try {
           return [{
               address: await EvmWeb3Service.getWeb3(nodeLink).eth.ens.getAddress(domain),
               network: network,
           }]
         } catch (e) {
-          console.error("ENS Error", e);
+          console.error("ENS Error", e.message);
           return []
         }
     }

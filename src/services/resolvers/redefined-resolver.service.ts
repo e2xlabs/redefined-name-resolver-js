@@ -2,15 +2,20 @@ import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { Account, RedefinedRevers } from "@resolver/models/types";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
+import config from "@resolver/config";
 
-const web3 = EvmWeb3Service.getWeb3("bsc");
-// TODO: add contract address when available
-const contract = new web3.eth.Contract(redefinedResolverAbi, "contract_address");
+const web3 = EvmWeb3Service.getWeb3("eth");
+const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
 
 export class RedefinedResolverService implements ResolverService {
 
     async resolve(domain: string): Promise<Account[]> {
-        return await contract.methods.resolve(domain).call();
+        try {
+            return await contract.methods.resolve(domain).call();
+        } catch (e) {
+            console.error("redefined Error", e.message);
+            return [];
+        }
     }
 
     async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void> {

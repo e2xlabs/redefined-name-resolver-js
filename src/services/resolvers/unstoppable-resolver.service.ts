@@ -14,18 +14,18 @@ export class UnstoppableResolverService implements ResolverService {
             return [];
         }
 
-        if (!(await resolution.isRegistered(domain))) {
-            console.log(`${domain} not registered with Unstoppable.`);
-            return [];
-        }
-
         try {
+            if (!(await resolution.isRegistered(domain))) {
+                console.log(`${domain} not registered with Unstoppable.`);
+                return [];
+            }
+
             return [{
                 address: await resolution.addr(domain, network),
                 network: network,
             }];
         } catch (e) {
-            console.error("Unstoppable Error", e);
+            console.error("Unstoppable Error", e.message);
             return [];
         }
     }
