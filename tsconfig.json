@@ -7,13 +7,16 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noImplicitAny": false,
     "resolveJsonModule": true,
     "allowJs": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@resolver/*": ["./src/*"]
     }
   },
   "lib": [

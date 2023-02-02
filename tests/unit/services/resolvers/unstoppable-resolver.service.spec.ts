@@ -1,5 +1,5 @@
-import { UnstoppableResolverService } from "@/services/resolvers/unstoppable-resolver.service";
-import { Network } from "@/models/types";
+import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
+import { Network } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 
 describe('unstoppable-resolver.service', () => {
@@ -10,12 +10,12 @@ describe('unstoppable-resolver.service', () => {
 
     test('SHOULD get addresses for domain with network IF it is registered and available', async () => {
         const unstoppableResolverService = new UnstoppableResolverService();
-    
+
         const networks: Network[] = ["eth", "bsc", "zil"];
         const callTest = async (network: Network) => {
             expect(await unstoppableResolverService.resolve("cifrex.crypto", network)).toEqual([{ address: "0x123", network, }]);
         };
-    
+
         await Promise.all(networks.map(callTest));
     });
 

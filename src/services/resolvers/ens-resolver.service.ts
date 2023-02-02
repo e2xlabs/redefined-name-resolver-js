@@ -1,6 +1,6 @@
-import { ResolverService } from "@/services/resolvers/resolver.service";
-import EvmWeb3Service from "@/services/web3/evm-web3.service";
-import { Network, Account } from "@/models/types";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
+import { Network, Account } from "@resolver/models/types";
 
 
 export class EnsResolverService implements ResolverService {
@@ -12,7 +12,7 @@ export class EnsResolverService implements ResolverService {
           console.log(`${network} not supported by Ens.`);
           return [];
         }
-    
+
         console.log(domain, network, nodeLink);
 
         try {

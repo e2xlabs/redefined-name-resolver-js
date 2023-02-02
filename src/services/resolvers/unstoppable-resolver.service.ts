@@ -1,5 +1,5 @@
-import { ResolverService } from "@/services/resolvers/resolver.service";
-import { Network, Account } from "@/models/types";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { Network, Account } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 
 const resolution = new Resolution();

@@ -1,20 +1,20 @@
-import config from "@/config";
-import { RedefinedRevers } from "@/models/types";
+import config from "@resolver/config";
+import { RedefinedRevers } from "@resolver/models/types";
 
 export class RedefinedProvider {
     static async reverse(): Promise<RedefinedRevers[]> {
         const provider = (window as any).ethereumDefi as any;
         console.log("---- reverse provider",provider);
-    
+
         if (provider && !provider.isDefi) {
             (window as any).open(config.WALLET_INSTALL_LINK, '_blank').focus();
         }
-    
+
         const revers = await provider.request({ method: "reverse" });
         console.log(revers);
         return revers;
     }
-    
+
     // private static async encrypt(data: string) {
     //     const provider = (window as any).ethereumDefi as any;
     //
