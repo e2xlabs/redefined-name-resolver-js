@@ -1,4 +1,4 @@
-const ETH_GOERLI_NODE = "";
+const ETH_GOERLI_NODE = "https://nameless-frequent-sea.ethereum-goerli.discover.quiknode.pro/251fd072d4269477a9053b036f131705359808f8/";
 const ETH_MAIN_NODE = "https://attentive-blue-choice.discover.quiknode.pro/a6d16bf50e42db77cd315b60e2c1f5c2386537e3/";
 
 export default {
