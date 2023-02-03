@@ -82,8 +82,8 @@ describe('redefined.resolver', () => {
 
   test('SHOULD call web3 in resolver with target node IF provided', async () => {
     const spyGetEvmWeb3 = jest.spyOn(EvmWeb3Service, "getWeb3")
-    spyEncResolve.mockImplementation(async (domain: string, network: Network, nodeLink: string) => {
-      EvmWeb3Service.getWeb3(nodeLink);
+    spyEncResolve.mockImplementation(async (domain: string, network?: Network, nodeLink?: string) => {
+      EvmWeb3Service.getWeb3(nodeLink!);
       return [];
     });
 

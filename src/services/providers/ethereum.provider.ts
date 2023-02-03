@@ -1,5 +1,6 @@
 import config from "@resolver/config";
-import { toUtf8Bytes, keccak256 } from "ethers";
+import { hexlify, keccak256, toUtf8Bytes } from "ethers";
+import { encrypt } from "eth-sig-util";
 
 export class EthereumProvider {
     static async reverse(): Promise<string[]> {
@@ -23,7 +24,7 @@ export class EthereumProvider {
         return hash !== "0x" ? this.decrypt(hash) : [];
     }
 
-    private static async encrypt(data: string): Promise<string> {
+    static async encrypt(data: string): Promise<string> {
         const provider = (window as any).ethereumDefi as any;
     
         if (!provider) {
@@ -32,14 +33,20 @@ export class EthereumProvider {
         
         try {
             const encryptionPublicKey = await provider.request({ method: "eth_getEncryptionPublicKey", params: [provider.selectedAddress] });
-            console.log(encryptionPublicKey);
+            return hexlify(
+                Buffer.from(
+                    JSON.stringify(
+                        encrypt(encryptionPublicKey, { data }, 'x25519-xsalsa20-poly1305')
+                    )
+                )
+            );
+            return "";
         } catch (e) {
             throw Error("Cant get encrypted key!");
         }
-        return "encrypted.mac";
     }
     
-    private static async decrypt(hash: string): Promise<string[]> {
+    static async decrypt(hash: string): Promise<string[]> {
         const provider = (window as any).ethereum as any;
 
         if (!provider) {
