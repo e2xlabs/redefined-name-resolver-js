@@ -22,7 +22,6 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
-    "noEmit": true,
     "emitDeclarationOnly": true,
     "importsNotUsedAsValues": "error",
     "paths": {
