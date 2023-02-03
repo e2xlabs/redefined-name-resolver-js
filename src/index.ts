@@ -1,2 +1,2 @@
-export { resolver } from "@/models/resolver";
-export { Chain } from "@/models/types";
+export { RedefinedResolver } from "@/redefined.resolver";
+export { Network, ResolverServices, ResolverOptions, Account } from "@/models/types";
