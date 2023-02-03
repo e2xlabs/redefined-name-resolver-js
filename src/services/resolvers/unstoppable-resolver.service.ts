@@ -8,9 +8,9 @@ export class UnstoppableResolverService implements ResolverService {
 
     supportedNetworks: Network[] = ["eth", "bsc", "zil"]
 
-    async resolve(domain: string, network: Network): Promise<Account[]> {
-        if (!this.supportedNetworks.some(it => it === network)) {
-            console.log(`${network} not supported by Unstoppable.`);
+    async resolve(domain: string, network?: Network): Promise<Account[]> {
+        if (!network || !this.supportedNetworks.some(it => it === network)) {
+            console.log(`${network || "Unknown"} not supported by Unstoppable.`);
             return [];
         }
 

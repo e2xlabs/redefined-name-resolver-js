@@ -7,10 +7,15 @@ export class EnsResolverService implements ResolverService {
 
     supportedNetworks: Network[] = ["eth", "bsc"];
 
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.supportedNetworks.some(it => it === network)) {
-          console.log(`${network} not supported by Ens.`);
-          return [];
+    async resolve(domain: string, network?: Network, nodeLink?: string): Promise<Account[]> {
+        if (!network || !this.supportedNetworks.some(it => it === network)) {
+            console.log(`${network || "Unknown"} not supported by Ens.`);
+            return [];
+        }
+        
+        if (!nodeLink) {
+            console.log("No node link provided for Ens.");
+            return [];
         }
 
         try {

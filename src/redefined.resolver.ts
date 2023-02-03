@@ -5,7 +5,7 @@ import { RedefinedResolverService } from "@resolver/services/resolvers/redefined
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
-import { RedefinedProvider } from "@resolver/services/providers/redefined.provider";
+import { EthereumProvider } from "@resolver/services/providers/ethereum.provider";
 import config from "@resolver/config";
 
 const redefinedResolverService = new RedefinedResolverService();
@@ -51,13 +51,14 @@ export class RedefinedResolver implements Resolver {
         }
     }
 
-    async resolve(domain: string, network: Network): Promise<Account[]> {
-        return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network, this.nodes[network] as string))));
+    async resolve(domain: string, network?: Network): Promise<Account[]> {
+        return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network, network && this.nodes[network]))));
     }
 
     async reverse(): Promise<string[]> {
-        const reverse = await RedefinedProvider.reverse();
-        return [];
+        const reverse = await EthereumProvider.reverse();
+        console.log("reverse: ", reverse);
+        return reverse;
     }
 
     async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void> {
