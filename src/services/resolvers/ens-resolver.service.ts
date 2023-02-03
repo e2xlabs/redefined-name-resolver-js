@@ -1,6 +1,6 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import { Network, Account } from "@resolver/models/types";
+import type { Network, Account } from "@resolver/models/types";
 
 
 export class EnsResolverService implements ResolverService {
@@ -18,7 +18,7 @@ export class EnsResolverService implements ResolverService {
               address: await EvmWeb3Service.getWeb3(nodeLink).eth.ens.getAddress(domain),
               network: network,
           }]
-        } catch (e) {
+        } catch (e: any) {
           console.error("ENS Error", e.message);
           return []
         }

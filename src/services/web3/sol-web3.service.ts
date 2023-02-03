@@ -1,5 +1,5 @@
 import * as solanaWeb3 from "@solana/web3.js";
-import { Cluster } from "@solana/web3.js";
+import type { Cluster } from "@solana/web3.js";
 
 export default class SolWeb3Service {
 

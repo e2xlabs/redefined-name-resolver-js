@@ -4,7 +4,7 @@ import { RedefinedResolverService } from "@resolver/services/resolvers/redefined
 import { RedefinedResolver } from "@resolver/redefined.resolver";
 import config from "@resolver/config";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import { Network } from "@resolver/models/types";
+import type { Network } from "@resolver/models/types";
 
 describe('redefined.resolver', () => {
   const spyRedefinedResolve = jest.spyOn(RedefinedResolverService.prototype, 'resolve');
@@ -32,7 +32,7 @@ describe('redefined.resolver', () => {
   test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
     try {
       new RedefinedResolver({ resolverServices: [] })
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toBe("You need to provide the resolvers you want to use or provide nothing!")
     }
   });
@@ -100,7 +100,7 @@ describe('redefined.resolver', () => {
   test('SHOULD show error on create instance IF nodes exists but provided nothing', async () => {
     try {
       new RedefinedResolver({ nodes: {} })
-    } catch (e) {
+    } catch (e: any) {
       expect(e.message).toBe("You need to provide the nodes you want to use or provide nothing!")
     }
   });

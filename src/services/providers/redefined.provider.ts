@@ -1,5 +1,5 @@
 import config from "@resolver/config";
-import { RedefinedRevers } from "@resolver/models/types";
+import type { RedefinedRevers } from "@resolver/models/types";
 
 export class RedefinedProvider {
     static async reverse(): Promise<RedefinedRevers[]> {

@@ -1,6 +1,6 @@
 import type { Account, Resolver } from "@resolver/models/types";
-import { Network, ResolverOptions, ResolverServices, RedefinedRevers, Nodes } from "@resolver/models/types";
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { Network, ResolverOptions, ResolverServices, RedefinedRevers, Nodes } from "@resolver/models/types";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
@@ -51,7 +51,7 @@ export class RedefinedResolver implements Resolver {
     }
 
     async resolve(domain: string, network: Network): Promise<Account[]> {
-        return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network, this.nodes[network]))));
+        return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network, this.nodes[network] as string))));
     }
 
     async reverse(): Promise<string[]> {

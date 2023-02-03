@@ -1,5 +1,5 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import { Account, RedefinedRevers } from "@resolver/models/types";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { Account, RedefinedRevers } from "@resolver/models/types";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
 import config from "@resolver/config";
@@ -12,7 +12,7 @@ export class RedefinedResolverService implements ResolverService {
     async resolve(domain: string): Promise<Account[]> {
         try {
             return await contract.methods.resolve(domain).call();
-        } catch (e) {
+        } catch (e: any) {
             console.error("redefined Error", e.message);
             return [];
         }

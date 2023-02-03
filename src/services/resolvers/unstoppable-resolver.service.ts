@@ -1,5 +1,5 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import { Network, Account } from "@resolver/models/types";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { Network, Account } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 
 const resolution = new Resolution();
@@ -24,7 +24,7 @@ export class UnstoppableResolverService implements ResolverService {
                 address: await resolution.addr(domain, network),
                 network: network,
             }];
-        } catch (e) {
+        } catch (e: any) {
             console.error("Unstoppable Error", e.message);
             return [];
         }
