@@ -2,9 +2,14 @@ export type Network = "eth" | "bsc" | "sol" | "zil";
 
 export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
+export type Nodes = {
+    [key in Network]?: string
+}
+
 export type ResolverOptions = {
     // by default, we use all services
     resolverServices?: ResolverServices[],
+    nodes?: Nodes
 }
 
 export type Account = {

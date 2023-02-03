@@ -1,6 +1,6 @@
 {
-  "name": "redefined-name-resolver-js",
-  "version": "0.0.1-development",
+  "name": "@redefined/name-resolver-js",
+  "version": "0.0.0-development",
   "description": "JS lib to resolve crypto names",
   "main": "index.ts",
   "repository": {
@@ -8,7 +8,12 @@
     "url": "https://github.com/e2xlabs/redefined-name-resolver-js.git"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org"
+    "registry": "https://registry.npmjs.org",
+    "access": "public"
+  },
+  "release": {
+    "branches": ["master"],
+    "access": "public"
   },
   "author": "Cifrex",
   "scripts": {
