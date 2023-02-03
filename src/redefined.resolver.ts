@@ -21,6 +21,7 @@ const resolverServicesByType: { [key in ResolverServices]: ResolverService } = {
 export class RedefinedResolver implements Resolver {
 
     private resolverServices: ResolverService[] = [ redefinedResolverService, ensResolverService, unstoppableResolverService ];
+
     private nodes: Nodes = {
         eth: config.ETH_NODE,
         bsc: config.BSC_NODE,
