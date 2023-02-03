@@ -12,7 +12,7 @@
     "noImplicitAny": false,
     "resolveJsonModule": true,
     "allowJs": true,
-     "paths": {
+    "paths": {
       "@/*": ["./src/*"]
     }
   },
