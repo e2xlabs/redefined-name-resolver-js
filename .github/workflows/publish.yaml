@@ -23,6 +23,7 @@ jobs:
         - name: build
           run: npm run build
   test:
+    needs: [ build ]
     runs-on: "ubuntu-latest"
       steps:
         - name: checkout
@@ -36,6 +37,7 @@ jobs:
         - name: test:unit
           run: npm run test:unit
   publish:
+    needs: [build, test]
     if: ${{ github.ref == 'refs/heads/master' }}
     runs-on: "ubuntu-latest"
     steps:
