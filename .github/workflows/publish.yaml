@@ -9,7 +9,7 @@ on:
       - '*'
 
 jobs:
-  build:
+  building:
     runs-on: "ubuntu-latest"
     steps:
       - name: checkout
@@ -25,7 +25,7 @@ jobs:
 
   test:
     runs-on: "ubuntu-latest"
-    needs: [ build ]
+    needs: [ building ]
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -40,7 +40,7 @@ jobs:
 
   publish:
     runs-on: "ubuntu-latest"
-    needs: [build, test]
+    needs: [building, test]
     if: ${{ github.ref == 'refs/heads/master' }}
     steps:
       - name: checkout
@@ -48,6 +48,7 @@ jobs:
       - name: node
         uses: actions/setup-node@v3
         with:
+          // semantic-release starts with ^18 version only
           node-version: 18
       - name: run ci
         run: npm ci
