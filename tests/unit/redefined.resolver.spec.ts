@@ -73,7 +73,11 @@ describe('redefined.resolver', () => {
       nodes: { eth: "eth_node" }
     });
 
-    expect(resolver["nodes"]).toEqual({ eth: "eth_node" });
+    expect(resolver["nodes"]).toEqual({
+      eth: "eth_node",
+      bsc: config.BSC_NODE,
+      sol: config.SOL_NODE,
+    });
   });
 
   test('SHOULD call web3 in resolver with target node IF provided', async () => {

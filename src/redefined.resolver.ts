@@ -46,7 +46,7 @@ export class RedefinedResolver implements Resolver {
         }
 
         if (nodes) {
-            this.nodes = nodes;
+            this.nodes = { ...this.nodes, ...nodes };
         }
     }
 
