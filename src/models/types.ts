@@ -27,6 +27,14 @@ export type RedefinedRevers = {
     data: string,
 }
 
+export enum FiatCurrency {
+    USD = "USD"
+}
+
+export enum CryptoCurrency {
+    ETH = "ETH"
+}
+
 export interface Resolver {
     options?: ResolverOptions;
 
