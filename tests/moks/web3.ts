@@ -1,6 +1,6 @@
-import EvmWeb3Service from "@/services/web3/evm-web3.service";
-import SolWeb3Service from "@/services/web3/sol-web3.service";
-import { Account, Network, RedefinedRevers } from "@/models/types";
+import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
+import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
+import type { Account, Network, RedefinedRevers } from "@resolver/models/types";
 
 EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
   (network: Network) => ({

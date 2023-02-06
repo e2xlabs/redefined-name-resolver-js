@@ -1,5 +1,5 @@
-import EvmWeb3Service from "@/services/web3/evm-web3.service";
-import config from "@/config";
+import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
+import config from "@resolver/config";
 
 describe('evm-web3.service', () => {
   test('SHOULD get web3 provider', () => {

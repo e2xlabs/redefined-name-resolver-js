@@ -7,13 +7,25 @@
     "sourceMap": true,
     "outDir": "dist",
     "baseUrl": ".",
+    "declaration": true,
+    "declarationMap": true,
+    "composite": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "noImplicitAny": false,
     "resolveJsonModule": true,
     "allowJs": true,
+    "strict": true,
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": true,
+    "emitDeclarationOnly": true,
+    "importsNotUsedAsValues": "error",
     "paths": {
-      "@/*": ["./src/*"]
+      "@resolver/*": ["./src/*"]
     }
   },
   "lib": [
