@@ -4,9 +4,9 @@ import { encrypt } from "eth-sig-util";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
 import type { AccountRecord, RedefinedRevers } from "@resolver/models/types";
-import BN from 'bn.js';
 import { QuoteService } from "@resolver/services/quote.service";
 import { CryptoCurrency, FiatCurrency } from "@resolver/models/types";
+import * as exactMath from "exact-math";
 
 const web3 = EvmWeb3Service.getWeb3(config.ETH_NODE);
 
@@ -75,6 +75,7 @@ export class EthereumProvider {
         if (!provider) {
             throw Error("Provider not found!");
         }
+        console.log(domainHash, redefinedSign, records, newRevers);
 
         try {
             web3.eth.setProvider(provider);
@@ -82,24 +83,15 @@ export class EthereumProvider {
             const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
             
             const equiv = await QuoteService.getEquiv(CryptoCurrency.ETH, FiatCurrency.USD);
-            const payedAmount = new BN(10).div(new BN(equiv));
-            const decimals = new BN(10).pow(new BN(18));
-            // 10$ in GWEI
-            const value = payedAmount.mul(decimals).toString();
-            console.log(equiv, payedAmount.toString(), value);
-            console.log("========== GET",{
-                from: records[0].addr,
-                to: config.CONTRACT_ADDRESS,
-                gas: 32508,
-                gasPrice: 10000,
-                value,
-            });
-            
+            // coast 10$xR
+            const payedAmount = exactMath.div(10, equiv);
+            const value = exactMath.mul(payedAmount, 10 ** 18);
+    
             return await contract.methods.register(domainHash, redefinedSign, records, newRevers).send({
                 from: records[0].addr,
                 to: config.CONTRACT_ADDRESS,
                 gas: 32508,
-                gasPrice: await web3.eth.getGasPrice(),
+                gasPrice: 30000,
                 value,
             });
         } catch (e: any) {
@@ -107,3 +99,18 @@ export class EthereumProvider {
         }
     }
 }
+
+// setTimeout(() => {
+//     EthereumProvider.sendRegistrationTransfer(
+//         "de1dfb297f7cf17918b093194a2e7958f09876f8688c9d236251644c202593b5",
+//         "0x748549a1bb2b657065c2748a11280f54f570e88a9f53a82d84fd3459e6a871c67aa6cf787ea3fb998462aba6a6be6e9ca335e25a9b3840606a5686baec406e401c",
+//         [{
+//             addr: "0x6bdfc9fb0102ddefc2c7eb44cf62e96356d55d04",
+//             network: "eth"
+//         }],
+//         {
+//             version: 1675698969,
+//             data: '0x7b2276657273696f6e223a227832353531392d7873616c73…351763156443631425678694e35513979536d74773d3d227d'
+//         }
+//     )
+// }, 2000)
