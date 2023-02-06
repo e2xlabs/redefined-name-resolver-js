@@ -1,6 +1,6 @@
 import config from "@resolver/config";
-import { hexlify, keccak256, toUtf8Bytes } from "ethers";
-import { encrypt } from "eth-sig-util";
+import { keccak256, toUtf8Bytes } from "ethers";
+// import { encrypt } from "eth-sig-util";
 
 export class EthereumProvider {
     static async reverse(): Promise<string[]> {
@@ -33,13 +33,13 @@ export class EthereumProvider {
         
         try {
             const encryptionPublicKey = await provider.request({ method: "eth_getEncryptionPublicKey", params: [provider.selectedAddress] });
-            return hexlify(
-                Buffer.from(
-                    JSON.stringify(
-                        encrypt(encryptionPublicKey, { data }, 'x25519-xsalsa20-poly1305')
-                    )
-                )
-            );
+            // return hexlify(
+            //     Buffer.from(
+            //         JSON.stringify(
+            //             encrypt(encryptionPublicKey, { data }, 'x25519-xsalsa20-poly1305')
+            //         )
+            //     )
+            // );
             return "";
         } catch (e) {
             throw Error("Cant get encrypted key!");
