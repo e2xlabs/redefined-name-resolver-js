@@ -17,6 +17,11 @@ export type Account = {
     network: Network,
 }
 
+export type AccountRecord = {
+    addr: string,
+    network: Network,
+}
+
 export type RedefinedRevers = {
     version: number,
     data: string,
@@ -29,7 +34,7 @@ export interface Resolver {
 
     reverse(): Promise<string[]>;
     
-    register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void>;
+    register(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers): Promise<void>;
     
     update(domainHash: string, records: Account[]): Promise<void>;
 }

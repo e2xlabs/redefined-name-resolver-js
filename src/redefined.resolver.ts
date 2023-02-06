@@ -1,4 +1,4 @@
-import type { Account, Resolver } from "@resolver/models/types";
+import type { Account, AccountRecord, Resolver } from "@resolver/models/types";
 import type { Network, ResolverOptions, ResolverServices, RedefinedRevers, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
@@ -56,13 +56,12 @@ export class RedefinedResolver implements Resolver {
     }
 
     async reverse(): Promise<string[]> {
-        const reverse = await EthereumProvider.reverse();
-        console.log("reverse: ", reverse);
-        return reverse;
+        return EthereumProvider.reverse();
     }
 
-    async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void> {
-        return redefinedResolverService.register(domainHash, redefinedSign, records, newRevers);
+    async register(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers): Promise<void> {
+        // return redefinedResolverService.register(domainHash, redefinedSign, records, newRevers);
+        return EthereumProvider.sendRegistrationTransfer(domainHash, redefinedSign, records, newRevers);
     }
 
     async update(domainHash: string, records: Account[]): Promise<void> {
