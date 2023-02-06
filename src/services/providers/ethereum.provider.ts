@@ -31,7 +31,7 @@ export class EthereumProvider {
             }, "latest"]
         });
 
-        return hash !== "0x" ? this.decrypt(hash) : [];
+        return await this.decrypt(hash);
     }
 
     static async encrypt(data: string): Promise<string> {
@@ -63,8 +63,9 @@ export class EthereumProvider {
         }
     
         try {
-            return provider.request({ method: "eth_decrypt", params: [hash, provider.selectedAddress] });
+            return await provider.request({ method: "eth_decrypt", params: [hash, provider.selectedAddress] });
         } catch (e) {
+            console.error("Decryption ERROR", e);
             return [];
         }
     }
@@ -75,7 +76,6 @@ export class EthereumProvider {
         if (!provider) {
             throw Error("Provider not found!");
         }
-        console.log(domainHash, redefinedSign, records, newRevers);
 
         try {
             web3.eth.setProvider(provider);
@@ -86,13 +86,33 @@ export class EthereumProvider {
             // coast 10$xR
             const payedAmount = exactMath.div(10, equiv);
             const value = exactMath.mul(payedAmount, 10 ** 18);
-    
-            return await contract.methods.register(domainHash, redefinedSign, records, newRevers).send({
+            
+            const params = {
                 from: records[0].addr,
                 to: config.CONTRACT_ADDRESS,
-                gas: 32508,
-                gasPrice: 30000,
-                value,
+                contractAddress: config.CONTRACT_ADDRESS,
+                gas: 21000,
+                value: web3.utils.toWei(`${payedAmount}`, 'ether'),
+            };
+    
+            const balanceFrom = web3.utils.fromWei(await web3.eth.getBalance(params.from), 'ether');
+            
+            console.log("====== TXN", balanceFrom, {
+                ...params,
+            });
+            
+            
+            await contract.methods.register(domainHash, redefinedSign, records, newRevers).send({
+                ...params,
+            }).on('receipt', function(res){
+                console.log("Receipt", res);
+            }).on('error', function(res){
+                console.error("ERROR", res);
+            }).on('confirmation', function(confirmationNumber, receipt){
+                console.log("confirmation", confirmationNumber, receipt);
+            })
+            .then(function(newContractInstance){
+                console.log("newContractInstance", newContractInstance)
             });
         } catch (e: any) {
             throw Error(`Cant create transfer to register domain ${e.message}`);
