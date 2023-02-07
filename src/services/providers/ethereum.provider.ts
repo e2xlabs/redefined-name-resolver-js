@@ -85,9 +85,6 @@ export class EthereumProvider {
             const payedAmount = exactMath.mul(10, equiv.ETH);
             const value = exactMath.mul(payedAmount, 10 ** 18);
 
-            console.log("payedAmount:", payedAmount);
-            console.log("value:", value);
-
             const params = {
                 from: records[0].addr,
                 to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
@@ -97,34 +94,12 @@ export class EthereumProvider {
                     to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
                     gasPrice: await web3.eth.getGasPrice(),
                     value: `${value}`
-                }) + 50000}`,
-                gasPrice: await web3.eth.getGasPrice(),
+                }) + 10000}`,
+                gasPrice: `${+(await web3.eth.getGasPrice())}`,
                 value: `${value}`
-                // value: "6108000000000"
             }
 
             console.log("REQ", params);
-
-            // const res = await provider.request({
-            //     method: 'eth_sendTransaction',
-            //     params: [param],
-            // });
-            //
-            // console.log("RES", res);
-
-            // const params = {
-            //     from: records[0].addr,
-            //     to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
-            //     gas: "35000",
-            //     gasPrice: "22000000",
-            //     value,
-            //     data: contract.methods.register(domainHash, redefinedSign, records, newReverse).encodeABI(),
-            // };
-            //
-            // console.log("====== TXN", {
-            //     ...params,
-            // });
-
             console.log(domainHash, redefinedSign, records, newReverse);
 
             await contract.methods.register(domainHash, redefinedSign, records, newReverse).send(params)
