@@ -51,8 +51,10 @@ export class RedefinedResolver implements Resolver {
         }
     }
 
-    async resolve(domain: string, network?: Network): Promise<Account[]> {
-        return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network, network && this.nodes[network]))));
+    async resolve(domain: string, networks?: Network[]): Promise<Account[]> {
+        return flatten(await Promise.all(this.resolverServices.map(resolver =>
+          resolver.resolveAll(domain, this.nodes)
+        ))).filter(it => !networks || networks.includes(it.network));
     }
 
     async reverse(): Promise<string[]> {
@@ -60,11 +62,10 @@ export class RedefinedResolver implements Resolver {
     }
 
     async register(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers): Promise<void> {
-        // return redefinedResolverService.register(domainHash, redefinedSign, records, newRevers);
-        return EthereumProvider.sendRegistrationTransfer(domainHash, redefinedSign, records, newRevers);
+        return EthereumProvider.sendTransferToRegister(domainHash, redefinedSign, records, newRevers);
     }
 
     async update(domainHash: string, records: Account[]): Promise<void> {
-        return redefinedResolverService.update(domainHash, records);
+        return EthereumProvider.sendTransferToUpdate(domainHash, records);
     }
 }

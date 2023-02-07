@@ -35,14 +35,14 @@ export enum CryptoCurrency {
     ETH = "ETH"
 }
 
-export interface Resolver {
+export declare interface Resolver {
     options?: ResolverOptions;
 
-    resolve(domain: string, network: Network): Promise<Account[]>;
+    resolve(domain: string, networks?: Network[]): Promise<Account[]>;
 
     reverse(): Promise<string[]>;
-    
+
     register(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers): Promise<void>;
-    
+
     update(domainHash: string, records: Account[]): Promise<void>;
 }

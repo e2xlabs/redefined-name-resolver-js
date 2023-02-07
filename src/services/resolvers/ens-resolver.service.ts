@@ -1,21 +1,18 @@
-import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import type { Network, Account } from "@resolver/models/types";
 
 
-export class EnsResolverService implements ResolverService {
+export class EnsResolverService extends ResolverService {
 
-    supportedNetworks: Network[] = ["eth", "bsc"];
+    getSupportedNetworks(): Network[] {
+      return ["eth", "bsc"];
+    }
 
-    async resolve(domain: string, network?: Network, nodeLink?: string): Promise<Account[]> {
-        if (!network || !this.supportedNetworks.some(it => it === network)) {
-            console.log(`${network || "Unknown"} not supported by Ens.`);
-            return [];
-        }
-        
-        if (!nodeLink) {
-            console.log("No node link provided for Ens.");
-            return [];
+    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
+        if (!this.getSupportedNetworks().some(it => it === network)) {
+          console.log(`${network} not supported by Ens.`);
+          return [];
         }
 
         try {

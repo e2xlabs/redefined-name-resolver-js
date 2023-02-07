@@ -42,7 +42,7 @@ describe('redefined.resolver', () => {
       resolverServices: ["redefined", "ens"]
     })
 
-    await resolver.resolve("cifrex.evm", "eth");
+    await resolver.resolve("cifrex.evm", ["eth"]);
 
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
@@ -52,7 +52,7 @@ describe('redefined.resolver', () => {
   test('SHOULD call all resolvers IF none are provided', async () => {
     const resolver = new RedefinedResolver();
 
-    await resolver.resolve("cifrex.evm", "eth");
+    await resolver.resolve("cifrex.evm", ["eth"]);
 
     expect(spyRedefinedResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
@@ -92,7 +92,7 @@ describe('redefined.resolver', () => {
       nodes: { eth: "eth_node" }
     });
 
-    await resolver.resolve("cifrex.eth", "eth");
+    await resolver.resolve("cifrex.eth", ["eth"]);
 
     expect(spyGetEvmWeb3).toHaveBeenCalledWith("eth_node");
   });

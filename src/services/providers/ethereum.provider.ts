@@ -5,7 +5,7 @@ import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
 import type { AccountRecord, RedefinedRevers } from "@resolver/models/types";
 import { QuoteService } from "@resolver/services/quote.service";
-import { CryptoCurrency, FiatCurrency } from "@resolver/models/types";
+import { Account, CryptoCurrency, FiatCurrency } from "@resolver/models/types";
 import * as exactMath from "exact-math";
 
 const web3 = EvmWeb3Service.getWeb3(config.ETH_NODE);
@@ -17,9 +17,9 @@ export class EthereumProvider {
         if (!provider) {
             throw Error("Provider not found!");
         }
-    
+
         web3.eth.setProvider(provider);
-    
+
         const hash = await provider.request({
             method: "eth_call",
             params: [{
@@ -36,11 +36,11 @@ export class EthereumProvider {
 
     static async encrypt(data: string): Promise<string> {
         const provider = (window as any).ethereum as any;
-    
+
         if (!provider) {
             throw Error("Provider not found!");
         }
-        
+
         try {
             const encryptionPublicKey = await provider.request({ method: "eth_getEncryptionPublicKey", params: [provider.selectedAddress] });
             return hexlify(
@@ -54,14 +54,14 @@ export class EthereumProvider {
             throw Error("Cant get encrypted data!");
         }
     }
-    
+
     static async decrypt(hash: string): Promise<string[]> {
         const provider = (window as any).ethereum as any;
 
         if (!provider) {
             throw Error("Provider not found!");
         }
-    
+
         try {
             return await provider.request({ method: "eth_decrypt", params: [hash, provider.selectedAddress] });
         } catch (e) {
@@ -69,53 +69,66 @@ export class EthereumProvider {
             return [];
         }
     }
-    
-    static async sendRegistrationTransfer(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers) {
+
+    static async sendTransferToRegister(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers) {
         const provider = (window as any).ethereum as any;
-    
+
         if (!provider) {
             throw Error("Provider not found!");
         }
 
         try {
             web3.eth.setProvider(provider);
-            
+
             const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
-            
+
             const equiv = await QuoteService.getEquiv(CryptoCurrency.ETH, FiatCurrency.USD);
             // coast 10$xR
             const payedAmount = exactMath.div(10, equiv);
             const value = exactMath.mul(payedAmount, 10 ** 18);
-            
+
+            // const data = ["register(string,bytes,tuple[],tuple)", domainHash, redefinedSign, JSON.stringify(records), JSON.stringify(newRevers)]
+            //   .map(it => keccak256(toUtf8Bytes(it))).join("")
+
             const params = {
                 from: records[0].addr,
                 to: config.CONTRACT_ADDRESS,
                 contractAddress: config.CONTRACT_ADDRESS,
-                gas: 21000,
-                value: web3.utils.toWei(`${payedAmount}`, 'ether'),
+                gas: 35000,
+                gasPrice: 22000000,
+                value,
             };
-    
-            const balanceFrom = web3.utils.fromWei(await web3.eth.getBalance(params.from), 'ether');
-            
-            console.log("====== TXN", balanceFrom, {
+
+            console.log("====== TXN", {
                 ...params,
             });
-            
-            
+
             await contract.methods.register(domainHash, redefinedSign, records, newRevers).send({
                 ...params,
             }).on('receipt', function(res){
-                console.log("Receipt", res);
-            }).on('error', function(res){
-                console.error("ERROR", res);
+                console.log("Receipt:", res);
+            }).on('error', function(e){
+                console.error(e);
+                throw Error(e.message);
             }).on('confirmation', function(confirmationNumber, receipt){
-                console.log("confirmation", confirmationNumber, receipt);
+                console.log("Confirmation:", confirmationNumber, receipt);
             })
             .then(function(newContractInstance){
-                console.log("newContractInstance", newContractInstance)
+                console.log("New contract instance:", newContractInstance)
             });
         } catch (e: any) {
+            console.error(e);
             throw Error(`Cant create transfer to register domain ${e.message}`);
+        }
+    }
+
+    static async sendTransferToUpdate(domainHash: string, records: Account[]): Promise<void> {
+        try {
+            const web3 = EvmWeb3Service.getWeb3(config.ETH_NODE);
+            const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
+            return await contract.methods.update(domainHash, records).send();
+        } catch (e: any) {
+            throw Error(`Cant update domain ${e.message}`);
         }
     }
 }

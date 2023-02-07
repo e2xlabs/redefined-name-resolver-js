@@ -1,6 +1,5 @@
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
-import type { Account, Network, RedefinedRevers } from "@resolver/models/types";
+import type { Account, Network, RedefinedRevers, AccountRecord } from "@resolver/models/types";
 
 EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
   (network: Network) => ({
@@ -13,13 +12,10 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
       Contract: class Contract {
           methods = {
               resolve(domain: string) { return []; },
-              register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]) { return []; },
+              register(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers) { return []; },
               update(domainHash: string, records: Account[]) { return []; },
           }
       }
     }
   }),
-);
-SolWeb3Service.getWeb3 = jest.fn().mockImplementation(
-  (network: Network) => ({ }),
 );
