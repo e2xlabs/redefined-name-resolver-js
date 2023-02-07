@@ -33,7 +33,7 @@ describe('redefined.resolver', () => {
     try {
       new RedefinedResolver({ resolverServices: [] })
     } catch (e: any) {
-      expect(e.message).toBe("You need to provide the resolvers you want to use or provide nothing!")
+      expect(e.message).toBe("“resolverServices” option must be a non-empty array or falsy")
     }
   });
 
@@ -101,7 +101,7 @@ describe('redefined.resolver', () => {
     try {
       new RedefinedResolver({ nodes: {} })
     } catch (e: any) {
-      expect(e.message).toBe("You need to provide the nodes you want to use or provide nothing!")
+      expect(e.message).toBe("“nodes” option must be a non-empty array or falsy")
     }
   });
 });

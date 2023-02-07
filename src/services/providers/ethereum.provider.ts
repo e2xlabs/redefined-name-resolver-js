@@ -3,7 +3,7 @@ import { keccak256, toUtf8Bytes, hexlify } from "ethers";
 import { encrypt } from "eth-sig-util";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
-import type { AccountRecord, RedefinedRevers } from "@resolver/models/types";
+import type { AccountRecord, RedefinedReverse } from "@resolver/models/types";
 import { QuoteService } from "@resolver/services/quote.service";
 import { Account, CryptoCurrency, FiatCurrency } from "@resolver/models/types";
 import * as exactMath from "exact-math";
@@ -23,7 +23,7 @@ export class EthereumProvider {
         const hash = await provider.request({
             method: "eth_call",
             params: [{
-                to: config.CONTRACT_ADDRESS,
+                to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
                 data: keccak256(toUtf8Bytes("reverse()")),
                 from: undefined,
                 gas: undefined,
@@ -70,7 +70,7 @@ export class EthereumProvider {
         }
     }
 
-    static async sendTransferToRegister(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers) {
+    static async sendTransferToRegister(domainHash: string, redefinedSign: string, records: AccountRecord[], newReverse: RedefinedReverse) {
         const provider = (window as any).ethereum as any;
 
         if (!provider) {
@@ -80,20 +80,20 @@ export class EthereumProvider {
         try {
             web3.eth.setProvider(provider);
 
-            const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
+            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
 
             const equiv = await QuoteService.getEquiv(CryptoCurrency.ETH, FiatCurrency.USD);
-            // coast 10$xR
+            // coast 10$
             const payedAmount = exactMath.div(10, equiv);
             const value = exactMath.mul(payedAmount, 10 ** 18);
 
-            // const data = ["register(string,bytes,tuple[],tuple)", domainHash, redefinedSign, JSON.stringify(records), JSON.stringify(newRevers)]
+            // const data = ["register(string,bytes,tuple[],tuple)", domainHash, redefinedSign, JSON.stringify(records), JSON.stringify(newReverse)]
             //   .map(it => keccak256(toUtf8Bytes(it))).join("")
 
             const params = {
                 from: records[0].addr,
-                to: config.CONTRACT_ADDRESS,
-                contractAddress: config.CONTRACT_ADDRESS,
+                to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
+                contractAddress: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
                 gas: 35000,
                 gasPrice: 22000000,
                 value,
@@ -103,7 +103,7 @@ export class EthereumProvider {
                 ...params,
             });
 
-            await contract.methods.register(domainHash, redefinedSign, records, newRevers).send({
+            await contract.methods.register(domainHash, redefinedSign, records, newReverse).send({
                 ...params,
             }).on('receipt', function(res){
                 console.log("Receipt:", res);
@@ -125,7 +125,7 @@ export class EthereumProvider {
     static async sendTransferToUpdate(domainHash: string, records: Account[]): Promise<void> {
         try {
             const web3 = EvmWeb3Service.getWeb3(config.ETH_NODE);
-            const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
+            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
             return await contract.methods.update(domainHash, records).send();
         } catch (e: any) {
             throw Error(`Cant update domain ${e.message}`);

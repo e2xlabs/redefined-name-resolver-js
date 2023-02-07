@@ -18,7 +18,7 @@ export class RedefinedResolverService extends ResolverService {
 
         try {
             const web3 = EvmWeb3Service.getWeb3(nodeLink);
-            const contract = new web3.eth.Contract(redefinedResolverAbi, config.CONTRACT_ADDRESS);
+            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
             return (await contract.methods.resolve(domain).call()).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,

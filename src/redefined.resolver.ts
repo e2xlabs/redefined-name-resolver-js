@@ -1,5 +1,5 @@
 import type { Account, AccountRecord, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions, ResolverServices, RedefinedRevers, Nodes } from "@resolver/models/types";
+import type { Network, ResolverOptions, ResolverServices, RedefinedReverse, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
@@ -35,11 +35,11 @@ export class RedefinedResolver implements Resolver {
         const nodes = this.options?.nodes;
 
         if (resolverServices && !resolverServices.length) {
-            throw Error("You need to provide the resolvers you want to use or provide nothing!")
+            throw Error("“resolverServices” option must be a non-empty array or falsy")
         }
 
         if (nodes && !Object.keys(nodes).length) {
-            throw Error("You need to provide the nodes you want to use or provide nothing!")
+            throw Error("“nodes” option must be a non-empty array or falsy")
         }
 
         if (resolverServices) {
@@ -61,8 +61,8 @@ export class RedefinedResolver implements Resolver {
         return EthereumProvider.reverse();
     }
 
-    async register(domainHash: string, redefinedSign: string, records: AccountRecord[], newRevers: RedefinedRevers): Promise<void> {
-        return EthereumProvider.sendTransferToRegister(domainHash, redefinedSign, records, newRevers);
+    async register(domainHash: string, redefinedSign: string, records: AccountRecord[], newReverse: RedefinedReverse): Promise<void> {
+        return EthereumProvider.sendTransferToRegister(domainHash, redefinedSign, records, newReverse);
     }
 
     async update(domainHash: string, records: Account[]): Promise<void> {
