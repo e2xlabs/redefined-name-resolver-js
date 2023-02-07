@@ -11,21 +11,19 @@ import * as exactMath from "exact-math";
 const web3 = EvmWeb3Service.getWeb3(config.ETH_NODE);
 
 export class EthereumProvider {
-    static async reverse(): Promise<string[]> {
+    static async callReverse(): Promise<string[]> {
         const provider = (window as any).ethereum as any;
 
         if (!provider) {
             throw Error("Provider not found!");
         }
 
-        web3.eth.setProvider(provider);
-
         const hash = await provider.request({
             method: "eth_call",
             params: [{
                 to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
                 data: keccak256(toUtf8Bytes("reverse()")),
-                from: undefined,
+                from: provider.selectedAddress,
                 gas: undefined,
                 gasPrice: undefined,
             }, "latest"]
@@ -82,40 +80,61 @@ export class EthereumProvider {
 
             const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
 
-            const equiv = await QuoteService.getEquiv(CryptoCurrency.ETH, FiatCurrency.USD);
+            const equiv = await QuoteService.getEquiv(FiatCurrency.USD, CryptoCurrency.ETH);
             // coast 10$
-            const payedAmount = exactMath.div(10, equiv);
+            const payedAmount = exactMath.mul(10, equiv.ETH);
             const value = exactMath.mul(payedAmount, 10 ** 18);
 
-            // const data = ["register(string,bytes,tuple[],tuple)", domainHash, redefinedSign, JSON.stringify(records), JSON.stringify(newReverse)]
-            //   .map(it => keccak256(toUtf8Bytes(it))).join("")
+            console.log("payedAmount:", payedAmount);
+            console.log("value:", value);
 
-            const params = {
+            const param = {
                 from: records[0].addr,
                 to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
-                contractAddress: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
-                gas: 35000,
-                gasPrice: 22000000,
-                value,
-            };
+                data: contract.methods.register(domainHash, redefinedSign, records, newReverse).encodeABI(),
+                gas: `${await web3.eth.estimateGas({
+                    from: records[0].addr,
+                    to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
+                })}`,
+                gasPrice: await web3.eth.getGasPrice(),
+                // value: `${value}`,"6108000000000000"
+                value: "6108000000000"
+            }
 
-            console.log("====== TXN", {
-                ...params,
+            console.log("REQ", param);
+
+            await provider.request({
+                method: 'eth_sendTransaction',
+                params: [param],
             });
 
-            await contract.methods.register(domainHash, redefinedSign, records, newReverse).send({
-                ...params,
-            }).on('receipt', function(res){
-                console.log("Receipt:", res);
-            }).on('error', function(e){
-                console.error(e);
-                throw Error(e.message);
-            }).on('confirmation', function(confirmationNumber, receipt){
-                console.log("Confirmation:", confirmationNumber, receipt);
-            })
-            .then(function(newContractInstance){
-                console.log("New contract instance:", newContractInstance)
-            });
+            // const params = {
+            //     from: records[0].addr,
+            //     to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
+            //     gas: "35000",
+            //     gasPrice: "22000000",
+            //     value,
+            //     data: contract.methods.register(domainHash, redefinedSign, records, newReverse).encodeABI(),
+            // };
+            //
+            // console.log("====== TXN", {
+            //     ...params,
+            // });
+
+            // await contract.methods.register(domainHash, redefinedSign, records, newReverse).send(params)
+            //     .on('receipt', function(res){
+            //         console.log("Receipt:", res);
+            //     })
+            //     .on('error', function(e){
+            //         console.error(e);
+            //         throw Error(e.message);
+            //     })
+            //     .on('confirmation', function(confirmationNumber, receipt){
+            //         console.log("Confirmation:", confirmationNumber, receipt);
+            //     })
+            //     .then(function(newContractInstance){
+            //         console.log("New contract instance:", newContractInstance)
+            //     });
         } catch (e: any) {
             console.error(e);
             throw Error(`Cant create transfer to register domain ${e.message}`);

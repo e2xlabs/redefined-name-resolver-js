@@ -58,7 +58,7 @@ export class RedefinedResolver implements Resolver {
     }
 
     async reverse(): Promise<string[]> {
-        return EthereumProvider.reverse();
+        return EthereumProvider.callReverse();
     }
 
     async register(domainHash: string, redefinedSign: string, records: AccountRecord[], newReverse: RedefinedReverse): Promise<void> {

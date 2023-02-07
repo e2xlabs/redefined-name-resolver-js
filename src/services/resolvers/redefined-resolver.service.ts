@@ -7,7 +7,7 @@ import config from "@resolver/config";
 export class RedefinedResolverService extends ResolverService {
 
     getSupportedNetworks(): Network[] {
-        return ["eth", "bsc", "sol"];
+        return ["eth"];
     }
 
     async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
