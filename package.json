@@ -29,6 +29,7 @@
   "dependencies": {
     "@solana/web3.js": "^1.73.0",
     "@types/axios": "^0.14.0",
+    "js-sha256": "^0.9.0",
     "@unstoppabledomains/resolution": "^8.4.0",
     "axios": "^1.3.2",
     "eth-sig-util": "^3.0.1",

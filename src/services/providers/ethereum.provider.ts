@@ -88,25 +88,29 @@ export class EthereumProvider {
             console.log("payedAmount:", payedAmount);
             console.log("value:", value);
 
-            const param = {
+            const params = {
                 from: records[0].addr,
                 to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
                 data: contract.methods.register(domainHash, redefinedSign, records, newReverse).encodeABI(),
                 gas: `${await web3.eth.estimateGas({
                     from: records[0].addr,
                     to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
-                })}`,
+                    gasPrice: await web3.eth.getGasPrice(),
+                    value: `${value}`
+                }) + 50000}`,
                 gasPrice: await web3.eth.getGasPrice(),
-                // value: `${value}`,"6108000000000000"
-                value: "6108000000000"
+                value: `${value}`
+                // value: "6108000000000"
             }
 
-            console.log("REQ", param);
+            console.log("REQ", params);
 
-            await provider.request({
-                method: 'eth_sendTransaction',
-                params: [param],
-            });
+            // const res = await provider.request({
+            //     method: 'eth_sendTransaction',
+            //     params: [param],
+            // });
+            //
+            // console.log("RES", res);
 
             // const params = {
             //     from: records[0].addr,
@@ -121,20 +125,22 @@ export class EthereumProvider {
             //     ...params,
             // });
 
-            // await contract.methods.register(domainHash, redefinedSign, records, newReverse).send(params)
-            //     .on('receipt', function(res){
-            //         console.log("Receipt:", res);
-            //     })
-            //     .on('error', function(e){
-            //         console.error(e);
-            //         throw Error(e.message);
-            //     })
-            //     .on('confirmation', function(confirmationNumber, receipt){
-            //         console.log("Confirmation:", confirmationNumber, receipt);
-            //     })
-            //     .then(function(newContractInstance){
-            //         console.log("New contract instance:", newContractInstance)
-            //     });
+            console.log(domainHash, redefinedSign, records, newReverse);
+
+            await contract.methods.register(domainHash, redefinedSign, records, newReverse).send(params)
+                .on('receipt', function(res){
+                    console.log("Receipt:", res);
+                })
+                .on('error', function(e){
+                    console.error(e);
+                    throw Error(e.message);
+                })
+                .on('confirmation', function(confirmationNumber, receipt){
+                    console.log("Confirmation:", confirmationNumber, receipt);
+                })
+                .then(function(newContractInstance){
+                    console.log("New contract instance:", newContractInstance)
+                });
         } catch (e: any) {
             console.error(e);
             throw Error(`Cant create transfer to register domain ${e.message}`);
