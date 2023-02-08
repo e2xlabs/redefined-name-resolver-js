@@ -1,5 +1,5 @@
 import config from "@resolver/config";
-import { keccak256, toUtf8Bytes, hexlify } from "ethers";
+import { keccak256, toUtf8Bytes, hexlify, ethers } from "ethers";
 import { encrypt } from "eth-sig-util";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
@@ -78,44 +78,26 @@ export class EthereumProvider {
         try {
             web3.eth.setProvider(provider);
 
-            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
+            // const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
 
             const equiv = await QuoteService.getEquiv(FiatCurrency.USD, CryptoCurrency.ETH);
             // coast 10$
             const payedAmount = exactMath.mul(10, equiv.ETH);
             const value = exactMath.mul(payedAmount, 10 ** 18);
 
-            const params = {
-                from: records[0].addr,
-                to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
-                data: contract.methods.register(domainHash, redefinedSign, records, newReverse).encodeABI(),
-                gas: `${await web3.eth.estimateGas({
-                    from: records[0].addr,
-                    to: config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS,
-                    gasPrice: await web3.eth.getGasPrice(),
-                    value: `${value}`
-                }) + 10000}`,
-                gasPrice: `${+(await web3.eth.getGasPrice())}`,
-                value: `${value}`
+            const etherjsProvider = new ethers.BrowserProvider(provider);
+            const signer = await etherjsProvider.getSigner();
+
+            const EmailContract = new ethers.Contract(config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS, redefinedResolverAbi as unknown as any, signer);
+
+            //TODO: add obvyazka from old code
+            try {
+                await EmailContract.register(domainHash, redefinedSign, records, newReverse, { value })
+            } catch (e: any) {
+                console.error(e);
+                throw Error(e.message || e.toString());
             }
-
-            console.log("REQ", params);
-            console.log(domainHash, redefinedSign, records, newReverse);
-
-            await contract.methods.register(domainHash, redefinedSign, records, newReverse).send(params)
-                .on('receipt', function(res){
-                    console.log("Receipt:", res);
-                })
-                .on('error', function(e){
-                    console.error(e);
-                    throw Error(e.message);
-                })
-                .on('confirmation', function(confirmationNumber, receipt){
-                    console.log("Confirmation:", confirmationNumber, receipt);
-                })
-                .then(function(newContractInstance){
-                    console.log("New contract instance:", newContractInstance)
-                });
+            
         } catch (e: any) {
             console.error(e);
             throw Error(`Cant create transfer to register domain ${e.message}`);
