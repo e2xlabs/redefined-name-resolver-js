@@ -5,7 +5,6 @@ import config from "@resolver/config";
 import { isEmail } from "@resolver/utils/utils";
 import { sha256 } from "js-sha256";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import type { AbiItem } from "web3-utils";
 
 export class RedefinedResolverService extends ResolverService {
 
@@ -21,8 +20,7 @@ export class RedefinedResolverService extends ResolverService {
 
         try {
             const web3 = EvmWeb3Service.getWeb3(nodeLink);
-            const contract = new web3.eth.Contract(redefinedResolverAbi as AbiItem[], config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
-            console.log(contract);
+            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
             return (await contract.methods.resolve(isEmail(domain) ? sha256(domain) : domain).call()).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
