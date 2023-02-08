@@ -28,7 +28,7 @@ export type RedefinedReverse = {
     data: string,
 }
 
-export declare interface Resolver {
+export interface Resolver {
     options?: ResolverOptions;
 
     resolve(domain: string, networks?: Network[]): Promise<Account[]>;
