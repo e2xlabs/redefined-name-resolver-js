@@ -1,10 +1,11 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { Account, AccountRecord, Network, Nodes } from "@resolver/models/types";
+import type { Account, AccountRecord, Network } from "@resolver/models/types";
 import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
 import config from "@resolver/config";
-import { ethers } from "ethers";
 import { isEmail } from "@resolver/utils/utils";
 import { sha256 } from "js-sha256";
+import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
+import type { AbiItem } from "web3-utils";
 
 export class RedefinedResolverService extends ResolverService {
 
@@ -17,18 +18,12 @@ export class RedefinedResolverService extends ResolverService {
             console.log(`${network} not supported by redefined.`);
             return [];
         }
-    
-        const provider = (window as any).ethereum as any;
-
-        if (!provider) {
-            throw Error("Provider not found!");
-        }
 
         try {
-            const etherjsProvider = new ethers.BrowserProvider(provider);
-            const signer = await etherjsProvider.getSigner();
-            const EmailContract = new ethers.Contract(config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS, redefinedResolverAbi, signer);
-            return (await EmailContract.resolve(isEmail(domain) ? sha256(domain) : domain)).map((it: AccountRecord) => ({
+            const web3 = EvmWeb3Service.getWeb3(nodeLink);
+            const contract = new web3.eth.Contract(redefinedResolverAbi as AbiItem[], config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
+            console.log(contract);
+            return (await contract.methods.resolve(isEmail(domain) ? sha256(domain) : domain).call()).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
                 from: "redefined"

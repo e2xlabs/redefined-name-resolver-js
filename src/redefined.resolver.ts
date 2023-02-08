@@ -1,5 +1,5 @@
-import type { Account, AccountRecord, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions, ResolverServices, RedefinedReverse, Nodes } from "@resolver/models/types";
+import type { Account, Resolver } from "@resolver/models/types";
+import type { Network, ResolverOptions, ResolverServices, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
