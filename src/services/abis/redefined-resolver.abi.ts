@@ -1,6 +1,7 @@
 import type { AbiItem } from "web3-utils";
+import type { InterfaceAbi } from "ethers";
 
-const redefinedResolverAbi: AbiItem[] = [
+const redefinedResolverAbi: InterfaceAbi = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
