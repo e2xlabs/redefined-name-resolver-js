@@ -1,6 +1,6 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "0.0.0-development",
+  "version": "0.0.1-development",
   "description": "JS lib to resolve crypto names",
   "main": "index.ts",
   "repository": {
@@ -27,20 +27,17 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "@solana/web3.js": "^1.73.0",
-    "@types/axios": "^0.14.0",
     "@unstoppabledomains/resolution": "^8.4.0",
-    "axios": "^1.3.2",
     "eth-sig-util": "^3.0.1",
     "ethers": "^6.0.0",
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "typescript": "^4.5.2",
     "web3": "^1.8.1",
     "web3-eth-contract": "^1.8.2"
   },
   "devDependencies": {
+    "typescript": "^4.5.2",
     "@types/jest": "^29.4.0",
     "@types/lodash": "^4.14.184",
     "@types/web3": "^1.2.2",
