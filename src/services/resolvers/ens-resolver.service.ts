@@ -19,6 +19,7 @@ export class EnsResolverService extends ResolverService {
           return [{
               address: await EvmWeb3Service.getWeb3(nodeLink).eth.ens.getAddress(domain),
               network: network,
+              from: "ens"
           }]
         } catch (e: any) {
           console.error("ENS Error", e.message);

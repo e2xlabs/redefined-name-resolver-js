@@ -25,6 +25,7 @@ export class UnstoppableResolverService extends ResolverService {
             return [{
                 address: await resolution.addr(domain, network),
                 network: network,
+                from: "unstoppable"
             }];
         } catch (e: any) {
             console.error("Unstoppable Error", e.message);

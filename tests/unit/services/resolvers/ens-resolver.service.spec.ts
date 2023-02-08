@@ -10,7 +10,7 @@ describe('ens-resolver.service', () => {
 
         const networks: Network[] = ["eth", "bsc"];
         const callTest = async (network: Network) => {
-            expect(await ensResolverService.resolve("ivan.eth", network, config.ETH_NODE)).toEqual([{ address: "0x123", network }]);
+            expect(await ensResolverService.resolve("ivan.eth", network, config.ETH_NODE)).toEqual([{ address: "0x123", network, from: "ens", }]);
         };
 
         await Promise.all(networks.map((it) => callTest(it)));

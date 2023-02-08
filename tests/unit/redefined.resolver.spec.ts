@@ -16,9 +16,9 @@ describe('redefined.resolver', () => {
     spyEncResolve.mockClear();
     spyUnsResolve.mockClear();
 
-    spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
-    spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
-    spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth" }]);
+    spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "redefined" }]);
+    spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "ens" }]);
+    spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "unstoppable" }]);
   })
 
   test('SHOULD use provided resolvers IF exists', async () => {

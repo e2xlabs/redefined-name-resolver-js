@@ -14,7 +14,7 @@ describe('unstoppable-resolver.service', () => {
 
         const networks: Network[] = ["eth", "bsc", "zil"];
         const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.ETH_NODE)).toEqual([{ address: "0x123", network, }]);
+            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.ETH_NODE)).toEqual([{ address: "0x123", network, from: "unstoppable"}]);
         };
 
         await Promise.all(networks.map(callTest));

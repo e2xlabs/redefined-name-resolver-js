@@ -19,7 +19,7 @@ export class RedefinedResolverService extends ResolverService {
         }
     
         const provider = (window as any).ethereum as any;
-    
+
         if (!provider) {
             throw Error("Provider not found!");
         }
@@ -31,6 +31,7 @@ export class RedefinedResolverService extends ResolverService {
             return (await EmailContract.resolve(isEmail(domain) ? sha256(domain) : domain)).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
+                from: "redefined"
             }));
         } catch (e: any) {
             console.error("redefined Error", e.message);

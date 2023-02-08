@@ -5,10 +5,7 @@ import { RedefinedResolverService } from "@resolver/services/resolvers/redefined
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
-import { EthereumProvider } from "@resolver/services/providers/ethereum.provider";
 import config from "@resolver/config";
-import { isEmail } from "@resolver/utils/utils";
-import { sha256 } from "js-sha256";
 
 const redefinedResolverService = new RedefinedResolverService();
 const ensResolverService = new EnsResolverService();
@@ -57,17 +54,5 @@ export class RedefinedResolver implements Resolver {
         return flatten(await Promise.all(this.resolverServices.map(resolver =>
           resolver.resolveAll(domain, this.nodes)
         ))).filter(it => !networks || networks.includes(it.network));
-    }
-
-    async reverse(): Promise<string[]> {
-        return EthereumProvider.callReverse();
-    }
-
-    async register(domain: string, redefinedSign: string, records: AccountRecord[], newReverse: RedefinedReverse): Promise<void> {
-        return EthereumProvider.sendTransferToRegister(isEmail(domain) ? sha256(domain) : domain, redefinedSign, records, newReverse);
-    }
-
-    async update(domain: string, records: Account[]): Promise<void> {
-        return EthereumProvider.sendTransferToUpdate(isEmail(domain) ? sha256(domain) : domain, records);
     }
 }

@@ -15,6 +15,7 @@ export type ResolverOptions = {
 export type Account = {
     address: string,
     network: Network,
+    from: ResolverServices,
 }
 
 export type AccountRecord = {
@@ -27,22 +28,8 @@ export type RedefinedReverse = {
     data: string,
 }
 
-export enum FiatCurrency {
-    USD = "USD"
-}
-
-export enum CryptoCurrency {
-    ETH = "ETH"
-}
-
 export declare interface Resolver {
     options?: ResolverOptions;
 
     resolve(domain: string, networks?: Network[]): Promise<Account[]>;
-
-    reverse(): Promise<string[]>;
-
-    register(domainHash: string, redefinedSign: string, records: AccountRecord[], newReverse: RedefinedReverse): Promise<void>;
-
-    update(domainHash: string, records: Account[]): Promise<void>;
 }
