@@ -26,7 +26,7 @@ describe('redefined.resolver', () => {
       resolverServices: ["redefined"]
     })
     // to bypass privacy
-    expect(resolver["resolverServices"]).toEqual([RedefinedResolverService.prototype]);
+    expect(resolver["resolverServices"]).toEqual([new RedefinedResolverService()]);
   });
 
   test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
