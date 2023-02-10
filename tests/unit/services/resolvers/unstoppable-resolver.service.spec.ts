@@ -1,6 +1,7 @@
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import type { Network } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
+import config from "@resolver/config";
 
 describe('unstoppable-resolver.service', () => {
     beforeEach(() => {
@@ -13,7 +14,7 @@ describe('unstoppable-resolver.service', () => {
 
         const networks: Network[] = ["eth", "bsc", "zil"];
         const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("cifrex.crypto", network)).toEqual([{ address: "0x123", network, }]);
+            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.ETH_NODE)).toEqual([{ address: "0x123", network, from: "unstoppable"}]);
         };
 
         await Promise.all(networks.map(callTest));
@@ -24,7 +25,7 @@ describe('unstoppable-resolver.service', () => {
 
         const networks: Network[] = ["sol"];
         const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("cifrex.crypto", network)).toEqual([]);
+            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.SOL_NODE)).toEqual([]);
         };
 
         await Promise.all(networks.map(callTest));
@@ -34,6 +35,6 @@ describe('unstoppable-resolver.service', () => {
         const unstoppableResolverService = new UnstoppableResolverService();
         jest.spyOn(Resolution.prototype, 'isRegistered').mockImplementation(async () => false);
 
-        expect(await unstoppableResolverService.resolve("cifrex.crypto", "eth")).toEqual([]);
+        expect(await unstoppableResolverService.resolve("cifrex.crypto", "eth", config.ETH_NODE)).toEqual([]);
     });
 });

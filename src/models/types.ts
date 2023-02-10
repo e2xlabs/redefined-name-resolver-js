@@ -15,9 +15,15 @@ export type ResolverOptions = {
 export type Account = {
     address: string,
     network: Network,
+    from: ResolverServices,
 }
 
-export type RedefinedRevers = {
+export type AccountRecord = {
+    addr: string,
+    network: Network,
+}
+
+export type RedefinedReverse = {
     version: number,
     data: string,
 }
@@ -25,11 +31,5 @@ export type RedefinedRevers = {
 export interface Resolver {
     options?: ResolverOptions;
 
-    resolve(domain: string, network: Network): Promise<Account[]>;
-
-    reverse(): Promise<string[]>;
-    
-    register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void>;
-    
-    update(domainHash: string, records: Account[]): Promise<void>;
+    resolve(domain: string, networks?: Network[]): Promise<Account[]>;
 }

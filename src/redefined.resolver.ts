@@ -1,11 +1,10 @@
 import type { Account, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions, ResolverServices, RedefinedRevers, Nodes } from "@resolver/models/types";
+import type { Network, ResolverOptions, ResolverServices, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
-import { RedefinedProvider } from "@resolver/services/providers/redefined.provider";
 import config from "@resolver/config";
 
 const redefinedResolverService = new RedefinedResolverService();
@@ -35,11 +34,11 @@ export class RedefinedResolver implements Resolver {
         const nodes = this.options?.nodes;
 
         if (resolverServices && !resolverServices.length) {
-            throw Error("You need to provide the resolvers you want to use or provide nothing!")
+            throw Error("“resolverServices” option must be a non-empty array or falsy")
         }
 
         if (nodes && !Object.keys(nodes).length) {
-            throw Error("You need to provide the nodes you want to use or provide nothing!")
+            throw Error("“nodes” option must be a non-empty array or falsy")
         }
 
         if (resolverServices) {
@@ -51,20 +50,9 @@ export class RedefinedResolver implements Resolver {
         }
     }
 
-    async resolve(domain: string, network: Network): Promise<Account[]> {
-        return flatten(await Promise.all(this.resolverServices.map(resolver => resolver.resolve(domain, network, this.nodes[network] as string))));
-    }
-
-    async reverse(): Promise<string[]> {
-        const reverse = await RedefinedProvider.reverse();
-        return [];
-    }
-
-    async register(domainHash: string, redefinedSign: string, records: Account[], newRevers: RedefinedRevers[]): Promise<void> {
-        return redefinedResolverService.register(domainHash, redefinedSign, records, newRevers);
-    }
-
-    async update(domainHash: string, records: Account[]): Promise<void> {
-        return redefinedResolverService.update(domainHash, records);
+    async resolve(domain: string, networks?: Network[]): Promise<Account[]> {
+        return flatten(await Promise.all(this.resolverServices.map(resolver =>
+          resolver.resolveAll(domain, this.nodes)
+        ))).filter(it => !networks || networks.includes(it.network));
     }
 }

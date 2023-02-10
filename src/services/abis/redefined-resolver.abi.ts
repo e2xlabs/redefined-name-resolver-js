@@ -1,6 +1,6 @@
 import type { AbiItem } from "web3-utils";
 
-const redefinedResolverAbi: AbiItem[] = [
+export const redefinedResolverAbi: AbiItem[] = [
     {
         "inputs": [],
         "stateMutability": "nonpayable",
