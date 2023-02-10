@@ -4,13 +4,11 @@ import type { Network, Account } from "@resolver/models/types";
 
 
 export class EnsResolverService extends ResolverService {
-
-    getSupportedNetworks(): Network[] {
-      return ["eth", "bsc"];
-    }
+    
+    supportedNetworks: Network[]  = ["eth", "bsc"];
 
     async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.getSupportedNetworks().some(it => it === network)) {
+        if (!this.isSupportedNetwork(network)) {
           console.log(`${network} not supported by Ens.`);
           return [];
         }

@@ -6,12 +6,10 @@ const resolution = new Resolution();
 
 export class UnstoppableResolverService extends ResolverService {
 
-    getSupportedNetworks(): Network[] {
-        return ["eth", "bsc", "zil"];
-    }
-
+    supportedNetworks: Network[]  = ["eth", "bsc", "zil"];
+    
     async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.getSupportedNetworks().some(it => it === network)) {
+        if (!this.isSupportedNetwork(network)) {
             console.log(`${network} not supported by Unstoppable.`);
             return [];
         }

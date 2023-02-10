@@ -7,13 +7,11 @@ import { sha256 } from "js-sha256";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 
 export class RedefinedResolverService extends ResolverService {
-
-    getSupportedNetworks(): Network[] {
-        return ["eth"];
-    }
-
+    
+    supportedNetworks: Network[]  = ["eth"];
+    
     async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.getSupportedNetworks().some(it => it === network)) {
+        if (!this.isSupportedNetwork(network)) {
             console.log(`${network} not supported by redefined.`);
             return [];
         }
