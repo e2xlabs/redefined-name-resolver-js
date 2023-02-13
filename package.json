@@ -1,9 +1,10 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "JS lib to resolve crypto names",
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist/**/*"],
   "repository": {
     "type": "git",
     "url": "https://github.com/e2xlabs/redefined-name-resolver-js.git"
