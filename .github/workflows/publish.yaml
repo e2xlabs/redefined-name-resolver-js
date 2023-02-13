@@ -51,6 +51,8 @@ jobs:
           node-version: 18
       - name: run ci
         run: npm ci
+      - name: run build
+        run: npm run build
       - name: publish
         run: npm run semantic-release
         env:
