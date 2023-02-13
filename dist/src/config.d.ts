@@ -5,4 +5,3 @@ declare const _default: {
     SOL_NODE: string;
 };
 export default _default;
-//# sourceMappingURL=config.d.ts.map

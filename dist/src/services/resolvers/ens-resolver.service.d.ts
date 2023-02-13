@@ -4,4 +4,3 @@ export declare class EnsResolverService extends ResolverService {
     supportedNetworks: Network[];
     resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]>;
 }
-//# sourceMappingURL=ens-resolver.service.d.ts.map

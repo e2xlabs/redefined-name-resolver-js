@@ -6,4 +6,3 @@ const isEmail = (domain) => {
     return exports.EMAIL_REGEX.test(domain);
 };
 exports.isEmail = isEmail;
-//# sourceMappingURL=utils.js.map

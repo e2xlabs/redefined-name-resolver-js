@@ -1,1 +1,0 @@
-{"version":3,"file":"evm-web3.service.d.ts","sourceRoot":"","sources":["../../../../src/services/web3/evm-web3.service.ts"],"names":[],"mappings":"AAAA,OAAO,IAAI,MAAM,MAAM,CAAC;AAExB,MAAM,CAAC,OAAO,OAAO,cAAc;IAE/B,MAAM,CAAC,OAAO,CAAC,QAAQ,EAAE,MAAM,GAAG,IAAI;CAGzC"}

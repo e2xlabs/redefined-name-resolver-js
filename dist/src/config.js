@@ -6,4 +6,3 @@ exports.default = {
     BSC_NODE: "https://bsc-dataseed.binance.org",
     SOL_NODE: "mainnet-beta",
 };
-//# sourceMappingURL=config.js.map

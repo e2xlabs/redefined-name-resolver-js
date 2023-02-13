@@ -5,4 +5,3 @@ export declare abstract class ResolverService {
     isSupportedNetwork(network: Network): boolean;
     resolveAll(domain: string, nodes: Nodes): Promise<Account[]>;
 }
-//# sourceMappingURL=resolver.service.d.ts.map

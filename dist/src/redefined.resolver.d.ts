@@ -7,4 +7,3 @@ export declare class RedefinedResolver implements Resolver {
     constructor(options?: ResolverOptions | undefined);
     resolve(domain: string, networks?: Network[]): Promise<Account[]>;
 }
-//# sourceMappingURL=redefined.resolver.d.ts.map
