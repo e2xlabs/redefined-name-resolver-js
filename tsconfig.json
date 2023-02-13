@@ -22,13 +22,16 @@
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
     "isolatedModules": true,
-    "emitDeclarationOnly": true,
     "importsNotUsedAsValues": "error",
     "paths": {
       "@resolver/*": ["./src/*"]
     }
   },
+  "include": [
+    "./src",
+    "./index.ts"
+  ],
   "lib": [
     "es2020"
-  ],
+  ]
 }
