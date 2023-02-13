@@ -5,6 +5,7 @@
     "declaration": true,
     "composite": true,
     "outDir": "dist",
+    "rootDir": ".",
     "strict": true,
     "baseUrl": ".",
     "paths": {

@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnsResolverService = void 0;
-const resolver_service_1 = require("@resolver/services/resolvers/resolver.service");
-const evm_web3_service_1 = require("@resolver/services/web3/evm-web3.service");
+const resolver_service_1 = require("./resolver.service");
+const evm_web3_service_1 = require("../web3/evm-web3.service");
 class EnsResolverService extends resolver_service_1.ResolverService {
     constructor() {
         super(...arguments);

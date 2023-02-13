@@ -10,11 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedefinedResolver = void 0;
-const redefined_resolver_service_1 = require("@resolver/services/resolvers/redefined-resolver.service");
-const ens_resolver_service_1 = require("@resolver/services/resolvers/ens-resolver.service");
-const unstoppable_resolver_service_1 = require("@resolver/services/resolvers/unstoppable-resolver.service");
+const redefined_resolver_service_1 = require("./services/resolvers/redefined-resolver.service");
+const ens_resolver_service_1 = require("./services/resolvers/ens-resolver.service");
+const unstoppable_resolver_service_1 = require("./services/resolvers/unstoppable-resolver.service");
 const lodash_1 = require("lodash");
-const config_1 = require("@resolver/config");
+const config_1 = require("./config");
 const redefinedResolverService = new redefined_resolver_service_1.RedefinedResolverService();
 const ensResolverService = new ens_resolver_service_1.EnsResolverService();
 const unstoppableResolverService = new unstoppable_resolver_service_1.UnstoppableResolverService();

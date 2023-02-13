@@ -10,12 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RedefinedResolverService = void 0;
-const resolver_service_1 = require("@resolver/services/resolvers/resolver.service");
-const redefined_resolver_abi_1 = require("@resolver/services/abis/redefined-resolver.abi");
-const config_1 = require("@resolver/config");
-const utils_1 = require("@resolver/utils/utils");
+const resolver_service_1 = require("./resolver.service");
+const redefined_resolver_abi_1 = require("../abis/redefined-resolver.abi");
+const config_1 = require("../../config");
+const utils_1 = require("../../utils/utils");
 const js_sha256_1 = require("js-sha256");
-const evm_web3_service_1 = require("@resolver/services/web3/evm-web3.service");
+const evm_web3_service_1 = require("../web3/evm-web3.service");
 class RedefinedResolverService extends resolver_service_1.ResolverService {
     constructor() {
         super(...arguments);

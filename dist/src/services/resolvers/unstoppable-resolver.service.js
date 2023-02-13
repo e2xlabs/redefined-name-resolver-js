@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UnstoppableResolverService = void 0;
-const resolver_service_1 = require("@resolver/services/resolvers/resolver.service");
+const resolver_service_1 = require("./resolver.service");
 const resolution_1 = require("@unstoppabledomains/resolution");
 const resolution = new resolution_1.default();
 class UnstoppableResolverService extends resolver_service_1.ResolverService {

@@ -1,5 +1,5 @@
-import type { Account, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions } from "@resolver/models/types";
+import type { Account, Resolver } from "./models/types";
+import type { Network, ResolverOptions } from "./models/types";
 export declare class RedefinedResolver implements Resolver {
     options?: ResolverOptions | undefined;
     private resolverServices;
