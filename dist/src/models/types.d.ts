@@ -24,4 +24,3 @@ export interface Resolver {
     options?: ResolverOptions;
     resolve(domain: string, networks?: Network[]): Promise<Account[]>;
 }
-//# sourceMappingURL=types.d.ts.map

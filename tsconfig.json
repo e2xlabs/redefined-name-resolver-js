@@ -1,37 +1,25 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "esModuleInterop": true,
     "target": "es6",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "dist",
-    "baseUrl": ".",
     "declaration": true,
-    "declarationMap": true,
     "composite": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "noImplicitAny": false,
-    "resolveJsonModule": true,
-    "allowJs": true,
+    "outDir": "dist",
+    "rootDir": ".",
     "strict": true,
-    "importHelpers": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "isolatedModules": true,
-    "importsNotUsedAsValues": "error",
+    "baseUrl": ".",
     "paths": {
       "@resolver/*": ["./src/*"]
     }
   },
-  "include": [
-    "./src",
-    "./index.ts"
-  ],
   "lib": [
     "es2020"
+  ],
+  "include": [
+    "src/**/*",
+    "index.ts"
+  ],
+  "exclude": [
+    "node_modules"
   ]
 }

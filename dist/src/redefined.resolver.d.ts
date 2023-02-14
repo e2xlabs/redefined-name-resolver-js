@@ -1,5 +1,5 @@
-import type { Account, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions } from "@resolver/models/types";
+import type { Account, Resolver } from "./models/types";
+import type { Network, ResolverOptions } from "./models/types";
 export declare class RedefinedResolver implements Resolver {
     options?: ResolverOptions | undefined;
     private resolverServices;
@@ -7,4 +7,3 @@ export declare class RedefinedResolver implements Resolver {
     constructor(options?: ResolverOptions | undefined);
     resolve(domain: string, networks?: Network[]): Promise<Account[]>;
 }
-//# sourceMappingURL=redefined.resolver.d.ts.map

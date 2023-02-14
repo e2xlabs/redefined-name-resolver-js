@@ -1,5 +1,3 @@
-import Web3 from "web3";
 export default class EvmWeb3Service {
-    static getWeb3(nodeLink: string): Web3;
+    static getWeb3(nodeLink: string): any;
 }
-//# sourceMappingURL=evm-web3.service.d.ts.map
