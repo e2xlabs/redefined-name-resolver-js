@@ -6,17 +6,9 @@ const resolution = new Resolution();
 
 export class UnstoppableResolverService extends ResolverService {
 
-    supportedNetworks: Network[]  = ["eth", "bsc", "zil"];
-    
     async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.isSupportedNetwork(network)) {
-            console.log(`${network} not supported by Unstoppable.`);
-            return [];
-        }
-
         try {
             if (!(await resolution.isRegistered(domain))) {
-                console.log(`${domain} not registered with Unstoppable.`);
                 return [];
             }
 
@@ -26,8 +18,7 @@ export class UnstoppableResolverService extends ResolverService {
                 from: "unstoppable"
             }];
         } catch (e: any) {
-            console.error("Unstoppable Error", e.message);
-            return [];
+            throw Error(`Unstoppable Error: ${e.message}`);
         }
     }
 }

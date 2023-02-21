@@ -1,32 +1,53 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account, AccountRecord, Network } from "@resolver/models/types";
-import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
 import config from "@resolver/config";
-import { isEmail } from "@resolver/utils/utils";
 import { sha256 } from "js-sha256";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
+import { EmailService } from "@resolver/services/email.service";
+import redefinedEmailResolverAbi from "@resolver/services/abis/redefined-email-resolver.abi";
+import redefinedNicknameResolverAbi from "@resolver/services/abis/redefined-nickname-resolver.abi";
 
 export class RedefinedResolverService extends ResolverService {
-    
-    supportedNetworks: Network[]  = ["eth"];
-    
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.isSupportedNetwork(network)) {
-            console.log(`${network} not supported by redefined.`);
-            return [];
-        }
 
+    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
         try {
-            const web3 = EvmWeb3Service.getWeb3(nodeLink);
-            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
-            return (await contract.methods.resolve(isEmail(domain) ? sha256(domain) : domain).call()).map((it: AccountRecord) => ({
+            const resolve = EmailService.isEmail(domain)
+              ? this.resolveEmail(domain, nodeLink)
+              : this.resolveNickname(domain, nodeLink);
+
+            return (await resolve).map(it => ({
                 address: it.addr,
                 network: it.network,
                 from: "redefined"
             }));
         } catch (e: any) {
-            console.error("redefined Error", e.message);
-            return [];
+            throw Error(`redefined Error: ${e.message}`);
+        }
+    }
+
+    private async resolveEmail(domain: string, nodeLink: string): Promise<AccountRecord[]> {
+        try {
+            const web3 = EvmWeb3Service.getWeb3(nodeLink);
+            const contract = new web3.eth.Contract(redefinedEmailResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
+            return await contract.methods.resolve(sha256(domain)).call();
+        } catch (e: any) {
+            if (e.message.includes("Name is not registered")) {
+                return [];
+            }
+            throw Error(`redefined Error: ${e.message}`);
+        }
+    }
+
+    private async resolveNickname(domain: string, nodeLink: string): Promise<AccountRecord[]> {
+        try {
+            const web3 = EvmWeb3Service.getWeb3(nodeLink);
+            const contract = new web3.eth.Contract(redefinedNicknameResolverAbi, config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS);
+            return await contract.methods.resolve(domain).call();
+        } catch (e: any) {
+            if (e.message.includes("Name is not registered")) {
+                return [];
+            }
+            throw Error(`redefined Error: ${e.message}`);
         }
     }
 }
