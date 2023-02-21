@@ -64,7 +64,6 @@ describe('redefined.resolver', () => {
     expect(resolver["nodes"]).toEqual({
       eth: config.ETH_NODE,
       bsc: config.BSC_NODE,
-      sol: config.SOL_NODE,
     })
   });
 
@@ -76,7 +75,6 @@ describe('redefined.resolver', () => {
     expect(resolver["nodes"]).toEqual({
       eth: "eth_node",
       bsc: config.BSC_NODE,
-      sol: config.SOL_NODE,
     });
   });
 
@@ -101,7 +99,7 @@ describe('redefined.resolver', () => {
     try {
       new RedefinedResolver({ nodes: {} })
     } catch (e: any) {
-      expect(e.message).toBe("“nodes” option must be a non-empty array or falsy")
+      expect(e.message).toBe("“nodes” option must be a non-empty object or falsy")
     }
   });
 });

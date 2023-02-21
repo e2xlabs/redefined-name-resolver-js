@@ -1,4 +1,4 @@
-export type Network = "eth" | "bsc" | "sol" | "zil";
+export type Network = "eth" | "arbitrum" | "bsc" | "sol" | "zil";
 
 export type ResolverServices = "redefined" | "ens" | "unstoppable"
 

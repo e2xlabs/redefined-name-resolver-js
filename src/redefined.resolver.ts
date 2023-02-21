@@ -24,7 +24,6 @@ export class RedefinedResolver implements Resolver {
     private nodes: Nodes = {
         eth: config.ETH_NODE,
         bsc: config.BSC_NODE,
-        sol: config.SOL_NODE,
     };
 
     constructor(
@@ -38,7 +37,7 @@ export class RedefinedResolver implements Resolver {
         }
 
         if (nodes && !Object.keys(nodes).length) {
-            throw Error("“nodes” option must be a non-empty array or falsy")
+            throw Error("“nodes” option must be a non-empty object or falsy")
         }
 
         if (resolverServices) {

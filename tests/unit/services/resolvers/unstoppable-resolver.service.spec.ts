@@ -20,17 +20,6 @@ describe('unstoppable-resolver.service', () => {
         await Promise.all(networks.map(callTest));
     });
 
-    test('SHOULD get empty response for unsupported networks', async () => {
-        const unstoppableResolverService = new UnstoppableResolverService();
-
-        const networks: Network[] = ["sol"];
-        const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.SOL_NODE)).toEqual([]);
-        };
-
-        await Promise.all(networks.map(callTest));
-    });
-
     test('SHOULD get empty response for domain IF it is not registered', async () => {
         const unstoppableResolverService = new UnstoppableResolverService();
         jest.spyOn(Resolution.prototype, 'isRegistered').mockImplementation(async () => false);
