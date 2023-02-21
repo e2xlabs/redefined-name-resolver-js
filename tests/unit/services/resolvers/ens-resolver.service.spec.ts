@@ -15,13 +15,4 @@ describe('ens-resolver.service', () => {
 
         await Promise.all(networks.map((it) => callTest(it)));
     });
-
-    // test('SHOULD get empty response IF networks unsupported', async () => {
-    //     const networks: Network[] = ["sol", "zil"];
-    //     const callTest = async (network: Network) => {
-    //         expect(await ensResolverService.resolve("cifrex.eth", network, config.ETH_NODE)).toEqual([]);
-    //     };
-    //
-    //     await Promise.all(networks.map((it) => callTest(it)));
-    // });
 });
