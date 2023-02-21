@@ -62,6 +62,7 @@ describe('redefined.resolver', () => {
   test('SHOULD use preinstalled nodes IF none are provided', async () => {
     const resolver = new RedefinedResolver();
     expect(resolver["nodes"]).toEqual({
+      arbitrum: config.ARBITRUM_NODE,
       eth: config.ETH_NODE,
       bsc: config.BSC_NODE,
     })
@@ -73,6 +74,7 @@ describe('redefined.resolver', () => {
     });
 
     expect(resolver["nodes"]).toEqual({
+      arbitrum: config.ARBITRUM_NODE,
       eth: "eth_node",
       bsc: config.BSC_NODE,
     });

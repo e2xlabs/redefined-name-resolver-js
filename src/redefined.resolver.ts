@@ -22,6 +22,7 @@ export class RedefinedResolver implements Resolver {
     private resolverServices: ResolverService[] = [ redefinedResolverService, ensResolverService, unstoppableResolverService ];
 
     private nodes: Nodes = {
+        arbitrum: config.ARBITRUM_NODE,
         eth: config.ETH_NODE,
         bsc: config.BSC_NODE,
     };
