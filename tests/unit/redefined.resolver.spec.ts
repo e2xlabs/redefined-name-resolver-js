@@ -105,4 +105,41 @@ describe('redefined.resolver', () => {
     
     await Promise.all(networks.map((it) => callTest(it)));
   });
+  
+  test('SHOULD resolve with evm network IF target network not resolved', async () => {
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"]
+    });
+  
+    const networks: Network[] = ["eth", "evm"];
+    spyRedefinedResolve.mockReset();
+    spyRedefinedResolve.mockImplementation(async () => networks.map(network => ({ address: "0x123", network, from: "redefined" })));
+  
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([{ address: "0x123", network: "evm", from: "redefined" }]);
+  });
+  
+  test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"]
+    });
+    
+    const networks: Network[] = ["eth", "evm"];
+    spyRedefinedResolve.mockReset();
+    spyRedefinedResolve.mockImplementation(async () => networks.map(network => ({ address: "0x123", network, from: "redefined" })));
+    
+    expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual([{ address: "0x123", network: "eth", from: "redefined" }]);
+  });
+  
+  test('SHOULD NOT resolve with evm network IF provided option', async () => {
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"],
+      allowDefaultEvmResolves: false,
+    });
+    
+    const networks: Network[] = ["eth", "evm"];
+    spyRedefinedResolve.mockReset();
+    spyRedefinedResolve.mockImplementation(async () => networks.map(network => ({ address: "0x123", network, from: "redefined" })));
+    
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([]);
+  });
 });

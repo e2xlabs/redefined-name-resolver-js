@@ -11,6 +11,8 @@ export class RedefinedResolver implements Resolver {
 
     private resolverServices: ResolverServices[] = ["redefined", "ens", "unstoppable"];
     
+    private allowDefaultEvmResolves: boolean;
+    
     private resolvers: { [key in ResolverServices]: ResolverService[] };
     
     private nodes: Nodes = {
@@ -42,14 +44,23 @@ export class RedefinedResolver implements Resolver {
             this.nodes = { ...this.nodes, ...nodes };
         }
         
+        this.allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves !== undefined
+            ? this.options?.allowDefaultEvmResolves
+            : true;
+        
         this.resolvers = this.createResolvers(this.nodes);
     }
 
     async resolve(domain: string, networks?: Network[]): Promise<Account[]> {
         const resolvers = flatten(this.resolverServices.map(name => this.resolvers[name]));
         
-        return flatten(await Promise.all(resolvers.map(it => it.resolve(domain))))
-            .filter(it => !networks || networks.includes(it.network));
+        const resolvedAccounts = flatten(await Promise.all(resolvers.map(it => it.resolve(domain))));
+        
+        const targetAccountsWithoutEvm = resolvedAccounts.filter(it => (!networks || networks.includes(it.network) && it.network !== "evm"));
+    
+        return targetAccountsWithoutEvm.length
+            ? targetAccountsWithoutEvm
+            : this.allowDefaultEvmResolves && resolvedAccounts.filter(it => it.network === "evm") || [];
     }
     
     private createResolvers(nodes: Nodes): { [key in ResolverServices]: ResolverService[] } {
