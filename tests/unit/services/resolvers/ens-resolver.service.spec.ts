@@ -2,7 +2,6 @@ import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.se
 import type { Network } from "@resolver/models/types";
 import config from "@resolver/config";
 
-const ensResolverService = new EnsResolverService();
 
 describe('ens-resolver.service', () => {
 
@@ -10,7 +9,8 @@ describe('ens-resolver.service', () => {
 
         const networks: Network[] = ["eth", "bsc"];
         const callTest = async (network: Network) => {
-            expect(await ensResolverService.resolve("ivan.eth", network, config.ETH_NODE)).toEqual([{ address: "0x123", network, from: "ens", }]);
+            const ensResolverService = new EnsResolverService(config.ETH_NODE, network);
+            expect(await ensResolverService.resolve("ivan.eth")).toEqual([{ address: "0x123", network, from: "ens", }]);
         };
 
         await Promise.all(networks.map((it) => callTest(it)));

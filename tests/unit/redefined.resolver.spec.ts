@@ -3,7 +3,6 @@ import { UnstoppableResolverService } from "@resolver/services/resolvers/unstopp
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
 import { RedefinedResolver } from "@resolver/redefined.resolver";
 import config from "@resolver/config";
-import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import type { Network } from "@resolver/models/types";
 
 describe('redefined.resolver', () => {
@@ -26,7 +25,7 @@ describe('redefined.resolver', () => {
       resolverServices: ["redefined"]
     })
     // to bypass privacy
-    expect(resolver["resolverServices"]).toEqual([new RedefinedResolverService()]);
+    expect(resolver["resolverServices"]).toEqual(["redefined"]);
   });
 
   test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
@@ -65,6 +64,7 @@ describe('redefined.resolver', () => {
       arbitrum: config.ARBITRUM_NODE,
       eth: config.ETH_NODE,
       bsc: config.BSC_NODE,
+      zil: config.ZIL_NODE,
     })
   });
 
@@ -77,24 +77,8 @@ describe('redefined.resolver', () => {
       arbitrum: config.ARBITRUM_NODE,
       eth: "eth_node",
       bsc: config.BSC_NODE,
+      zil: config.ZIL_NODE,
     });
-  });
-
-  test('SHOULD call web3 in resolver with target node IF provided', async () => {
-    const spyGetEvmWeb3 = jest.spyOn(EvmWeb3Service, "getWeb3")
-    spyEncResolve.mockImplementation(async (domain: string, network?: Network, nodeLink?: string) => {
-      EvmWeb3Service.getWeb3(nodeLink!);
-      return [];
-    });
-
-    const resolver = new RedefinedResolver({
-      resolverServices: ["ens"],
-      nodes: { eth: "eth_node" }
-    });
-
-    await resolver.resolve("cifrex.eth", ["eth"]);
-
-    expect(spyGetEvmWeb3).toHaveBeenCalledWith("eth_node");
   });
 
   test('SHOULD show error on create instance IF nodes exists but provided nothing', async () => {
@@ -103,5 +87,22 @@ describe('redefined.resolver', () => {
     } catch (e: any) {
       expect(e.message).toBe("“nodes” option must be a non-empty object or falsy")
     }
+  });
+  
+  test('SHOULD resolve only with target network IF provided', async () => {
+    const networks: Network[] = ["eth", "sol", "zil", "bsc", "arbitrum"];
+    
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"]
+    });
+    
+    spyRedefinedResolve.mockReset();
+    spyRedefinedResolve.mockImplementation(async () => networks.map(network => ({ address: "0x123", network, from: "redefined" })));
+    
+    const callTest = async (network: Network) => {
+      expect(await resolver.resolve("cifrex.eth", [network])).toEqual([{ address: "0x123", network, from: "redefined" }]);
+    }
+    
+    await Promise.all(networks.map((it) => callTest(it)));
   });
 });

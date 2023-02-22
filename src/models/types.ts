@@ -9,9 +9,9 @@ export type Nodes = {
 }
 
 export type ResolverOptions = {
-    // by default, we use all services
     resolverServices?: ResolverServices[],
-    nodes?: Nodes
+    nodes?: { [key in NodeNetwork]?: string }
+    allowDefaultEvmResolves?: boolean
 }
 
 export type Account = {
