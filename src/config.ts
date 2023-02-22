@@ -4,4 +4,5 @@ export default {
     ARBITRUM_NODE: "https://thrumming-shy-shadow.arbitrum-mainnet.discover.quiknode.pro/8293587af0f7311ba25216d08c72844c9d39fdfe/",
     ETH_NODE: "https://attentive-blue-choice.discover.quiknode.pro/a6d16bf50e42db77cd315b60e2c1f5c2386537e3/",
     BSC_NODE: "https://bsc-dataseed.binance.org",
+    ZIL_NODE: "https://evm-api-dev.zilliqa.com",
 }

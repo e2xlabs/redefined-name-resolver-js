@@ -5,16 +5,23 @@ import Resolution from "@unstoppabledomains/resolution";
 const resolution = new Resolution();
 
 export class UnstoppableResolverService extends ResolverService {
-
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
+    
+    constructor(
+        public nodeLink: string,
+        public network: Network,
+    ) {
+        super();
+    }
+    
+    async resolve(domain: string): Promise<Account[]> {
         try {
             if (!(await resolution.isRegistered(domain))) {
                 return [];
             }
 
             return [{
-                address: await resolution.addr(domain, network),
-                network: network,
+                address: await resolution.addr(domain, this.network),
+                network: this.network,
                 from: "unstoppable"
             }];
         } catch (e: any) {

@@ -4,12 +4,19 @@ import type { Network, Account } from "@resolver/models/types";
 
 
 export class EnsResolverService extends ResolverService {
-
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
+    
+    constructor(
+        public nodeLink: string,
+        public network: Network,
+    ) {
+        super();
+    }
+    
+    async resolve(domain: string): Promise<Account[]> {
         try {
           return [{
-              address: await EvmWeb3Service.getWeb3(nodeLink).eth.ens.getAddress(domain),
-              network: network,
+              address: await EvmWeb3Service.getWeb3(this.nodeLink).eth.ens.getAddress(domain),
+              network: this.network,
               from: "ens"
           }]
         } catch (e: any) {

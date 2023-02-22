@@ -1,9 +1,11 @@
-export type Network = "eth" | "arbitrum" | "bsc" | "sol" | "zil";
-
 export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
+export type NodeNetwork = "eth" | "arbitrum" | "bsc"| "zil";
+
+export type Network = NodeNetwork  | "sol" | "evm";
+
 export type Nodes = {
-    [key in Network]?: string
+    [key in NodeNetwork]: string
 }
 
 export type ResolverOptions = {

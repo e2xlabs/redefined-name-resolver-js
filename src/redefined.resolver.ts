@@ -7,24 +7,17 @@ import { UnstoppableResolverService } from "@resolver/services/resolvers/unstopp
 import { flatten } from "lodash";
 import config from "@resolver/config";
 
-const redefinedResolverService = new RedefinedResolverService();
-const ensResolverService = new EnsResolverService();
-const unstoppableResolverService = new UnstoppableResolverService();
-
-const resolverServicesByType: { [key in ResolverServices]: ResolverService } = {
-    redefined: redefinedResolverService,
-    ens: ensResolverService,
-    unstoppable: unstoppableResolverService,
-}
-
 export class RedefinedResolver implements Resolver {
 
-    private resolverServices: ResolverService[] = [ redefinedResolverService, ensResolverService, unstoppableResolverService ];
-
+    private resolverServices: ResolverServices[] = ["redefined", "ens", "unstoppable"];
+    
+    private resolvers: { [key in ResolverServices]: ResolverService[] };
+    
     private nodes: Nodes = {
         arbitrum: config.ARBITRUM_NODE,
         eth: config.ETH_NODE,
         bsc: config.BSC_NODE,
+        zil: config.ZIL_NODE,
     };
 
     constructor(
@@ -42,17 +35,37 @@ export class RedefinedResolver implements Resolver {
         }
 
         if (resolverServices) {
-            this.resolverServices = resolverServices.map(it => resolverServicesByType[it]);
+            this.resolverServices = resolverServices;
         }
 
         if (nodes) {
             this.nodes = { ...this.nodes, ...nodes };
         }
+        
+        this.resolvers = this.createResolvers(this.nodes);
     }
 
     async resolve(domain: string, networks?: Network[]): Promise<Account[]> {
-        return flatten(await Promise.all(this.resolverServices.map(resolver =>
-          resolver.resolveAll(domain, this.nodes)
-        ))).filter(it => !networks || networks.includes(it.network));
+        const resolvers = flatten(this.resolverServices.map(name => this.resolvers[name]));
+        
+        return flatten(await Promise.all(resolvers.map(it => it.resolve(domain))))
+            .filter(it => !networks || networks.includes(it.network));
+    }
+    
+    private createResolvers(nodes: Nodes): { [key in ResolverServices]: ResolverService[] } {
+        return {
+            redefined: [
+                new RedefinedResolverService(nodes.arbitrum, "arbitrum"),
+            ],
+            ens: [
+                new EnsResolverService(nodes.eth, "eth"),
+                new EnsResolverService(nodes.bsc, "bsc"),
+            ],
+            unstoppable: [
+                new UnstoppableResolverService(nodes.eth, "eth"),
+                new UnstoppableResolverService(nodes.bsc, "bsc"),
+                new UnstoppableResolverService(nodes.zil, "zil"),
+            ],
+        }
     }
 }

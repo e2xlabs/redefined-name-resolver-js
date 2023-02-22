@@ -8,12 +8,19 @@ import redefinedEmailResolverAbi from "@resolver/services/abis/redefined-email-r
 import redefinedNicknameResolverAbi from "@resolver/services/abis/redefined-nickname-resolver.abi";
 
 export class RedefinedResolverService extends ResolverService {
+    
+    constructor(
+        public nodeLink: string,
+        public network: Network,
+    ) {
+        super();
+    }
 
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
+    async resolve(domain: string): Promise<Account[]> {
         try {
             const resolve = EmailService.isEmail(domain)
-              ? this.resolveEmail(domain, nodeLink)
-              : this.resolveNickname(domain, nodeLink);
+              ? this.resolveEmail(domain)
+              : this.resolveNickname(domain);
 
             return (await resolve).map(it => ({
                 address: it.addr,
@@ -25,9 +32,9 @@ export class RedefinedResolverService extends ResolverService {
         }
     }
 
-    private async resolveEmail(domain: string, nodeLink: string): Promise<AccountRecord[]> {
+    private async resolveEmail(domain: string): Promise<AccountRecord[]> {
         try {
-            const web3 = EvmWeb3Service.getWeb3(nodeLink);
+            const web3 = EvmWeb3Service.getWeb3(this.nodeLink);
             const contract = new web3.eth.Contract(redefinedEmailResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
             return await contract.methods.resolve(sha256(domain)).call();
         } catch (e: any) {
@@ -38,9 +45,9 @@ export class RedefinedResolverService extends ResolverService {
         }
     }
 
-    private async resolveNickname(domain: string, nodeLink: string): Promise<AccountRecord[]> {
+    private async resolveNickname(domain: string): Promise<AccountRecord[]> {
         try {
-            const web3 = EvmWeb3Service.getWeb3(nodeLink);
+            const web3 = EvmWeb3Service.getWeb3(this.nodeLink);
             const contract = new web3.eth.Contract(redefinedNicknameResolverAbi, config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS);
             return await contract.methods.resolve(domain).call();
         } catch (e: any) {
