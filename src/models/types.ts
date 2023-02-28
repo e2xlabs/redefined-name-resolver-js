@@ -2,7 +2,9 @@ export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
 export type NodeNetwork = "eth" | "arbitrum" | "bsc"| "zil";
 
-export type Network = NodeNetwork  | "sol" | "evm";
+export type RequestedNetwork = NodeNetwork  | "sol";
+
+export type Network = RequestedNetwork | "evm";
 
 export type Nodes = {
     [key in NodeNetwork]: string

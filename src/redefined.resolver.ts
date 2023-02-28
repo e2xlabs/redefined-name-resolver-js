@@ -1,20 +1,22 @@
 import type { Account, Resolver } from "@resolver/models/types";
 import type { Network, ResolverOptions, ResolverServices, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
+import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
+import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
 import config from "@resolver/config";
+import { RequestedNetwork } from "@resolver/models/types";
 
 export class RedefinedResolver implements Resolver {
 
     private resolverServices: ResolverServices[] = ["redefined", "ens", "unstoppable"];
-    
-    private allowDefaultEvmResolves: boolean;
-    
-    private resolvers: { [key in ResolverServices]: ResolverService[] };
-    
+
+    private allowDefaultEvmResolves: boolean = true;
+
+    private resolvers: ResolverService[];
+
     private nodes: Nodes = {
         arbitrum: config.ARBITRUM_NODE,
         eth: config.ETH_NODE,
@@ -27,6 +29,7 @@ export class RedefinedResolver implements Resolver {
     ) {
         const resolverServices = this.options?.resolverServices;
         const nodes = this.options?.nodes;
+        const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
 
         if (resolverServices && !resolverServices.length) {
             throw Error("“resolverServices” option must be a non-empty array or falsy")
@@ -43,40 +46,36 @@ export class RedefinedResolver implements Resolver {
         if (nodes) {
             this.nodes = { ...this.nodes, ...nodes };
         }
-        
-        this.allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves !== undefined
-            ? this.options?.allowDefaultEvmResolves
-            : true;
-        
-        this.resolvers = this.createResolvers(this.nodes);
+
+        if (allowDefaultEvmResolves !== undefined) {
+            this.allowDefaultEvmResolves = allowDefaultEvmResolves;
+        }
+
+        this.resolvers = this.createResolvers(this.nodes, this.resolverServices, this.allowDefaultEvmResolves);
     }
 
-    async resolve(domain: string, networks?: Network[]): Promise<Account[]> {
-        const resolvers = flatten(this.resolverServices.map(name => this.resolvers[name]));
-        
-        const resolvedAccounts = flatten(await Promise.all(resolvers.map(it => it.resolve(domain))));
-        
-        const targetAccountsWithoutEvm = resolvedAccounts.filter(it => (!networks || networks.includes(it.network) && it.network !== "evm"));
-    
-        return targetAccountsWithoutEvm.length
-            ? targetAccountsWithoutEvm
-            : this.allowDefaultEvmResolves && resolvedAccounts.filter(it => it.network === "evm") || [];
+    async resolve(domain: string, networks?: RequestedNetwork[]): Promise<Account[]> {
+        return flatten(
+          await Promise.all(this.resolvers
+              .filter(it => !networks || it.allNetworksSupported || networks.includes(it.network as RequestedNetwork))
+              .map(it => it.resolve(domain, networks)))
+          )
+        ;
     }
-    
-    private createResolvers(nodes: Nodes): { [key in ResolverServices]: ResolverService[] } {
-        return {
-            redefined: [
-                new RedefinedResolverService(nodes.arbitrum, "arbitrum"),
-            ],
-            ens: [
-                new EnsResolverService(nodes.eth, "eth"),
-                new EnsResolverService(nodes.bsc, "bsc"),
-            ],
-            unstoppable: [
-                new UnstoppableResolverService(nodes.eth, "eth"),
-                new UnstoppableResolverService(nodes.bsc, "bsc"),
-                new UnstoppableResolverService(nodes.zil, "zil"),
-            ],
-        }
+
+    private createResolvers(nodes: Nodes, resolverNames: ResolverServices[], allowDefaultEvmResolves: boolean): ResolverService[] {
+        const resolvers: ResolverService[] = [
+            new RedefinedUsernameResolverService(nodes.arbitrum, "arbitrum", allowDefaultEvmResolves),
+            new RedefinedEmailResolverService(nodes.arbitrum, "arbitrum", allowDefaultEvmResolves),
+
+            new EnsResolverService(nodes.eth, "eth"),
+            new EnsResolverService(nodes.bsc, "bsc"),
+
+            new UnstoppableResolverService(nodes.eth, "eth"),
+            new UnstoppableResolverService(nodes.bsc, "bsc"),
+            new UnstoppableResolverService(nodes.zil, "zil"),
+        ]
+
+        return resolvers.filter(it => resolverNames.includes(it.vendor));
     }
 }

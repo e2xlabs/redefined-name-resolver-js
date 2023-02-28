@@ -7,7 +7,10 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
       ens: {
         async getAddress(domain: string): Promise<string> {
           return "0x123"
-        }
+        },
+        async recordExists(): Promise<boolean> {
+          return true
+        },
       },
       Contract: class Contract {
         methods = {
@@ -15,8 +18,8 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
             return {
               async call(): Promise<AccountRecord[]> {
                 return [
-                    { addr: "0x123", network: "eth" },
-                    { addr: "0x323", network: "sol" }
+                  { addr: "0x123", network: "eth" },
+                  { addr: "0x323", network: "sol" }
                 ];
               },
             }
