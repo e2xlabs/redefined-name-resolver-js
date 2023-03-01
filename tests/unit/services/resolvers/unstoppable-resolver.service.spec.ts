@@ -1,5 +1,4 @@
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
-import type { Network } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 import config from "@resolver/config";
 

@@ -1,8 +1,8 @@
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import type { AccountRecord, Network } from "@resolver/models/types";
+import type { AccountRecord } from "@resolver/models/types";
 
 EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
-  (network: Network) => ({
+  (node: string) => ({
     eth: {
       ens: {
         async getAddress(domain: string): Promise<string> {

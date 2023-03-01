@@ -2,10 +2,6 @@ export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
 export type NodeNetwork = "eth" | "arbitrum" | "polygon";
 
-export type RequestedNetwork = "eth" | "bsc"| "zil" | "sol" | "doge" | "ltc";
-
-export type Network = RequestedNetwork | "evm";
-
 export type Nodes = {
     [key in NodeNetwork]: string
 }
@@ -24,7 +20,7 @@ export type Account = {
 
 export type AccountRecord = {
     addr: string,
-    network: Network,
+    network: string,
 }
 
 export type RedefinedReverse = {
@@ -35,5 +31,5 @@ export type RedefinedReverse = {
 export interface Resolver {
     options?: ResolverOptions;
 
-    resolve(domain: string, networks?: Network[]): Promise<Account[]>;
+    resolve(domain: string, networks?: string[]): Promise<Account[]>;
 }

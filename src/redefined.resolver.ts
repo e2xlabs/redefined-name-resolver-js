@@ -7,7 +7,6 @@ import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.se
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
 import config from "@resolver/config";
-import { RequestedNetwork } from "@resolver/models/types";
 
 export class RedefinedResolver implements Resolver {
 
@@ -53,7 +52,7 @@ export class RedefinedResolver implements Resolver {
         this.resolvers = this.createResolvers();
     }
 
-    async resolve(domain: string, networks?: RequestedNetwork[]): Promise<Account[]> {
+    async resolve(domain: string, networks?: string[]): Promise<Account[]> {
         return flatten(
           await Promise.all(this.resolvers.map(it => it.resolve(domain, false, networks)))
         )

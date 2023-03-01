@@ -4,7 +4,6 @@ import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/r
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { RedefinedResolver } from "@resolver/redefined.resolver";
 import config from "@resolver/config";
-import type { Account, AccountRecord, Network, RequestedNetwork } from "@resolver/models/types";
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
@@ -12,7 +11,7 @@ describe('redefined.resolver', () => {
   const spyEncResolve = jest.spyOn(EnsResolverService.prototype, 'resolve');
   const spyUnsResolve = jest.spyOn(UnstoppableResolverService.prototype, 'resolve');
 
-  function resetRedefinedImplementationWithNetworks(networks: Network[]) {
+  function resetRedefinedImplementationWithNetworks(networks: string[]) {
     spyRedefinedUsernameResolve.mockReset()
     spyRedefinedEmailResolve.mockReset()
 
@@ -102,7 +101,7 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD resolve only with target network IF provided', async () => {
-    const networks: RequestedNetwork[] = ["eth", "sol", "zil", "bsc"];
+    const networks= ["eth", "sol", "zil", "bsc"];
 
     const resolver = new RedefinedResolver({
       resolverServices: ["redefined"]
@@ -110,7 +109,7 @@ describe('redefined.resolver', () => {
 
     resetRedefinedImplementationWithNetworks(networks)
 
-    const callTest = async (network: RequestedNetwork) => {
+    const callTest = async (network: string) => {
       expect(await resolver.resolve("cifrex.eth", [network])).toEqual([
         { address: "0xUsername", network, from: "redefined" },
         { address: "0xEmail", network, from: "redefined" },
@@ -125,7 +124,7 @@ describe('redefined.resolver', () => {
       resolverServices: ["redefined"]
     });
 
-    const networks: Network[] = ["eth", "evm"];
+    const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
     expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([
@@ -139,7 +138,7 @@ describe('redefined.resolver', () => {
       resolverServices: ["redefined"]
     });
 
-    const networks: Network[] = ["eth", "evm"];
+    const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
     expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual([
@@ -154,7 +153,7 @@ describe('redefined.resolver', () => {
       allowDefaultEvmResolves: false,
     });
 
-    const networks: Network[] = ["eth", "evm"];
+    const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
     expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([]);

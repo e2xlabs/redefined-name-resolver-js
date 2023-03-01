@@ -1,6 +1,6 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
-import { AccountRecord, RequestedNetwork, ResolverServices } from "@resolver/models/types";
+import { AccountRecord, ResolverServices } from "@resolver/models/types";
 
 export abstract class RedefinedResolverService extends ResolverService {
 
@@ -16,7 +16,7 @@ export abstract class RedefinedResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: RequestedNetwork[]): Promise<Account[]> {
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: string[]): Promise<Account[]> {
         try {
             const accounts: Account[] = (await this.resolveDomain(domain)).map((it: AccountRecord) => ({
                 address: it.addr,
@@ -25,7 +25,7 @@ export abstract class RedefinedResolverService extends ResolverService {
             }));
     
             const targetAccountsWithoutEvm = accounts.filter(it => (
-                (!networks || networks.includes(it.network as RequestedNetwork))
+                (!networks || networks.includes(it.network))
                 && it.network !== "evm"
             ));
     
