@@ -41,11 +41,10 @@ export abstract class RedefinedResolverService extends ResolverService {
                 : [];
         } catch (e: any) {
     
-            if (e.message.includes("Name is not registered")) {
-                return [];
-            }
-    
-            if (!throwErrorOnIllegalCharacters && e.message.includes("Invalid character")) {
+            if (
+                e.message.includes("Name is not registered")
+                || (!throwErrorOnIllegalCharacters && e.message.includes("Invalid character"))
+            ) {
                 return [];
             }
     
