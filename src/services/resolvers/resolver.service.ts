@@ -10,6 +10,6 @@ export abstract class ResolverService {
     abstract nodeLink: string;
 
     abstract vendor: ResolverServices;
-
-    abstract resolve(domain: string, networks?: RequestedNetwork[]): Promise<Account[]>;
+    
+    abstract resolve(domain: string, throwErrorOnIllegalCharacters: boolean, networks?: RequestedNetwork[], ): Promise<Account[]>;
 }

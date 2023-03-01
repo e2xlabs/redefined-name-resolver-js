@@ -8,9 +8,6 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
         async getAddress(domain: string): Promise<string> {
           return "0x123"
         },
-        async recordExists(): Promise<boolean> {
-          return true
-        },
       },
       Contract: class Contract {
         methods = {

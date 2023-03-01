@@ -13,7 +13,7 @@ export class RedefinedResolver implements Resolver {
 
     private resolverServices: ResolverServices[] = ["redefined", "ens", "unstoppable"];
 
-    private allowDefaultEvmResolves: boolean = true;
+    private allowDefaultEvmResolves = true;
 
     private resolvers: ResolverService[];
 
@@ -58,7 +58,7 @@ export class RedefinedResolver implements Resolver {
         return flatten(
           await Promise.all(this.resolvers
               .filter(it => !networks || it.allNetworksSupported || networks.includes(it.network as RequestedNetwork))
-              .map(it => it.resolve(domain, networks)))
+              .map(it => it.resolve(domain, false, networks)))
           )
         ;
     }

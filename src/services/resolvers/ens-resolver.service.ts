@@ -15,26 +15,22 @@ export class EnsResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string): Promise<Account[]> {
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true): Promise<Account[]> {
         const ens = EvmWeb3Service.getWeb3(this.nodeLink).eth.ens;
-
-        // domain validation request
-        // if it fell, then it is not valid
+        
         try {
-          await ens.recordExists(domain)
-        } catch (e) {
-          console.error(e);
-          return [];
-        }
-
-        try {
-          return [{
+            return [{
               address: await ens.getAddress(domain),
               network: this.network,
               from: "ens"
-          }]
+            }]
         } catch (e: any) {
-          throw Error(`ENS Error: ${e.message}`);
+            if (!throwErrorOnIllegalCharacters && e.message.includes("Illegal char")) {
+                return [];
+            }
+            
+            console.error(e);
+            throw Error(`ENS Error: ${e.message}`);
         }
     }
 }

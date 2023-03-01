@@ -15,15 +15,8 @@ export class RedefinedUsernameResolverService extends RedefinedResolverService {
     }
 
     async resolveDomain(domain: string): Promise<AccountRecord[]> {
-        try {
-            const web3 = EvmWeb3Service.getWeb3(this.nodeLink);
-            const contract = new web3.eth.Contract(redefinedNicknameResolverAbi, config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS);
-            return await contract.methods.resolve(domain).call();
-        } catch (e: any) {
-            if (e.message.includes("Name is not registered")) {
-                return [];
-            }
-            throw Error(`redefined Error: ${e.message}`);
-        }
+        const web3 = EvmWeb3Service.getWeb3(this.nodeLink);
+        const contract = new web3.eth.Contract(redefinedNicknameResolverAbi, config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS);
+        return await contract.methods.resolve(domain).call();
     }
 }

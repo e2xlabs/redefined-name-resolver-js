@@ -16,7 +16,7 @@ export class UnstoppableResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string): Promise<Account[]> {
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true): Promise<Account[]> {
         try {
             if (!(await this.resolution.isRegistered(domain))) {
                 return [];
@@ -28,6 +28,12 @@ export class UnstoppableResolverService extends ResolverService {
                 from: "unstoppable"
             }];
         } catch (e: any) {
+    
+            if (!throwErrorOnIllegalCharacters && e.message.includes("is invalid")) {
+                return [];
+            }
+    
+            console.error(e);
             throw Error(`Unstoppable Error: ${e.message}`);
         }
     }
