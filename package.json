@@ -34,7 +34,6 @@
     "@ensdomains/address-encoder": "^0.2.21",
     "@ensdomains/ensjs": "^2.1.0",
     "@unstoppabledomains/resolution": "^8.4.0",
-    "content-hash": "^2.5.2",
     "ethers": "^5.7.2",
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.21",
