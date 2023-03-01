@@ -1,6 +1,6 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "1.2.11",
+  "version": "1.3.0",
   "description": "JS lib to resolve crypto names",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -21,7 +21,7 @@
     ],
     "access": "public"
   },
-  "author": "Cifrex",
+  "author": "e2xlabs",
   "scripts": {
     "commit": "git-cz",
     "start": "del-cli --force dist && tsc && node dist/index.js",

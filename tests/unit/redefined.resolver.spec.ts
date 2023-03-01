@@ -1,22 +1,33 @@
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
-import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
+import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
+import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { RedefinedResolver } from "@resolver/redefined.resolver";
 import config from "@resolver/config";
-import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import type { Network } from "@resolver/models/types";
+import type { Account, AccountRecord, Network, RequestedNetwork } from "@resolver/models/types";
 
 describe('redefined.resolver', () => {
-  const spyRedefinedResolve = jest.spyOn(RedefinedResolverService.prototype, 'resolve');
+  const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
+  const spyRedefinedEmailResolve = jest.spyOn(RedefinedEmailResolverService.prototype, 'resolveDomain');
   const spyEncResolve = jest.spyOn(EnsResolverService.prototype, 'resolve');
   const spyUnsResolve = jest.spyOn(UnstoppableResolverService.prototype, 'resolve');
 
-  beforeEach(() => {
-    spyRedefinedResolve.mockClear();
-    spyEncResolve.mockClear();
-    spyUnsResolve.mockClear();
+  function resetRedefinedImplementationWithNetworks(networks: Network[]) {
+    spyRedefinedUsernameResolve.mockReset()
+    spyRedefinedEmailResolve.mockReset()
 
-    spyRedefinedResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "redefined" }]);
+    spyRedefinedUsernameResolve.mockImplementation(async () => networks.map(network => ({ addr: "0xUsername", network })));
+    spyRedefinedEmailResolve.mockImplementation(async () => networks.map(network => ({ addr: "0xEmail", network })));
+  }
+
+  beforeEach(() => {
+    spyRedefinedUsernameResolve.mockReset();
+    spyRedefinedEmailResolve.mockReset();
+    spyEncResolve.mockReset();
+    spyUnsResolve.mockReset();
+
+    spyRedefinedUsernameResolve.mockImplementation(async () => [{ addr: "0xUsername", network: "eth" }]);
+    spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail", network: "eth" }]);
     spyEncResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "ens" }]);
     spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "unstoppable" }]);
   })
@@ -26,7 +37,7 @@ describe('redefined.resolver', () => {
       resolverServices: ["redefined"]
     })
     // to bypass privacy
-    expect(resolver["resolverServices"]).toEqual([new RedefinedResolverService()]);
+    expect(resolver["resolverServices"]).toEqual(["redefined"]);
   });
 
   test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
@@ -44,7 +55,8 @@ describe('redefined.resolver', () => {
 
     await resolver.resolve("cifrex.evm", ["eth"]);
 
-    expect(spyRedefinedResolve).toHaveBeenCalled()
+    expect(spyRedefinedEmailResolve).toHaveBeenCalled()
+    expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
     expect(spyUnsResolve).not.toHaveBeenCalled()
   });
@@ -54,7 +66,8 @@ describe('redefined.resolver', () => {
 
     await resolver.resolve("cifrex.evm", ["eth"]);
 
-    expect(spyRedefinedResolve).toHaveBeenCalled()
+    expect(spyRedefinedEmailResolve).toHaveBeenCalled()
+    expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
     expect(spyEncResolve).toHaveBeenCalled()
     expect(spyUnsResolve).toHaveBeenCalled()
   });
@@ -62,9 +75,10 @@ describe('redefined.resolver', () => {
   test('SHOULD use preinstalled nodes IF none are provided', async () => {
     const resolver = new RedefinedResolver();
     expect(resolver["nodes"]).toEqual({
+      arbitrum: config.ARBITRUM_NODE,
       eth: config.ETH_NODE,
       bsc: config.BSC_NODE,
-      sol: config.SOL_NODE,
+      zil: config.ZIL_NODE,
     })
   });
 
@@ -74,34 +88,77 @@ describe('redefined.resolver', () => {
     });
 
     expect(resolver["nodes"]).toEqual({
+      arbitrum: config.ARBITRUM_NODE,
       eth: "eth_node",
       bsc: config.BSC_NODE,
-      sol: config.SOL_NODE,
+      zil: config.ZIL_NODE,
     });
-  });
-
-  test('SHOULD call web3 in resolver with target node IF provided', async () => {
-    const spyGetEvmWeb3 = jest.spyOn(EvmWeb3Service, "getWeb3")
-    spyEncResolve.mockImplementation(async (domain: string, network?: Network, nodeLink?: string) => {
-      EvmWeb3Service.getWeb3(nodeLink!);
-      return [];
-    });
-
-    const resolver = new RedefinedResolver({
-      resolverServices: ["ens"],
-      nodes: { eth: "eth_node" }
-    });
-
-    await resolver.resolve("cifrex.eth", ["eth"]);
-
-    expect(spyGetEvmWeb3).toHaveBeenCalledWith("eth_node");
   });
 
   test('SHOULD show error on create instance IF nodes exists but provided nothing', async () => {
     try {
       new RedefinedResolver({ nodes: {} })
     } catch (e: any) {
-      expect(e.message).toBe("“nodes” option must be a non-empty array or falsy")
+      expect(e.message).toBe("“nodes” option must be a non-empty object or falsy")
     }
+  });
+
+  test('SHOULD resolve only with target network IF provided', async () => {
+    const networks: RequestedNetwork[] = ["eth", "sol", "zil", "bsc", "arbitrum"];
+
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"]
+    });
+
+    resetRedefinedImplementationWithNetworks(networks)
+
+    const callTest = async (network: RequestedNetwork) => {
+      expect(await resolver.resolve("cifrex.eth", [network])).toEqual([
+        { address: "0xUsername", network, from: "redefined" },
+        { address: "0xEmail", network, from: "redefined" },
+      ]);
+    }
+
+    await Promise.all(networks.map((it) => callTest(it)));
+  });
+
+  test('SHOULD resolve with evm network IF target network not resolved', async () => {
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"]
+    });
+
+    const networks: Network[] = ["eth", "evm"];
+    resetRedefinedImplementationWithNetworks(networks)
+
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([
+      { address: "0xUsername", network: "evm", from: "redefined" },
+      { address: "0xEmail", network: "evm", from: "redefined" },
+    ]);
+  });
+
+  test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"]
+    });
+
+    const networks: Network[] = ["eth", "evm"];
+    resetRedefinedImplementationWithNetworks(networks)
+
+    expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual([
+      { address: "0xUsername", network: "eth", from: "redefined" },
+      { address: "0xEmail", network: "eth", from: "redefined" },
+    ]);
+  });
+
+  test('SHOULD NOT resolve with evm network IF provided option', async () => {
+    const resolver = new RedefinedResolver({
+      resolverServices: ["redefined"],
+      allowDefaultEvmResolves: false,
+    });
+
+    const networks: Network[] = ["eth", "evm"];
+    resetRedefinedImplementationWithNetworks(networks)
+
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([]);
   });
 });

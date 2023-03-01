@@ -1,33 +1,40 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Network, Account } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
-
-const resolution = new Resolution();
+import { ResolverServices } from "@resolver/models/types";
 
 export class UnstoppableResolverService extends ResolverService {
 
-    supportedNetworks: Network[]  = ["eth", "bsc", "zil"];
-    
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.isSupportedNetwork(network)) {
-            console.log(`${network} not supported by Unstoppable.`);
-            return [];
-        }
+    vendor: ResolverServices = "unstoppable"
 
+    private resolution = new Resolution();
+
+    constructor(
+        public nodeLink: string,
+        public network: Network,
+    ) {
+        super();
+    }
+
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true): Promise<Account[]> {
         try {
-            if (!(await resolution.isRegistered(domain))) {
-                console.log(`${domain} not registered with Unstoppable.`);
+            if (!(await this.resolution.isRegistered(domain))) {
                 return [];
             }
 
             return [{
-                address: await resolution.addr(domain, network),
-                network: network,
+                address: await this.resolution.addr(domain, this.network),
+                network: this.network,
                 from: "unstoppable"
             }];
         } catch (e: any) {
-            console.error("Unstoppable Error", e.message);
-            return [];
+    
+            if (!throwErrorOnIllegalCharacters && e.message.includes("is invalid")) {
+                return [];
+            }
+    
+            console.error(e);
+            throw Error(`Unstoppable Error: ${e.message}`);
         }
     }
 }

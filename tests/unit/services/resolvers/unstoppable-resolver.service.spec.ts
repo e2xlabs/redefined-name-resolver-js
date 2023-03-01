@@ -10,31 +10,21 @@ describe('unstoppable-resolver.service', () => {
     })
 
     test('SHOULD get addresses for domain with network IF it is registered and available', async () => {
-        const unstoppableResolverService = new UnstoppableResolverService();
 
         const networks: Network[] = ["eth", "bsc", "zil"];
         const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.ETH_NODE)).toEqual([{ address: "0x123", network, from: "unstoppable"}]);
-        };
-
-        await Promise.all(networks.map(callTest));
-    });
-
-    test('SHOULD get empty response for unsupported networks', async () => {
-        const unstoppableResolverService = new UnstoppableResolverService();
-
-        const networks: Network[] = ["sol"];
-        const callTest = async (network: Network) => {
-            expect(await unstoppableResolverService.resolve("cifrex.crypto", network, config.SOL_NODE)).toEqual([]);
+            const unstoppableResolverService = new UnstoppableResolverService(config.ETH_NODE, network);
+            expect(await unstoppableResolverService.resolve("cifrex.crypto")).toEqual([{ address: "0x123", network, from: "unstoppable"}]);
         };
 
         await Promise.all(networks.map(callTest));
     });
 
     test('SHOULD get empty response for domain IF it is not registered', async () => {
-        const unstoppableResolverService = new UnstoppableResolverService();
+        const unstoppableResolverService = new UnstoppableResolverService(config.ETH_NODE, "eth");
+        
         jest.spyOn(Resolution.prototype, 'isRegistered').mockImplementation(async () => false);
 
-        expect(await unstoppableResolverService.resolve("cifrex.crypto", "eth", config.ETH_NODE)).toEqual([]);
+        expect(await unstoppableResolverService.resolve("cifrex.crypto")).toEqual([]);
     });
 });

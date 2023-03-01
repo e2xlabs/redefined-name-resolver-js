@@ -1,15 +1,19 @@
-export type Network = "eth" | "bsc" | "sol" | "zil";
-
 export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
+export type NodeNetwork = "eth" | "arbitrum" | "bsc"| "zil";
+
+export type RequestedNetwork = NodeNetwork  | "sol";
+
+export type Network = RequestedNetwork | "evm";
+
 export type Nodes = {
-    [key in Network]?: string
+    [key in NodeNetwork]: string
 }
 
 export type ResolverOptions = {
-    // by default, we use all services
     resolverServices?: ResolverServices[],
-    nodes?: Nodes
+    nodes?: { [key in NodeNetwork]?: string }
+    allowDefaultEvmResolves?: boolean
 }
 
 export type Account = {

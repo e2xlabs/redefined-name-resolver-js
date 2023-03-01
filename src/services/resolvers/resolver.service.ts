@@ -1,18 +1,15 @@
-import type { Nodes, Account,Network } from "@resolver/models/types";
+import type { Nodes, Account, Network, RequestedNetwork, ResolverServices } from "@resolver/models/types";
 import { flatten } from "lodash";
 
 export abstract class ResolverService {
 
-    abstract supportedNetworks: Network[]
+    allNetworksSupported = false;
 
-    abstract resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]>;
+    abstract network: Network;
+
+    abstract nodeLink: string;
+
+    abstract vendor: ResolverServices;
     
-    isSupportedNetwork(network: Network) {
-        return this.supportedNetworks.some(it => it === network);
-    }
-
-    async resolveAll(domain: string, nodes: Nodes): Promise<Account[]> {
-        const serviceNodes = this.supportedNetworks.map(it => ({ network: it, node: nodes[it] }));
-        return flatten(await Promise.all(serviceNodes.map(it => this.resolve(domain, it.network, it.node!))));
-    }
+    abstract resolve(domain: string, throwErrorOnIllegalCharacters: boolean, networks?: RequestedNetwork[], ): Promise<Account[]>;
 }

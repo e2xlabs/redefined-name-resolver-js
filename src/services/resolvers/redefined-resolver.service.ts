@@ -1,32 +1,57 @@
+
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { Account, AccountRecord, Network } from "@resolver/models/types";
-import redefinedResolverAbi from "@resolver/services/abis/redefined-resolver.abi";
-import config from "@resolver/config";
-import { isEmail } from "@resolver/utils/utils";
-import { sha256 } from "js-sha256";
-import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
+import type { Account, Network } from "@resolver/models/types";
+import { AccountRecord, RequestedNetwork, ResolverServices } from "@resolver/models/types";
 
-export class RedefinedResolverService extends ResolverService {
-    
-    supportedNetworks: Network[]  = ["eth"];
-    
-    async resolve(domain: string, network: Network, nodeLink: string): Promise<Account[]> {
-        if (!this.isSupportedNetwork(network)) {
-            console.log(`${network} not supported by redefined.`);
-            return [];
-        }
+export abstract class RedefinedResolverService extends ResolverService {
 
+    vendor: ResolverServices = "redefined"
+
+    allNetworksSupported = true;
+
+    abstract network: Network;
+
+    abstract nodeLink: string;
+
+    protected constructor(
+      public allowDefaultEvmResolves: boolean,
+    ) {
+        super();
+    }
+
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: RequestedNetwork[]): Promise<Account[]> {
         try {
-            const web3 = EvmWeb3Service.getWeb3(nodeLink);
-            const contract = new web3.eth.Contract(redefinedResolverAbi, config.REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS);
-            return (await contract.methods.resolve(isEmail(domain) ? sha256(domain) : domain).call()).map((it: AccountRecord) => ({
+            const accounts: Account[] = (await this.resolveDomain(domain)).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
                 from: "redefined"
             }));
+    
+            const targetAccountsWithoutEvm = accounts.filter(it => (
+                (!networks || networks.includes(it.network as RequestedNetwork))
+                && it.network !== "evm"
+            ));
+    
+            if (targetAccountsWithoutEvm.length) {
+                return targetAccountsWithoutEvm;
+            }
+    
+            return this.allowDefaultEvmResolves
+                ? accounts.filter(it => it.network === "evm")
+                : [];
         } catch (e: any) {
-            console.error("redefined Error", e.message);
-            return [];
+    
+            if (
+                e.message.includes("Name is not registered")
+                || (!throwErrorOnIllegalCharacters && e.message.includes("Invalid character"))
+            ) {
+                return [];
+            }
+    
+            console.error(e);
+            throw Error(`redefined Error: ${e.message}`);
         }
     }
+
+    abstract resolveDomain(domain: string): Promise<AccountRecord[]>;
 }
