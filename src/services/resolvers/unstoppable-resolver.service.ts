@@ -1,32 +1,50 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { Network, Account } from "@resolver/models/types";
-import Resolution from "@unstoppabledomains/resolution";
+import type { Account } from "@resolver/models/types";
+import Resolution  from "@unstoppabledomains/resolution";
 import { ResolverServices } from "@resolver/models/types";
 
 export class UnstoppableResolverService extends ResolverService {
 
     vendor: ResolverServices = "unstoppable"
 
-    private resolution = new Resolution();
+    private resolution: Resolution
 
     constructor(
-        public nodeLink: string,
-        public network: Network,
+        public nodes: { eth: string, polygon: string },
     ) {
         super();
+    
+        this.resolution = new Resolution({
+            sourceConfig: {
+                uns: {
+                    locations: {
+                        Layer1: {
+                            url: nodes.eth,
+                            network: 'mainnet'
+                        },
+                        Layer2: {
+                            url: nodes.polygon,
+                            network: 'polygon-mainnet',
+                        },
+                    },
+                },
+            },
+        });
     }
 
-    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true): Promise<Account[]> {
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: string[]): Promise<Account[]> {
         try {
             if (!(await this.resolution.isRegistered(domain))) {
                 return [];
             }
-
-            return [{
-                address: await this.resolution.addr(domain, this.network),
-                network: this.network,
-                from: "unstoppable"
-            }];
+    
+            return !networks || networks.includes("eth")
+                ? [{
+                    address: await this.resolution.addr(domain, "ETH"),
+                    network: "eth",
+                    from: "unstoppable",
+                }]
+                : []
         } catch (e: any) {
     
             if (!throwErrorOnIllegalCharacters && e.message.includes("is invalid")) {

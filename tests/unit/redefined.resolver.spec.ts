@@ -77,8 +77,7 @@ describe('redefined.resolver', () => {
     expect(resolver["nodes"]).toEqual({
       arbitrum: config.ARBITRUM_NODE,
       eth: config.ETH_NODE,
-      bsc: config.BSC_NODE,
-      zil: config.ZIL_NODE,
+      polygon: config.POLYGON_NODE,
     })
   });
 
@@ -90,8 +89,7 @@ describe('redefined.resolver', () => {
     expect(resolver["nodes"]).toEqual({
       arbitrum: config.ARBITRUM_NODE,
       eth: "eth_node",
-      bsc: config.BSC_NODE,
-      zil: config.ZIL_NODE,
+      polygon: config.POLYGON_NODE,
     });
   });
 
@@ -104,7 +102,7 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD resolve only with target network IF provided', async () => {
-    const networks: RequestedNetwork[] = ["eth", "sol", "zil", "bsc", "arbitrum"];
+    const networks: RequestedNetwork[] = ["eth", "sol", "zil", "bsc"];
 
     const resolver = new RedefinedResolver({
       resolverServices: ["redefined"]

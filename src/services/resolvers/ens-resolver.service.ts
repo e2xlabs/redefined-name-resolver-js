@@ -1,36 +1,38 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import type { Network, Account } from "@resolver/models/types";
+import type { Account } from "@resolver/models/types";
 import { ResolverServices } from "@resolver/models/types";
+import { ethers } from 'ethers'
+import { formatsByName } from "@ensdomains/address-encoder";
+// @ts-ignore
+import ENS, { getEnsAddress } from '@ensdomains/ensjs'
 
+const COIN_LIST = Object.fromEntries(Object.entries(formatsByName).filter(([key, value]) => !key.match(/_LEGACY/)));
 
 export class EnsResolverService extends ResolverService {
 
     vendor: ResolverServices = "ens"
 
     constructor(
-        public nodeLink: string,
-        public network: Network,
+        public node: string,
     ) {
         super();
     }
 
-    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true): Promise<Account[]> {
-        const ens = EvmWeb3Service.getWeb3(this.nodeLink).eth.ens;
-        
+    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: string[]): Promise<Account[]> {
+        const provider = new ethers.providers.JsonRpcProvider(this.node);
+    
         try {
-            return [{
-              address: await ens.getAddress(domain),
-              network: this.network,
-              from: "ens"
-            }]
+            const resolver = await provider.getResolver(domain)
+    
+            return !networks || networks.includes("eth")
+                ? [{
+                    address: await resolver!.getAddress(COIN_LIST.ETH.coinType),
+                    network: "eth",
+                    from: "ens"
+                }]
+                : []
         } catch (e: any) {
-            if (!throwErrorOnIllegalCharacters && e.message.includes("Illegal char")) {
-                return [];
-            }
-            
-            console.error(e);
-            throw Error(`ENS Error: ${e.message}`);
+            throw Error(e.message);
         }
     }
 }

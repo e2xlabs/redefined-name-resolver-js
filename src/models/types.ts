@@ -1,8 +1,8 @@
 export type ResolverServices = "redefined" | "ens" | "unstoppable"
 
-export type NodeNetwork = "eth" | "arbitrum" | "bsc"| "zil";
+export type NodeNetwork = "eth" | "arbitrum" | "polygon";
 
-export type RequestedNetwork = NodeNetwork  | "sol";
+export type RequestedNetwork = "eth" | "bsc"| "zil" | "sol" | "doge" | "ltc";
 
 export type Network = RequestedNetwork | "evm";
 
@@ -18,7 +18,7 @@ export type ResolverOptions = {
 
 export type Account = {
     address: string,
-    network: Network,
+    network: string,
     from: ResolverServices,
 }
 

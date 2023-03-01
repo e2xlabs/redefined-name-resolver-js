@@ -1,4 +1,4 @@
-import type { AccountRecord, Network } from "@resolver/models/types";
+import type { AccountRecord } from "@resolver/models/types";
 import config from "@resolver/config";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedNicknameResolverAbi from "@resolver/services/abis/redefined-nickname-resolver.abi";
@@ -8,7 +8,6 @@ export class RedefinedUsernameResolverService extends RedefinedResolverService {
 
     constructor(
         public nodeLink: string,
-        public network: Network,
         public allowDefaultEvmResolves: boolean,
     ) {
         super(allowDefaultEvmResolves);

@@ -7,7 +7,7 @@ describe('redefined-username-resolver.service', () => {
         const networks: Network[] = ["sol", "zil", "bsc"];
 
         const callTest = async (network: Network) => {
-            const redefinedResolverService = new RedefinedUsernameResolverService(config.ETH_NODE, network, true);
+            const redefinedResolverService = new RedefinedUsernameResolverService(config.ETH_NODE, true);
 
             expect(await redefinedResolverService.resolve("cifrex.eth")).toEqual([
                 { address: "0x123", network: "eth", from: "redefined", },

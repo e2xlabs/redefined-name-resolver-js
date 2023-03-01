@@ -1,5 +1,5 @@
 import type { Account, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions, ResolverServices, Nodes } from "@resolver/models/types";
+import type { ResolverOptions, ResolverServices, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
@@ -20,8 +20,7 @@ export class RedefinedResolver implements Resolver {
     private nodes: Nodes = {
         arbitrum: config.ARBITRUM_NODE,
         eth: config.ETH_NODE,
-        bsc: config.BSC_NODE,
-        zil: config.ZIL_NODE,
+        polygon: config.POLYGON_NODE,
     };
 
     constructor(
@@ -51,31 +50,23 @@ export class RedefinedResolver implements Resolver {
             this.allowDefaultEvmResolves = allowDefaultEvmResolves;
         }
 
-        this.resolvers = this.createResolvers(this.nodes, this.resolverServices, this.allowDefaultEvmResolves);
+        this.resolvers = this.createResolvers();
     }
 
     async resolve(domain: string, networks?: RequestedNetwork[]): Promise<Account[]> {
         return flatten(
-          await Promise.all(this.resolvers
-              .filter(it => !networks || it.allNetworksSupported || networks.includes(it.network as RequestedNetwork))
-              .map(it => it.resolve(domain, false, networks)))
-          )
-        ;
+          await Promise.all(this.resolvers.map(it => it.resolve(domain, false, networks)))
+        )
     }
 
-    private createResolvers(nodes: Nodes, resolverNames: ResolverServices[], allowDefaultEvmResolves: boolean): ResolverService[] {
+    private createResolvers(): ResolverService[] {
         const resolvers: ResolverService[] = [
-            new RedefinedUsernameResolverService(nodes.arbitrum, "arbitrum", allowDefaultEvmResolves),
-            new RedefinedEmailResolverService(nodes.arbitrum, "arbitrum", allowDefaultEvmResolves),
-
-            new EnsResolverService(nodes.eth, "eth"),
-            new EnsResolverService(nodes.bsc, "bsc"),
-
-            new UnstoppableResolverService(nodes.eth, "eth"),
-            new UnstoppableResolverService(nodes.bsc, "bsc"),
-            new UnstoppableResolverService(nodes.zil, "zil"),
+            new RedefinedUsernameResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
+            new RedefinedEmailResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
+            new EnsResolverService(this.nodes.eth),
+            new UnstoppableResolverService({ eth: this.nodes.eth, polygon: this.nodes.polygon }),
         ]
 
-        return resolvers.filter(it => resolverNames.includes(it.vendor));
+        return resolvers.filter(it => this.resolverServices.includes(it.vendor));
     }
 }

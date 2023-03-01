@@ -1,4 +1,4 @@
-import type { AccountRecord, Network } from "@resolver/models/types";
+import type { AccountRecord } from "@resolver/models/types";
 import config from "@resolver/config";
 import { sha256 } from "js-sha256";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
@@ -9,7 +9,6 @@ export class RedefinedEmailResolverService extends RedefinedResolverService {
 
     constructor(
         public nodeLink: string,
-        public network: Network,
         public allowDefaultEvmResolves: boolean,
     ) {
         super(allowDefaultEvmResolves);

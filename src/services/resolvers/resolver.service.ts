@@ -1,15 +1,8 @@
-import type { Nodes, Account, Network, RequestedNetwork, ResolverServices } from "@resolver/models/types";
-import { flatten } from "lodash";
+import type { Account, ResolverServices } from "@resolver/models/types";
 
 export abstract class ResolverService {
 
-    allNetworksSupported = false;
-
-    abstract network: Network;
-
-    abstract nodeLink: string;
-
     abstract vendor: ResolverServices;
     
-    abstract resolve(domain: string, throwErrorOnIllegalCharacters: boolean, networks?: RequestedNetwork[], ): Promise<Account[]>;
+    abstract resolve(domain: string, throwErrorOnIllegalCharacters: boolean, networks?: string[]): Promise<Account[]>;
 }
