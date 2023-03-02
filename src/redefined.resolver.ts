@@ -54,8 +54,8 @@ export class RedefinedResolver implements Resolver {
 
     async resolve(domain: string, networks?: string[]): Promise<Account[]> {
         return flatten(
-          await Promise.all(this.resolvers.map(it => it.resolve(domain, false, networks)))
-        )
+          await Promise.all(this.resolvers.map(it => it.resolve(domain, { throwErrorOnInvalidDomain: false }, networks)))
+        ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
 
     private createResolvers(): ResolverService[] {

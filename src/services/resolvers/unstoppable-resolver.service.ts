@@ -1,4 +1,4 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import Resolution  from "@unstoppabledomains/resolution";
 import { ResolverServices } from "@resolver/models/types";
@@ -13,7 +13,7 @@ export class UnstoppableResolverService extends ResolverService {
         public nodes: { eth: string, polygon: string },
     ) {
         super();
-    
+
         this.resolution = new Resolution({
             sourceConfig: {
                 uns: {
@@ -32,25 +32,23 @@ export class UnstoppableResolverService extends ResolverService {
         });
     }
 
-    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: string[]): Promise<Account[]> {
+    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
         try {
             if (!(await this.resolution.isRegistered(domain))) {
                 return [];
             }
-    
-            return !networks || networks.includes("eth")
-                ? [{
-                    address: await this.resolution.addr(domain, "ETH"),
-                    network: "eth",
-                    from: "unstoppable",
-                }]
-                : []
+
+            return [{
+                address: await this.resolution.addr(domain, "ETH"),
+                network: "eth",
+                from: "unstoppable",
+            }]
         } catch (e: any) {
-    
-            if (!throwErrorOnIllegalCharacters && e.message.includes("is invalid")) {
+
+            if (!throwErrorOnInvalidDomain && e.message.includes("is invalid")) {
                 return [];
             }
-    
+
             console.error(e);
             throw Error(`Unstoppable Error: ${e.message}`);
         }

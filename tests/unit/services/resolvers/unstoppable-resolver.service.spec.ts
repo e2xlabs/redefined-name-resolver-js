@@ -4,12 +4,19 @@ import config from "@resolver/config";
 
 
 describe('unstoppable-resolver.service', () => {
-    
+
     const unstoppableResolverService = new UnstoppableResolverService({ eth: config.ETH_NODE, polygon: config.POLYGON_NODE });
-    
+
     const spyIsRegistered = jest.spyOn(Resolution.prototype, 'isRegistered');
     const spyIsAddr = jest.spyOn(Resolution.prototype, 'addr');
-    
+
+    function spyOnThrowInvalidDomainError() {
+        spyIsAddr.mockReset();
+        spyIsAddr.mockImplementation(() => {
+            throw Error("Domain is invalid")
+        })
+    }
+
     beforeEach(() => {
         spyIsRegistered.mockImplementation(async () => true);
         spyIsAddr.mockImplementation(async (domain: string, network: string) => "0x123");
@@ -25,5 +32,24 @@ describe('unstoppable-resolver.service', () => {
         spyIsRegistered.mockImplementation(async () => false);
 
         expect(await unstoppableResolverService.resolve("ivan.crypto")).toEqual([]);
+    });
+
+    test('SHOULD NOT throw Error IF domain is invalid', async () => {
+        spyOnThrowInvalidDomainError();
+
+        const response = await unstoppableResolverService.resolve("theseif.eth", { throwErrorOnInvalidDomain: false });
+        expect(response).toEqual([]);
+    });
+
+    test('SHOULD throw Error IF domain is invalid', async () => {
+        spyOnThrowInvalidDomainError();
+
+        let error = "";
+        try {
+            await unstoppableResolverService.resolve("theseif.eth", { throwErrorOnInvalidDomain: true });
+        } catch (e: any) {
+            error = e.message;
+        }
+        expect(error).toBe("Unstoppable Error: Domain is invalid")
     });
 });

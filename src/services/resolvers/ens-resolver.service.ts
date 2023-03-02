@@ -1,4 +1,4 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverServices } from "@resolver/models/types";
 import { ethers } from 'ethers'
@@ -18,21 +18,24 @@ export class EnsResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true, networks?: string[]): Promise<Account[]> {
+    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
         const provider = new ethers.providers.JsonRpcProvider(this.node);
-    
+
         try {
             const resolver = await provider.getResolver(domain)
-    
-            return !networks || networks.includes("eth")
-                ? [{
-                    address: await resolver!.getAddress(COIN_LIST.ETH.coinType),
-                    network: "eth",
-                    from: "ens"
-                }]
-                : []
+
+            return [{
+                address: await resolver!.getAddress(COIN_LIST.ETH.coinType),
+                network: "eth",
+                from: "ens"
+            }]
         } catch (e: any) {
-            throw Error(e.message);
+            if (!throwErrorOnInvalidDomain && e.message.includes("Illegal char")) {
+                return [];
+            }
+
+            console.error(e);
+            throw Error(`ENS Error: ${e.message}`);
         }
     }
 }
