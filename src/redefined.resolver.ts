@@ -10,11 +10,13 @@ import config from "@resolver/config";
 
 export class RedefinedResolver implements Resolver {
 
-    private resolverNames: ResolverName[] = ["redefined", "ens", "unstoppable"];
+    private defaultResolverNames: ResolverName[] = ["redefined", "ens", "unstoppable"];
 
     private allowDefaultEvmResolves = true;
 
-    private resolvers: ResolverService[];
+    private useDefaultResolvers = true;
+
+    private resolvers: ResolverService[] = [];
 
     private nodes: Nodes = {
         arbitrum: config.ARBITRUM_NODE,
@@ -25,40 +27,7 @@ export class RedefinedResolver implements Resolver {
     constructor(
       public options?: ResolverOptions
     ) {
-        const resolverNames = this.options?.resolverNames;
-        const nodes = this.options?.nodes;
-        const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
-        const customResolvers = this.options?.customResolvers;
-
-        if (resolverNames && !resolverNames.length) {
-            throw Error("“resolverServices” option must be a non-empty array or falsy")
-        }
-
-        if (nodes && !Object.keys(nodes).length) {
-            throw Error("“nodes” option must be a non-empty object or falsy")
-        }
-
-        if (customResolvers && !customResolvers.length) {
-            throw Error("“customResolvers” option must be a non-empty array or falsy")
-        }
-
-        if (resolverNames) {
-            this.resolverNames = resolverNames;
-        }
-
-        if (nodes) {
-            this.nodes = { ...this.nodes, ...nodes };
-        }
-
-        if (allowDefaultEvmResolves !== undefined) {
-            this.allowDefaultEvmResolves = allowDefaultEvmResolves;
-        }
-
-        this.resolvers = this.createResolvers();
-
-        if (customResolvers) {
-            this.resolvers.push(...customResolvers);
-        }
+        this.prepareOptions();
     }
 
     async resolve(domain: string, networks?: string[]): Promise<Account[]> {
@@ -67,14 +36,64 @@ export class RedefinedResolver implements Resolver {
         ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
 
-    private createResolvers(): ResolverService[] {
-        const resolvers: ResolverService[] = [
+    private getDefaultResolvers(): ResolverService[] {
+        return [
             new RedefinedUsernameResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
             new RedefinedEmailResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
             new EnsResolverService(this.nodes.eth),
             new UnstoppableResolverService({ eth: this.nodes.eth, polygon: this.nodes.polygon }),
         ]
+    }
 
-        return resolvers.filter(it => this.resolverNames.includes(it.vendor));
+    private prepareOptions() {
+        const defaultResolverNames = this.options?.defaultResolvers;
+        const nodes = this.options?.nodes;
+        const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
+        const customResolvers = this.options?.customResolvers;
+        const useDefaultResolvers = this.options?.useDefaultResolvers;
+
+        if (useDefaultResolvers !== undefined) {
+            this.useDefaultResolvers = useDefaultResolvers;
+        }
+
+        if (defaultResolverNames) {
+            if (!defaultResolverNames.length) {
+                throw Error("“resolverServices” option must be a non-empty array or falsy");
+            }
+
+            if (!this.useDefaultResolvers) {
+                console.warn("You have chosen not to use the default resolvers, but you have specified them!");
+            }
+
+            this.defaultResolverNames = defaultResolverNames;
+        }
+
+        if (nodes) {
+            if (!Object.keys(nodes).length) {
+                throw Error("“nodes” option must be a non-empty object or falsy")
+            }
+
+            this.nodes = { ...this.nodes, ...nodes };
+        }
+
+        if (allowDefaultEvmResolves !== undefined) {
+            this.allowDefaultEvmResolves = allowDefaultEvmResolves;
+        }
+
+        this.resolvers = this.useDefaultResolvers
+          ? this.getDefaultResolvers().filter(it => this.defaultResolverNames.includes(it.vendor))
+          : [];
+
+        if (customResolvers) {
+            if (!customResolvers.length) {
+                throw Error("“customResolvers” option must be a non-empty array or falsy");
+            }
+
+            this.resolvers.push(...customResolvers);
+        }
+
+        if (!this.resolvers.length) {
+            throw Error("No resolvers were added for your options!");
+        }
     }
 }

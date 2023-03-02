@@ -9,7 +9,8 @@ export type Nodes = {
 }
 
 export type ResolverOptions = {
-    resolverNames?: ResolverName[],
+    defaultResolvers?: ResolverName[],
+    useDefaultResolvers?: boolean,
     nodes?: { [key in NodeNetwork]?: string }
     allowDefaultEvmResolves?: boolean,
     customResolvers?: ResolverService[],

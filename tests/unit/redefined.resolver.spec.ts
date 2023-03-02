@@ -34,15 +34,15 @@ describe('redefined.resolver', () => {
 
   test('SHOULD use provided resolvers IF exists', async () => {
     const resolver = new RedefinedResolver({
-      resolverNames: ["redefined"]
+      defaultResolvers: ["redefined"]
     })
     // to bypass privacy
-    expect(resolver["resolverNames"]).toEqual(["redefined"]);
+    expect(resolver["defaultResolverNames"]).toEqual(["redefined"]);
   });
 
   test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
     try {
-      new RedefinedResolver({ resolverNames: [] })
+      new RedefinedResolver({ defaultResolvers: [] })
     } catch (e: any) {
       expect(e.message).toBe("“resolverServices” option must be a non-empty array or falsy")
     }
@@ -50,7 +50,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD call resolvers IF provided', async () => {
     const resolver = new RedefinedResolver({
-      resolverNames: ["redefined", "ens"]
+      defaultResolvers: ["redefined", "ens"]
     })
 
     await resolver.resolve("cifrex.evm", ["eth"]);
@@ -105,7 +105,7 @@ describe('redefined.resolver', () => {
     const networks= ["eth", "sol", "zil", "bsc"];
 
     const resolver = new RedefinedResolver({
-      resolverNames: ["redefined"]
+      defaultResolvers: ["redefined"]
     });
 
     resetRedefinedImplementationWithNetworks(networks)
@@ -122,7 +122,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD resolve with evm network IF target network not resolved', async () => {
     const resolver = new RedefinedResolver({
-      resolverNames: ["redefined"]
+      defaultResolvers: ["redefined"]
     });
 
     const networks = ["eth", "evm"];
@@ -136,7 +136,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
     const resolver = new RedefinedResolver({
-      resolverNames: ["redefined"]
+      defaultResolvers: ["redefined"]
     });
 
     const networks = ["eth", "evm"];
@@ -150,7 +150,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
     const resolver = new RedefinedResolver({
-      resolverNames: ["redefined"],
+      defaultResolvers: ["redefined"],
       allowDefaultEvmResolves: false,
     });
 
@@ -190,7 +190,7 @@ describe('redefined.resolver', () => {
     const spyCustomResolve = jest.spyOn(CustomResolver.prototype, 'resolve');
 
     const resolver = new RedefinedResolver({
-      resolverNames: ["ens"],
+      defaultResolvers: ["ens"],
       customResolvers: [new CustomResolver()]
     });
 
@@ -198,5 +198,47 @@ describe('redefined.resolver', () => {
 
     expect(spyEnsResolve).toHaveBeenCalled()
     expect(spyCustomResolve).toHaveBeenCalled()
+  });
+
+  test('SHOULD use only custom resolver IF options provided', async () => {
+    const spyCustomResolve = jest.spyOn(CustomResolver.prototype, 'resolve');
+
+    const resolver = new RedefinedResolver({
+      useDefaultResolvers: false,
+      customResolvers: [new CustomResolver()]
+    });
+
+    await resolver.resolve("domain");
+
+    expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
+    expect(spyRedefinedUsernameResolve).not.toHaveBeenCalled()
+    expect(spyEnsResolve).not.toHaveBeenCalled()
+    expect(spyUnsResolve).not.toHaveBeenCalled()
+    expect(spyCustomResolve).toHaveBeenCalled()
+  });
+
+  test('SHOULD warn user about an invalid action IF defaultResolvers provider and useDefaultResolvers is false', async () => {
+    const spyWarn = jest.spyOn(console, 'warn');
+
+    new RedefinedResolver({
+      defaultResolvers: ["ens"],
+      useDefaultResolvers: false,
+      customResolvers: [new CustomResolver()]
+    });
+
+    expect(spyWarn).toHaveBeenCalled()
+    expect(spyWarn).toHaveBeenCalledWith("You have chosen not to use the default resolvers, but you have specified them!")
+  });
+
+  test('SHOULD throw error IF useDefaultResolvers is false and no custom resolvers', async () => {
+    let error = "";
+    try {
+      new RedefinedResolver({
+        useDefaultResolvers: false,
+      });
+    } catch (e: any) {
+      error = e.message;
+    }
+    expect(error).toBe("No resolvers were added for your options!")
   });
 });
