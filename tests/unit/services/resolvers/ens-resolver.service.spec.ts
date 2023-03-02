@@ -11,7 +11,7 @@ describe('ens-resolver.service', () => {
     function spyOnThrowInvalidDomainError() {
         spyEthersGetAddress.mockReset();
         spyEthersGetAddress.mockImplementation(() => {
-            throw Error("Illegal char @")
+            throw Error("Illegal char TEST")
         })
     }
 
@@ -20,7 +20,7 @@ describe('ens-resolver.service', () => {
         spyEthersGetAddress.mockImplementation(async () => "0x123")
     })
 
-    test('SHOULD get addresses for domain with network IF networks supported', async () => {
+    test('SHOULD get addresses for domain with network IF is valid', async () => {
 
         expect(await ensResolverService.resolve("theseif.eth")).toEqual([{ address: "0x123", network: "eth", from: "ens", }]);
     });
@@ -41,6 +41,6 @@ describe('ens-resolver.service', () => {
         } catch (e: any) {
             error = e.message;
         }
-        expect(error).toBe("ENS Error: Illegal char @")
+        expect(error).toBe("ENS Error: Illegal char TEST")
     });
 });

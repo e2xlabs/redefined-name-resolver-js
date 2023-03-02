@@ -18,6 +18,9 @@ describe('unstoppable-resolver.service', () => {
     }
 
     beforeEach(() => {
+        spyIsRegistered.mockReset();
+        spyIsAddr.mockReset();
+
         spyIsRegistered.mockImplementation(async () => true);
         spyIsAddr.mockImplementation(async (domain: string, network: string) => "0x123");
     })
