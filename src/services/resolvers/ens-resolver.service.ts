@@ -3,8 +3,6 @@ import type { Account } from "@resolver/models/types";
 import { ResolverServices } from "@resolver/models/types";
 import { ethers } from 'ethers'
 import { formatsByName } from "@ensdomains/address-encoder";
-// @ts-ignore
-import ENS, { getEnsAddress } from '@ensdomains/ensjs'
 
 const COIN_LIST = Object.fromEntries(Object.entries(formatsByName).filter(([key, value]) => !key.match(/_LEGACY/)));
 
