@@ -44,7 +44,7 @@ describe('redefined.resolver', () => {
     try {
       new RedefinedResolver({ defaultResolvers: [] })
     } catch (e: any) {
-      expect(e.message).toBe("“resolverServices” option must be a non-empty array or falsy")
+      expect(e.message).toBe("“defaultResolvers” option must be a non-empty array or falsy")
     }
   });
 

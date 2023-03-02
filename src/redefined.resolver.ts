@@ -58,7 +58,7 @@ export class RedefinedResolver implements Resolver {
 
         if (defaultResolverNames) {
             if (!defaultResolverNames.length) {
-                throw Error("“resolverServices” option must be a non-empty array or falsy");
+                throw Error("“defaultResolvers” option must be a non-empty array or falsy");
             }
 
             if (!this.useDefaultResolvers) {
