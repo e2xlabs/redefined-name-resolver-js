@@ -1,4 +1,6 @@
-export type ResolverServices = "redefined" | "ens" | "unstoppable"
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+
+export type ResolverName = "redefined" | "ens" | "unstoppable" | string
 
 export type NodeNetwork = "eth" | "arbitrum" | "polygon";
 
@@ -7,15 +9,16 @@ export type Nodes = {
 }
 
 export type ResolverOptions = {
-    resolverServices?: ResolverServices[],
+    resolverNames?: ResolverName[],
     nodes?: { [key in NodeNetwork]?: string }
-    allowDefaultEvmResolves?: boolean
+    allowDefaultEvmResolves?: boolean,
+    customResolvers?: ResolverService[],
 }
 
 export type Account = {
     address: string,
     network: string,
-    from: ResolverServices,
+    from: ResolverName,
 }
 
 export type AccountRecord = {

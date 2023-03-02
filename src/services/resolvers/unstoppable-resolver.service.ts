@@ -1,11 +1,11 @@
 import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import Resolution  from "@unstoppabledomains/resolution";
-import { ResolverServices } from "@resolver/models/types";
+import { ResolverName } from "@resolver/models/types";
 
 export class UnstoppableResolverService extends ResolverService {
 
-    vendor: ResolverServices = "unstoppable"
+    vendor: ResolverName = "unstoppable"
 
     private resolution: Resolution
 
@@ -41,7 +41,7 @@ export class UnstoppableResolverService extends ResolverService {
             return [{
                 address: await this.resolution.addr(domain, "ETH"),
                 network: "eth",
-                from: "unstoppable",
+                from: this.vendor,
             }]
         } catch (e: any) {
 

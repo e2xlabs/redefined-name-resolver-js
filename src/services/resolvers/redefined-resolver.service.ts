@@ -1,10 +1,10 @@
 import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
-import { AccountRecord, ResolverServices } from "@resolver/models/types";
+import { AccountRecord, ResolverName } from "@resolver/models/types";
 
 export abstract class RedefinedResolverService extends ResolverService {
 
-    vendor: ResolverServices = "redefined"
+    vendor: ResolverName = "redefined"
 
     protected constructor(
       public allowDefaultEvmResolves: boolean,
@@ -17,7 +17,7 @@ export abstract class RedefinedResolverService extends ResolverService {
             const accounts: Account[] = (await this.resolveDomain(domain)).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
-                from: "redefined"
+                from: this.vendor,
             }));
 
             const targetAccountsWithoutEvm = accounts.filter(it => (
