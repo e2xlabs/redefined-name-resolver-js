@@ -33,26 +33,12 @@ describe('redefined.resolver', () => {
     spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "unstoppable" }]);
   })
 
-  test('SHOULD use provided resolvers IF exists', async () => {
-    const resolver = new RedefinedResolver({
-      defaultResolvers: ["redefined"]
-    })
-    // to bypass privacy
-    expect(resolver["defaultResolverVendors"]).toEqual(["redefined"]);
-  });
-
-  test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
-    try {
-      new RedefinedResolver({ defaultResolvers: [] })
-    } catch (e: any) {
-      expect(e.message).toBe("“defaultResolvers” option must be a non-empty array or falsy")
-    }
-  });
-
   test('SHOULD call resolvers IF provided', async () => {
-    const resolver = new RedefinedResolver({
-      defaultResolvers: ["redefined", "ens"]
-    })
+    const resolver = new RedefinedResolver()
+    resolver.setResolvers([
+      ...resolver.getRedefinedResolvers(),
+      resolver.getEnsResolver()
+    ]);
 
     await resolver.resolve("cifrex.evm", ["eth"]);
 
@@ -111,9 +97,8 @@ describe('redefined.resolver', () => {
   test('SHOULD resolve only with target network IF provided', async () => {
     const networks= ["eth", "sol", "zil", "bsc"];
 
-    const resolver = new RedefinedResolver({
-      defaultResolvers: ["redefined"]
-    });
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers(resolver.getRedefinedResolvers());
 
     resetRedefinedImplementationWithNetworks(networks)
 
@@ -128,9 +113,8 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD resolve with evm network IF target network not resolved', async () => {
-    const resolver = new RedefinedResolver({
-      defaultResolvers: ["redefined"]
-    });
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers(resolver.getRedefinedResolvers());
 
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
@@ -142,10 +126,9 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
-    const resolver = new RedefinedResolver({
-      defaultResolvers: ["redefined"]
-    });
-
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers(resolver.getRedefinedResolvers());
+    
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
@@ -157,7 +140,6 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
     const resolver = new RedefinedResolver({
-      defaultResolvers: ["redefined"],
       allowDefaultEvmResolves: false,
     });
 
@@ -167,22 +149,14 @@ describe('redefined.resolver', () => {
     expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([]);
   });
 
-  test('SHOULD show error on create instance IF customResolvers exists but provided nothing', async () => {
-    let error = "";
-    try {
-      new RedefinedResolver({ customResolvers: [] })
-    } catch (e: any) {
-      error = e.message;
-    }
-    expect(error).toBe("“customResolvers” option must be a non-empty array or falsy")
-  });
-
   test('SHOULD use custom resolver IF provided', async () => {
     const spyCustomResolve = jest.spyOn(CustomResolver.prototype, 'resolve');
 
-    const resolver = new RedefinedResolver({
-      customResolvers: [new CustomResolver()]
-    });
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers([
+      ...resolver.getDefaultResolvers(),
+      new CustomResolver()
+    ])
 
     await resolver.resolve("domain");
 
@@ -196,25 +170,28 @@ describe('redefined.resolver', () => {
   test('SHOULD use custom resolver with selected predefined IF provided', async () => {
     const spyCustomResolve = jest.spyOn(CustomResolver.prototype, 'resolve');
 
-    const resolver = new RedefinedResolver({
-      defaultResolvers: ["ens"],
-      customResolvers: [new CustomResolver()]
-    });
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers([
+      resolver.getEnsResolver(),
+      new CustomResolver()
+    ])
 
     await resolver.resolve("domain");
-
+  
+    expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
+    expect(spyRedefinedUsernameResolve).not.toHaveBeenCalled()
+    expect(spyUnsResolve).not.toHaveBeenCalled()
     expect(spyEnsResolve).toHaveBeenCalled()
     expect(spyCustomResolve).toHaveBeenCalled()
   });
 
   test('SHOULD use only custom resolver IF options provided', async () => {
-    const spyCustomResolve = jest.spyOn(CustomResolver.prototype, 'resolve');
+    const customResolver = new CustomResolver();
+    const spyCustomResolve = jest.spyOn(customResolver, 'resolve');
 
-    const resolver = new RedefinedResolver({
-      useDefaultResolvers: false,
-      customResolvers: [new CustomResolver()]
-    });
-
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers([customResolver])
+    
     await resolver.resolve("domain");
 
     expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
@@ -223,40 +200,13 @@ describe('redefined.resolver', () => {
     expect(spyUnsResolve).not.toHaveBeenCalled()
     expect(spyCustomResolve).toHaveBeenCalled()
   });
-
-  test('SHOULD warn user about an invalid action IF defaultResolvers provider and useDefaultResolvers is false', async () => {
-    const spyWarn = jest.spyOn(console, 'warn');
-
-    new RedefinedResolver({
-      defaultResolvers: ["ens"],
-      useDefaultResolvers: false,
-      customResolvers: [new CustomResolver()]
-    });
-
-    expect(spyWarn).toHaveBeenCalled()
-    expect(spyWarn).toHaveBeenCalledWith("You have chosen not to use the default resolvers, but you have specified them!")
-  });
-
-  test('SHOULD throw error IF useDefaultResolvers is false and no custom resolvers', async () => {
-    let error = "";
-    try {
-      new RedefinedResolver({
-        useDefaultResolvers: false,
-      });
-    } catch (e: any) {
-      error = e.message;
-    }
-    expect(error).toBe("No resolvers were added for your options!")
-  });
   
   test('SHOULD call resolve with custom options IF provided', async () => {
     const customResolver = new CustomResolver();
     const spyResolve = jest.spyOn(customResolver, 'resolve');
   
-    const resolver = new RedefinedResolver({
-      useDefaultResolvers: false,
-      customResolvers: [customResolver]
-    });
+    const resolver = new RedefinedResolver();
+    resolver.setResolvers([customResolver])
     
     await resolver.resolve("domain", undefined, { customOption: "customOption" });
     

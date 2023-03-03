@@ -1,5 +1,5 @@
 import type { Account, Resolver } from "@resolver/models/types";
-import type { ResolverOptions, ResolverVendor, Nodes } from "@resolver/models/types";
+import type { ResolverOptions, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
@@ -11,11 +11,7 @@ import { CustomResolverServiceOptions } from "@resolver/models/types";
 
 export class RedefinedResolver implements Resolver {
 
-    private defaultResolverVendors: ResolverVendor[] = ["redefined", "ens", "unstoppable"];
-
     private allowDefaultEvmResolves = true;
-
-    private useDefaultResolvers = true;
 
     private resolvers: ResolverService[];
 
@@ -29,27 +25,8 @@ export class RedefinedResolver implements Resolver {
     constructor(
       public options?: ResolverOptions
     ) {
-        const defaultResolverVendors = this.options?.defaultResolvers;
         const nodes = this.options?.nodes;
         const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
-        const customResolvers = this.options?.customResolvers;
-        const useDefaultResolvers = this.options?.useDefaultResolvers;
-
-        if (useDefaultResolvers !== undefined) {
-            this.useDefaultResolvers = useDefaultResolvers;
-        }
-
-        if (defaultResolverVendors) {
-            if (!defaultResolverVendors.length) {
-                throw Error("“defaultResolvers” option must be a non-empty array or falsy");
-            }
-
-            if (!this.useDefaultResolvers) {
-                console.warn("You have chosen not to use the default resolvers, but you have specified them!");
-            }
-
-            this.defaultResolverVendors = defaultResolverVendors;
-        }
 
         if (nodes) {
             if (!Object.keys(nodes).length) {
@@ -63,21 +40,7 @@ export class RedefinedResolver implements Resolver {
             this.allowDefaultEvmResolves = allowDefaultEvmResolves;
         }
 
-        this.resolvers = this.useDefaultResolvers
-            ? this.getDefaultResolvers().filter(it => this.defaultResolverVendors.includes(it.vendor))
-            : [];
-
-        if (customResolvers) {
-            if (!customResolvers.length) {
-                throw Error("“customResolvers” option must be a non-empty array or falsy");
-            }
-
-            this.resolvers.push(...customResolvers);
-        }
-
-        if (!this.resolvers.length) {
-            throw Error("No resolvers were added for your options!");
-        }
+        this.resolvers = this.getDefaultResolvers();
     }
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]> {
@@ -88,13 +51,43 @@ export class RedefinedResolver implements Resolver {
           await Promise.all(this.resolvers.map(it => it.resolve(domain, { ...customOptions, throwErrorOnInvalidDomain: false }, networks)))
         ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
-
-    private getDefaultResolvers(): ResolverService[] {
+    
+    setResolvers(resolvers: ResolverService[]) {
+        if (!resolvers.length) {
+            throw Error("resolvers must be a non-empty array");
+        }
+    
+        this.resolvers = resolvers;
+    }
+    
+    getDefaultResolvers() {
         return [
-            new RedefinedUsernameResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves),
-            new RedefinedEmailResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves),
-            new EnsResolverService(this.nodes.ensNode),
-            new UnstoppableResolverService({ mainnet: this.nodes.unsMainnetNode, polygonMainnet: this.nodes.unsPolygonMainnetNode }),
+            ...this.getRedefinedResolvers(),
+            this.getEnsResolver(),
+            this.getUnstoppableResolver(),
         ]
+    }
+    
+    getRedefinedResolvers() {
+        return [
+            this.getRedefinedUsernameResolver(),
+            this.getRedefinedEmailResolver(),
+        ]
+    }
+    
+    getRedefinedEmailResolver() {
+        return new RedefinedEmailResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves);
+    }
+    
+    getRedefinedUsernameResolver() {
+        return new RedefinedUsernameResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves)
+    }
+    
+    getEnsResolver() {
+        return new EnsResolverService(this.nodes.ensNode);
+    }
+    
+    getUnstoppableResolver() {
+        return new UnstoppableResolverService({ mainnet: this.nodes.unsMainnetNode, polygonMainnet: this.nodes.unsPolygonMainnetNode });
     }
 }
