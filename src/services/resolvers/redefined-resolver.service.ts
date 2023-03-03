@@ -21,7 +21,8 @@ export abstract class RedefinedResolverService extends ResolverService {
             }));
 
             const targetAccountsWithoutEvm = accounts.filter(it => (
-                (!networks || networks.includes(it.network))
+                networks
+                && networks.includes(it.network)
                 && it.network !== "evm"
             ));
 
@@ -30,13 +31,19 @@ export abstract class RedefinedResolverService extends ResolverService {
             }
 
             return this.allowDefaultEvmResolves
-                ? accounts.filter(it => it.network === "evm")
+                ? accounts
                 : [];
         } catch (e: any) {
 
             if (
                 e.message.includes("Name is not registered")
-                || (!throwErrorOnInvalidDomain && e.message.includes("Invalid character"))
+                || (
+                    !throwErrorOnInvalidDomain
+                    && (
+                        e.message.includes("Invalid character")
+                        || e.message.includes("Name should be at least")
+                    )
+                )
             ) {
                 return [];
             }

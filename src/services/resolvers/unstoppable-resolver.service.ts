@@ -42,7 +42,7 @@ export class UnstoppableResolverService extends ResolverService {
             
             return address ? [{
                 address,
-                network: "eth",
+                network: "evm",
                 from: this.vendor,
             }] : []
         } catch (e: any) {
