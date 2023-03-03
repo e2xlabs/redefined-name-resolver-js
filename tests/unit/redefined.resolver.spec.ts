@@ -37,7 +37,7 @@ describe('redefined.resolver', () => {
       defaultResolvers: ["redefined"]
     })
     // to bypass privacy
-    expect(resolver["defaultResolverNames"]).toEqual(["redefined"]);
+    expect(resolver["defaultResolverVendors"]).toEqual(["redefined"]);
   });
 
   test('SHOULD show error on create instance IF resolvers exists but provided nothing', async () => {
@@ -240,5 +240,19 @@ describe('redefined.resolver', () => {
       error = e.message;
     }
     expect(error).toBe("No resolvers were added for your options!")
+  });
+  
+  test('SHOULD call resolve with custom options IF provided', async () => {
+    const customResolver = new CustomResolver();
+    const spyResolve = jest.spyOn(customResolver, 'resolve');
+  
+    const resolver = new RedefinedResolver({
+      useDefaultResolvers: false,
+      customResolvers: [customResolver]
+    });
+    
+    await resolver.resolve("domain", undefined, { customOption: "customOption" });
+    
+    expect(spyResolve).toHaveBeenLastCalledWith("domain", { throwErrorOnInvalidDomain: false, customOption: "customOption" }, undefined)
   });
 });

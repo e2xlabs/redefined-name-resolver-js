@@ -1,6 +1,6 @@
 import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
-import { ResolverName } from "@resolver/models/types";
+import { ResolverVendor } from "@resolver/models/types";
 import { ethers } from 'ethers'
 import { formatsByName } from "@ensdomains/address-encoder";
 
@@ -8,7 +8,7 @@ const COIN_LIST = Object.fromEntries(Object.entries(formatsByName).filter(([key,
 
 export class EnsResolverService extends ResolverService {
 
-    vendor: ResolverName = "ens"
+    vendor: ResolverVendor = "ens"
 
     constructor(
         public node: string,

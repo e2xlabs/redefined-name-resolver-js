@@ -1,10 +1,10 @@
 import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
-import { AccountRecord, ResolverName } from "@resolver/models/types";
+import { AccountRecord, ResolverVendor } from "@resolver/models/types";
 
 export abstract class RedefinedResolverService extends ResolverService {
 
-    vendor: ResolverName = "redefined"
+    vendor: ResolverVendor = "redefined"
 
     protected constructor(
       public allowDefaultEvmResolves: boolean,

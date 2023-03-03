@@ -1,4 +1,4 @@
-import type { Account, ResolverName } from "@resolver/models/types";
+import type { Account, ResolverVendor } from "@resolver/models/types";
 
 export type ResolverServiceOptions = {
     throwErrorOnInvalidDomain: boolean,
@@ -11,7 +11,7 @@ export const defaultResolverServiceOptions: ResolverServiceOptions = {
 
 export abstract class ResolverService {
 
-    abstract vendor: ResolverName;
+    abstract vendor: ResolverVendor;
 
     abstract resolve(domain: string, options?: ResolverServiceOptions, networks?: string[]): Promise<Account[]>;
 }

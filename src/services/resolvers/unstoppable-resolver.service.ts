@@ -1,11 +1,11 @@
 import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import Resolution  from "@unstoppabledomains/resolution";
-import { ResolverName } from "@resolver/models/types";
+import { ResolverVendor } from "@resolver/models/types";
 
 export class UnstoppableResolverService extends ResolverService {
 
-    vendor: ResolverName = "unstoppable"
+    vendor: ResolverVendor = "unstoppable"
 
     private resolution: Resolution
 

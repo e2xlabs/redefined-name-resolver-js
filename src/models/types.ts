@@ -1,6 +1,6 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
 
-export type ResolverName = "redefined" | "ens" | "unstoppable" | string
+export type ResolverVendor = "redefined" | "ens" | "unstoppable" | string
 
 export type NodeNetwork = "eth" | "arbitrum" | "polygon";
 
@@ -9,7 +9,7 @@ export type Nodes = {
 }
 
 export type ResolverOptions = {
-    defaultResolvers?: ResolverName[],
+    defaultResolvers?: ResolverVendor[],
     useDefaultResolvers?: boolean,
     nodes?: { [key in NodeNetwork]?: string }
     allowDefaultEvmResolves?: boolean,
@@ -19,7 +19,7 @@ export type ResolverOptions = {
 export type Account = {
     address: string,
     network: string,
-    from: ResolverName,
+    from: ResolverVendor,
 }
 
 export type AccountRecord = {
@@ -27,13 +27,12 @@ export type AccountRecord = {
     network: string,
 }
 
-export type RedefinedReverse = {
-    version: number,
-    data: string,
+export type CustomResolverServiceOptions = ResolverServiceOptions | {
+    [key: string]: any,
 }
 
 export interface Resolver {
     options?: ResolverOptions;
 
-    resolve(domain: string, networks?: string[]): Promise<Account[]>;
+    resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]>;
 }
