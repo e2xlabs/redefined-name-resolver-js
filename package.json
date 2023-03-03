@@ -31,7 +31,9 @@
     "test:unit": "jest"
   },
   "dependencies": {
+    "@ensdomains/address-encoder": "^0.2.21",
     "@unstoppabledomains/resolution": "^8.4.0",
+    "ethers": "^5.7.2",
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",

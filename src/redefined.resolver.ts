@@ -1,5 +1,5 @@
 import type { Account, Resolver } from "@resolver/models/types";
-import type { Network, ResolverOptions, ResolverServices, Nodes } from "@resolver/models/types";
+import type { ResolverOptions, ResolverVendor, Nodes } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
@@ -7,43 +7,54 @@ import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.se
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
 import config from "@resolver/config";
-import { RequestedNetwork } from "@resolver/models/types";
+import { CustomResolverServiceOptions } from "@resolver/models/types";
 
 export class RedefinedResolver implements Resolver {
 
-    private resolverServices: ResolverServices[] = ["redefined", "ens", "unstoppable"];
+    private defaultResolverVendors: ResolverVendor[] = ["redefined", "ens", "unstoppable"];
 
     private allowDefaultEvmResolves = true;
+
+    private useDefaultResolvers = true;
 
     private resolvers: ResolverService[];
 
     private nodes: Nodes = {
         arbitrum: config.ARBITRUM_NODE,
         eth: config.ETH_NODE,
-        bsc: config.BSC_NODE,
-        zil: config.ZIL_NODE,
+        polygon: config.POLYGON_NODE,
     };
 
     constructor(
       public options?: ResolverOptions
     ) {
-        const resolverServices = this.options?.resolverServices;
+        const defaultResolverVendors = this.options?.defaultResolvers;
         const nodes = this.options?.nodes;
         const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
+        const customResolvers = this.options?.customResolvers;
+        const useDefaultResolvers = this.options?.useDefaultResolvers;
 
-        if (resolverServices && !resolverServices.length) {
-            throw Error("“resolverServices” option must be a non-empty array or falsy")
+        if (useDefaultResolvers !== undefined) {
+            this.useDefaultResolvers = useDefaultResolvers;
         }
 
-        if (nodes && !Object.keys(nodes).length) {
-            throw Error("“nodes” option must be a non-empty object or falsy")
-        }
+        if (defaultResolverVendors) {
+            if (!defaultResolverVendors.length) {
+                throw Error("“defaultResolvers” option must be a non-empty array or falsy");
+            }
 
-        if (resolverServices) {
-            this.resolverServices = resolverServices;
+            if (!this.useDefaultResolvers) {
+                console.warn("You have chosen not to use the default resolvers, but you have specified them!");
+            }
+
+            this.defaultResolverVendors = defaultResolverVendors;
         }
 
         if (nodes) {
+            if (!Object.keys(nodes).length) {
+                throw Error("“nodes” option must be a non-empty object or falsy")
+            }
+
             this.nodes = { ...this.nodes, ...nodes };
         }
 
@@ -51,31 +62,38 @@ export class RedefinedResolver implements Resolver {
             this.allowDefaultEvmResolves = allowDefaultEvmResolves;
         }
 
-        this.resolvers = this.createResolvers(this.nodes, this.resolverServices, this.allowDefaultEvmResolves);
+        this.resolvers = this.useDefaultResolvers
+            ? this.getDefaultResolvers().filter(it => this.defaultResolverVendors.includes(it.vendor))
+            : [];
+
+        if (customResolvers) {
+            if (!customResolvers.length) {
+                throw Error("“customResolvers” option must be a non-empty array or falsy");
+            }
+
+            this.resolvers.push(...customResolvers);
+        }
+
+        if (!this.resolvers.length) {
+            throw Error("No resolvers were added for your options!");
+        }
     }
 
-    async resolve(domain: string, networks?: RequestedNetwork[]): Promise<Account[]> {
+    async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]> {
+        const customOptions = options || {};
+        // throwErrorOnInvalidDomain - non-rewritable parameter
+        // If it is true, then everything will fall on an error in one resolver
         return flatten(
-          await Promise.all(this.resolvers
-              .filter(it => !networks || it.allNetworksSupported || networks.includes(it.network as RequestedNetwork))
-              .map(it => it.resolve(domain, false, networks)))
-          )
-        ;
+          await Promise.all(this.resolvers.map(it => it.resolve(domain, { ...customOptions, throwErrorOnInvalidDomain: false }, networks)))
+        ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
 
-    private createResolvers(nodes: Nodes, resolverNames: ResolverServices[], allowDefaultEvmResolves: boolean): ResolverService[] {
-        const resolvers: ResolverService[] = [
-            new RedefinedUsernameResolverService(nodes.arbitrum, "arbitrum", allowDefaultEvmResolves),
-            new RedefinedEmailResolverService(nodes.arbitrum, "arbitrum", allowDefaultEvmResolves),
-
-            new EnsResolverService(nodes.eth, "eth"),
-            new EnsResolverService(nodes.bsc, "bsc"),
-
-            new UnstoppableResolverService(nodes.eth, "eth"),
-            new UnstoppableResolverService(nodes.bsc, "bsc"),
-            new UnstoppableResolverService(nodes.zil, "zil"),
+    private getDefaultResolvers(): ResolverService[] {
+        return [
+            new RedefinedUsernameResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
+            new RedefinedEmailResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
+            new EnsResolverService(this.nodes.eth),
+            new UnstoppableResolverService({ eth: this.nodes.eth, polygon: this.nodes.polygon }),
         ]
-
-        return resolvers.filter(it => resolverNames.includes(it.vendor));
     }
 }

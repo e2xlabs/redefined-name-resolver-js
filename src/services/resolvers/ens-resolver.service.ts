@@ -1,34 +1,37 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import type { Network, Account } from "@resolver/models/types";
-import { ResolverServices } from "@resolver/models/types";
+import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
+import type { Account } from "@resolver/models/types";
+import { ResolverVendor } from "@resolver/models/types";
+import { ethers } from 'ethers'
+import { formatsByName } from "@ensdomains/address-encoder";
 
+const COIN_LIST = Object.fromEntries(Object.entries(formatsByName).filter(([key, value]) => !key.match(/_LEGACY/)));
 
 export class EnsResolverService extends ResolverService {
 
-    vendor: ResolverServices = "ens"
+    vendor: ResolverVendor = "ens"
 
     constructor(
-        public nodeLink: string,
-        public network: Network,
+        public node: string,
     ) {
         super();
     }
 
-    async resolve(domain: string, throwErrorOnIllegalCharacters: boolean = true): Promise<Account[]> {
-        const ens = EvmWeb3Service.getWeb3(this.nodeLink).eth.ens;
-        
+    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
+        const provider = new ethers.providers.JsonRpcProvider(this.node);
+
         try {
+            const resolver = await provider.getResolver(domain)
+
             return [{
-              address: await ens.getAddress(domain),
-              network: this.network,
-              from: "ens"
+                address: await resolver!.getAddress(COIN_LIST.ETH.coinType),
+                network: "eth",
+                from: this.vendor,
             }]
         } catch (e: any) {
-            if (!throwErrorOnIllegalCharacters && e.message.includes("Illegal char")) {
+            if (!throwErrorOnInvalidDomain && e.message.includes("Illegal char")) {
                 return [];
             }
-            
+
             console.error(e);
             throw Error(`ENS Error: ${e.message}`);
         }
