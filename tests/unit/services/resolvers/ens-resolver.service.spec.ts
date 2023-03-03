@@ -4,7 +4,7 @@ import { ethers } from "ethers";
 
 
 describe('ens-resolver.service', () => {
-    const ensResolverService = new EnsResolverService(config.ETH_NODE);
+    const ensResolverService = new EnsResolverService(config.ENS_NODE);
 
     const spyEthersGetAddress = jest.spyOn(ethers.providers.Resolver.prototype, "getAddress");
 

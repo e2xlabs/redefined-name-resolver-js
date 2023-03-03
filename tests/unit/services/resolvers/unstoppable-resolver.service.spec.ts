@@ -5,7 +5,7 @@ import config from "@resolver/config";
 
 describe('unstoppable-resolver.service', () => {
 
-    const unstoppableResolverService = new UnstoppableResolverService({ eth: config.ETH_NODE, polygon: config.POLYGON_NODE });
+    const unstoppableResolverService = new UnstoppableResolverService({ mainnet: config.UNS_MAINNET_NODE, polygonMainnet: config.UNS_POLYGON_MAINNET_NODE });
 
     const spyIsRegistered = jest.spyOn(Resolution.prototype, 'isRegistered');
     const spyIsAddr = jest.spyOn(Resolution.prototype, 'addr');

@@ -5,6 +5,7 @@ import { RedefinedEmailResolverService } from "@resolver/services/resolvers/rede
 import { RedefinedResolver } from "@resolver/redefined.resolver";
 import config from "@resolver/config";
 import { CustomResolver } from "../test-fixtures/custom-resolver";
+import { Nodes } from "@resolver/models/types";
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
@@ -74,23 +75,29 @@ describe('redefined.resolver', () => {
 
   test('SHOULD use preinstalled nodes IF none are provided', async () => {
     const resolver = new RedefinedResolver();
-    expect(resolver["nodes"]).toEqual({
-      arbitrum: config.ARBITRUM_NODE,
-      eth: config.ETH_NODE,
-      polygon: config.POLYGON_NODE,
-    })
+  
+    const nodes: Nodes = {
+      redefinedNode: config.REDEFINED_NODE,
+      ensNode: config.ENS_NODE,
+      unsMainnetNode: config.UNS_MAINNET_NODE,
+      unsPolygonMainnetNode: config.UNS_POLYGON_MAINNET_NODE,
+    }
+    expect(resolver["nodes"]).toEqual(nodes)
   });
 
   test('SHOULD use nodes IF provided', async () => {
     const resolver = new RedefinedResolver({
-      nodes: { eth: "eth_node" }
+      nodes: { ensNode: "eth_node" }
     });
+    
+    const nodes: Nodes = {
+      redefinedNode: config.REDEFINED_NODE,
+      ensNode: "eth_node",
+      unsMainnetNode: config.UNS_MAINNET_NODE,
+      unsPolygonMainnetNode: config.UNS_POLYGON_MAINNET_NODE,
+    }
 
-    expect(resolver["nodes"]).toEqual({
-      arbitrum: config.ARBITRUM_NODE,
-      eth: "eth_node",
-      polygon: config.POLYGON_NODE,
-    });
+    expect(resolver["nodes"]).toEqual(nodes);
   });
 
   test('SHOULD show error on create instance IF nodes exists but provided nothing', async () => {

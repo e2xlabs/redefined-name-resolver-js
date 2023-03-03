@@ -2,7 +2,7 @@ import config from "@resolver/config";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 
 describe('redefined-username-resolver.service', () => {
-    const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.ETH_NODE, true);
+    const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedUsernameResolverService, "resolveDomain");
 
