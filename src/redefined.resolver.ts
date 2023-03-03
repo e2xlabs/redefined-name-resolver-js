@@ -33,47 +33,47 @@ export class RedefinedResolver implements Resolver {
         const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
         const customResolvers = this.options?.customResolvers;
         const useDefaultResolvers = this.options?.useDefaultResolvers;
-    
+
         if (useDefaultResolvers !== undefined) {
             this.useDefaultResolvers = useDefaultResolvers;
         }
-    
+
         if (defaultResolverVendors) {
             if (!defaultResolverVendors.length) {
                 throw Error("“defaultResolvers” option must be a non-empty array or falsy");
             }
-        
+
             if (!this.useDefaultResolvers) {
                 console.warn("You have chosen not to use the default resolvers, but you have specified them!");
             }
-        
+
             this.defaultResolverVendors = defaultResolverVendors;
         }
-    
+
         if (nodes) {
             if (!Object.keys(nodes).length) {
                 throw Error("“nodes” option must be a non-empty object or falsy")
             }
-        
+
             this.nodes = { ...this.nodes, ...nodes };
         }
-    
+
         if (allowDefaultEvmResolves !== undefined) {
             this.allowDefaultEvmResolves = allowDefaultEvmResolves;
         }
-    
+
         this.resolvers = this.useDefaultResolvers
             ? this.getDefaultResolvers().filter(it => this.defaultResolverVendors.includes(it.vendor))
             : [];
-    
+
         if (customResolvers) {
             if (!customResolvers.length) {
                 throw Error("“customResolvers” option must be a non-empty array or falsy");
             }
-        
+
             this.resolvers.push(...customResolvers);
         }
-    
+
         if (!this.resolvers.length) {
             throw Error("No resolvers were added for your options!");
         }
