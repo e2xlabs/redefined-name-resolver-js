@@ -47,7 +47,7 @@ describe('redefined.resolver', () => {
     expect(spyUnsResolve).not.toHaveBeenCalled()
   });
   
-  test('SHOULD throw error on setResolver IF provided nothing', async () => {
+  test('SHOULD throw error on set resolvers IF provided nothing', async () => {
     let error = "";
     try {
       new RedefinedResolver({ resolvers: [] })
