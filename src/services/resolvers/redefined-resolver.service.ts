@@ -42,6 +42,7 @@ export abstract class RedefinedResolverService extends ResolverService {
                     && (
                         e.message.includes("Invalid character")
                         || e.message.includes("Name should be at")
+                        || e.message.includes("Name has incorrect length")
                     )
                 )
             ) {
