@@ -10,7 +10,7 @@ export class UnstoppableResolverService extends ResolverService {
     private resolution: Resolution
 
     constructor(
-        public nodes: { eth: string, polygon: string },
+        public nodes: { mainnet: string, polygonMainnet: string },
     ) {
         super();
 
@@ -19,11 +19,11 @@ export class UnstoppableResolverService extends ResolverService {
                 uns: {
                     locations: {
                         Layer1: {
-                            url: nodes.eth,
+                            url: nodes.mainnet,
                             network: 'mainnet'
                         },
                         Layer2: {
-                            url: nodes.polygon,
+                            url: nodes.polygonMainnet,
                             network: 'polygon-mainnet',
                         },
                     },

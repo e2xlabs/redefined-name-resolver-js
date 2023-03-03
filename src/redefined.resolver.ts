@@ -20,9 +20,10 @@ export class RedefinedResolver implements Resolver {
     private resolvers: ResolverService[];
 
     private nodes: Nodes = {
-        arbitrum: config.ARBITRUM_NODE,
-        eth: config.ETH_NODE,
-        polygon: config.POLYGON_NODE,
+        redefinedNode: config.REDEFINED_NODE,
+        ensNode: config.ENS_NODE,
+        unsMainnetNode: config.UNS_MAINNET_NODE,
+        unsPolygonMainnetNode: config.UNS_POLYGON_MAINNET_NODE,
     };
 
     constructor(
@@ -90,10 +91,10 @@ export class RedefinedResolver implements Resolver {
 
     private getDefaultResolvers(): ResolverService[] {
         return [
-            new RedefinedUsernameResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
-            new RedefinedEmailResolverService(this.nodes.arbitrum, this.allowDefaultEvmResolves),
-            new EnsResolverService(this.nodes.eth),
-            new UnstoppableResolverService({ eth: this.nodes.eth, polygon: this.nodes.polygon }),
+            new RedefinedUsernameResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves),
+            new RedefinedEmailResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves),
+            new EnsResolverService(this.nodes.ensNode),
+            new UnstoppableResolverService({ mainnet: this.nodes.unsMainnetNode, polygonMainnet: this.nodes.unsPolygonMainnetNode }),
         ]
     }
 }

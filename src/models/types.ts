@@ -2,7 +2,7 @@ import type { ResolverService, ResolverServiceOptions } from "@resolver/services
 
 export type ResolverVendor = "redefined" | "ens" | "unstoppable" | string
 
-export type NodeNetwork = "eth" | "arbitrum" | "polygon";
+export type NodeNetwork = "redefinedNode" | "ensNode" | "unsMainnetNode" | "unsPolygonMainnetNode";
 
 export type Nodes = {
     [key in NodeNetwork]: string
