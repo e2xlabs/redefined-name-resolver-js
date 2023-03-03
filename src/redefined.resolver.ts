@@ -52,7 +52,7 @@ export class RedefinedResolver implements Resolver {
             options?.node || config.REDEFINED_NODE,
             options?.allowDefaultEvmResolves !== undefined
                 ? options.allowDefaultEvmResolves
-                : true
+                : true,
         );
     }
     
@@ -61,7 +61,7 @@ export class RedefinedResolver implements Resolver {
             options?.node || config.REDEFINED_NODE,
             options?.allowDefaultEvmResolves !== undefined
                 ? options.allowDefaultEvmResolves
-                : true
+                : true,
         );
     }
     

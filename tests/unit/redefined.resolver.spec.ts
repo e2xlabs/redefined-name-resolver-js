@@ -154,7 +154,7 @@ describe('redefined.resolver', () => {
     const resolver = new RedefinedResolver({
       resolvers: [
         RedefinedResolver.createEnsResolver(),
-        new CustomResolver()
+        new CustomResolver(),
       ]
     });
 
@@ -172,7 +172,7 @@ describe('redefined.resolver', () => {
     const spyCustomResolve = jest.spyOn(customResolver, 'resolve');
   
     const resolver = new RedefinedResolver({
-      resolvers: [customResolver]
+      resolvers: [customResolver],
     });
     
     await resolver.resolve("domain");
@@ -189,7 +189,7 @@ describe('redefined.resolver', () => {
     const spyResolve = jest.spyOn(customResolver, 'resolve');
   
     const resolver = new RedefinedResolver({
-      resolvers: [customResolver]
+      resolvers: [customResolver],
     });
     
     await resolver.resolve("domain", undefined, { customOption: "customOption" });
