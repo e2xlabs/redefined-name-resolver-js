@@ -43,7 +43,7 @@ export interface Resolver {
     
     getDefaultResolvers(): ResolverService[];
     
-    getRedefinedResolvers(): ResolverService[];
+    getRedefinedResolvers(): RedefinedResolverService[];
     
     getRedefinedEmailResolver(): RedefinedResolverService;
     

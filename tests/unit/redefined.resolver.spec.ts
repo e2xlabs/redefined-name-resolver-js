@@ -47,6 +47,18 @@ describe('redefined.resolver', () => {
     expect(spyEnsResolve).toHaveBeenCalled()
     expect(spyUnsResolve).not.toHaveBeenCalled()
   });
+  
+  test('SHOULD throw error on setResolver IF provided nothing', async () => {
+    const resolver = new RedefinedResolver()
+    let error = "";
+    try {
+      resolver.setResolvers([]);
+    } catch (e: any) {
+      error = e.message;
+    }
+    
+    expect(error).toBe("resolvers must be a non-empty array");
+  });
 
   test('SHOULD call all resolvers IF none are provided', async () => {
     const resolver = new RedefinedResolver();
