@@ -22,7 +22,7 @@ describe('ens-resolver.service', () => {
 
     test('SHOULD get addresses for domain with network IF is valid', async () => {
 
-        expect(await ensResolverService.resolve("theseif.eth")).toEqual([{ address: "0x123", network: "eth", from: "ens", }]);
+        expect(await ensResolverService.resolve("theseif.eth")).toEqual([{ address: "0x123", network: "evm", from: "ens", }]);
     });
 
     test('SHOULD NOT throw Error IF domain is invalid', async () => {

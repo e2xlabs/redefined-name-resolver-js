@@ -27,7 +27,7 @@ describe('unstoppable-resolver.service', () => {
 
     test('SHOULD get addresses for domain with network IF it is registered and available', async () => {
 
-        expect(await unstoppableResolverService.resolve("ivan.crypto")).toEqual([{ address: "0x123", network: "eth", from: "unstoppable"}])
+        expect(await unstoppableResolverService.resolve("ivan.crypto")).toEqual([{ address: "0x123", network: "evm", from: "unstoppable"}])
     });
 
     test('SHOULD get empty response for domain IF it is not registered', async () => {

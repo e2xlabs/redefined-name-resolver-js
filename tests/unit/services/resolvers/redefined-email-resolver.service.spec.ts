@@ -17,14 +17,22 @@ describe('redefined-email-resolver.service', () => {
         spyResolveDomain.mockReset();
         spyResolveDomain.mockImplementation(async () => ([
             { addr: "0x123", network: "eth" },
-            { addr: "0x323", network: "sol" }
+            { addr: "0x323", network: "sol" },
+            { addr: "0x323", network: "evm" },
         ]))
     })
 
-    test('SHOULD get addresses IF domain resolved', async () => {
+    test('SHOULD get addresses IF domain resolved without target network', async () => {
         expect(await redefinedEmailResolverService.resolve("cifrex.eth")).toEqual([
             { address: "0x123", network: "eth", from: "redefined", },
-            { address: "0x323", network: "sol", from: "redefined", }
+            { address: "0x323", network: "sol", from: "redefined", },
+            { address: "0x323", network: "evm", from: "redefined", },
+        ]);
+    });
+    
+    test('SHOULD get addresses IF domain resolved with target networks', async () => {
+        expect(await redefinedEmailResolverService.resolve("cifrex.eth", undefined, ["eth"])).toEqual([
+            { address: "0x123", network: "eth", from: "redefined", },
         ]);
     });
 
