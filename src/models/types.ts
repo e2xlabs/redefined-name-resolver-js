@@ -1,7 +1,4 @@
 import type { ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
-import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
-import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
-import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
 
 export type ResolverVendor = "redefined" | "ens" | "unstoppable" | string
 
@@ -30,12 +27,20 @@ export type CustomResolverServiceOptions = ResolverServiceOptions | {
     [key: string]: any,
 }
 
-export type CreateResolverOptions = {
-    nodes?: NodeOptions,
-    allowDefaultEvmResolves?: boolean,
-}
-
 export interface Resolver {
 
     resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]>;
+}
+
+
+export type EnsParams = { node: string };
+
+export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: string };
+
+export type RedefinedParams = { node?: string, allowDefaultEvmResolves?: boolean };
+
+export type ResolversParams = {
+    redefined?: RedefinedParams,
+    unstoppable?: UnstoppableParams,
+    ens?: EnsParams,
 }

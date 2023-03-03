@@ -3,7 +3,6 @@ import { UnstoppableResolverService } from "@resolver/services/resolvers/unstopp
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { RedefinedResolver } from "@resolver/redefined.resolver";
-import config from "@resolver/config";
 import { CustomResolver } from "../test-fixtures/custom-resolver";
 
 describe('redefined.resolver', () => {
@@ -119,7 +118,9 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createDefaultResolvers({ allowDefaultEvmResolves: false })
+      resolvers: RedefinedResolver.createDefaultResolvers({
+        redefined: { allowDefaultEvmResolves: false }
+      })
     });
 
     const networks = ["eth", "evm"];
