@@ -19,10 +19,14 @@ export class EnsResolverService extends ResolverService {
         const provider = new ethers.providers.JsonRpcProvider(this.node);
 
         try {
-            const resolver = await provider.getResolver(domain)
+            const resolver = await provider.getResolver(domain);
+            
+            if (!resolver) {
+                return [];
+            }
 
             return [{
-                address: await resolver!.getAddress(ETH_COIN_TYPE),
+                address: await resolver.getAddress(ETH_COIN_TYPE),
                 network: "eth",
                 from: this.vendor,
             }]

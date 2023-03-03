@@ -45,7 +45,7 @@ export class UnstoppableResolverService extends ResolverService {
             }]
         } catch (e: any) {
 
-            if (!throwErrorOnInvalidDomain && e.message.includes("is invalid")) {
+            if (!throwErrorOnInvalidDomain && (e.message.includes("is invalid") || e.message.includes("is not supported"))) {
                 return [];
             }
 
