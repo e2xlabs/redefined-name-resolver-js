@@ -1,6 +1,6 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "1.3.0",
+  "version": "1.2.19",
   "description": "JS lib to resolve crypto names",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,7 +31,6 @@
     "test:unit": "jest"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "^0.2.21",
     "@unstoppabledomains/resolution": "^8.4.0",
     "ethers": "^5.7.2",
     "js-sha256": "^0.9.0",
