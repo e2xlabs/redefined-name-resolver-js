@@ -41,7 +41,7 @@ export abstract class RedefinedResolverService extends ResolverService {
                     !throwErrorOnInvalidDomain
                     && (
                         e.message.includes("Invalid character")
-                        || e.message.includes("Name should be at least")
+                        || e.message.includes("Name should be at")
                     )
                 )
             ) {
