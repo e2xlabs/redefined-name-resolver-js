@@ -2,9 +2,8 @@ import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions 
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import { ethers } from 'ethers'
-import { formatsByName } from "@ensdomains/address-encoder";
 
-const COIN_LIST = Object.fromEntries(Object.entries(formatsByName).filter(([key, value]) => !key.match(/_LEGACY/)));
+const ETH_COIN_TYPE = 60;
 
 export class EnsResolverService extends ResolverService {
 
@@ -23,7 +22,7 @@ export class EnsResolverService extends ResolverService {
             const resolver = await provider.getResolver(domain)
 
             return [{
-                address: await resolver!.getAddress(COIN_LIST.ETH.coinType),
+                address: await resolver!.getAddress(ETH_COIN_TYPE),
                 network: "eth",
                 from: this.vendor,
             }]

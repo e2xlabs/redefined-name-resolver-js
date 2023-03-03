@@ -8,10 +8,14 @@ export type Nodes = {
     [key in NodeNetwork]: string
 }
 
+export type NodeOptions = {
+    [key in NodeNetwork]?: string
+}
+
 export type ResolverOptions = {
     defaultResolvers?: ResolverVendor[],
     useDefaultResolvers?: boolean,
-    nodes?: { [key in NodeNetwork]?: string }
+    nodes?: NodeOptions
     allowDefaultEvmResolves?: boolean,
     customResolvers?: ResolverService[],
 }
