@@ -1,5 +1,5 @@
-import type { Account, Resolver } from "@resolver/models/types";
-import type { ResolverOptions, ResolverVendor, Nodes } from "@resolver/models/types";
+import type { Account, RedefinedParams, Resolver, UnstoppableParams } from "@resolver/models/types";
+import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
@@ -7,77 +7,20 @@ import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.se
 import { UnstoppableResolverService } from "@resolver/services/resolvers/unstoppable-resolver.service";
 import { flatten } from "lodash";
 import config from "@resolver/config";
-import { CustomResolverServiceOptions } from "@resolver/models/types";
+import { CustomResolverServiceOptions, EnsParams, ResolversParams } from "@resolver/models/types";
 
 export class RedefinedResolver implements Resolver {
 
-    private defaultResolverVendors: ResolverVendor[] = ["redefined", "ens", "unstoppable"];
-
-    private allowDefaultEvmResolves = true;
-
-    private useDefaultResolvers = true;
-
     private resolvers: ResolverService[];
-
-    private nodes: Nodes = {
-        redefinedNode: config.REDEFINED_NODE,
-        ensNode: config.ENS_NODE,
-        unsMainnetNode: config.UNS_MAINNET_NODE,
-        unsPolygonMainnetNode: config.UNS_POLYGON_MAINNET_NODE,
-    };
 
     constructor(
       public options?: ResolverOptions
     ) {
-        const defaultResolverVendors = this.options?.defaultResolvers;
-        const nodes = this.options?.nodes;
-        const allowDefaultEvmResolves = this.options?.allowDefaultEvmResolves;
-        const customResolvers = this.options?.customResolvers;
-        const useDefaultResolvers = this.options?.useDefaultResolvers;
-
-        if (useDefaultResolvers !== undefined) {
-            this.useDefaultResolvers = useDefaultResolvers;
+        if (options && !options.resolvers.length) {
+            throw Error("“resolvers” option must be a non-empty array or falsy")
         }
-
-        if (defaultResolverVendors) {
-            if (!defaultResolverVendors.length) {
-                throw Error("“defaultResolvers” option must be a non-empty array or falsy");
-            }
-
-            if (!this.useDefaultResolvers) {
-                console.warn("You have chosen not to use the default resolvers, but you have specified them!");
-            }
-
-            this.defaultResolverVendors = defaultResolverVendors;
-        }
-
-        if (nodes) {
-            if (!Object.keys(nodes).length) {
-                throw Error("“nodes” option must be a non-empty object or falsy")
-            }
-
-            this.nodes = { ...this.nodes, ...nodes };
-        }
-
-        if (allowDefaultEvmResolves !== undefined) {
-            this.allowDefaultEvmResolves = allowDefaultEvmResolves;
-        }
-
-        this.resolvers = this.useDefaultResolvers
-            ? this.getDefaultResolvers().filter(it => this.defaultResolverVendors.includes(it.vendor))
-            : [];
-
-        if (customResolvers) {
-            if (!customResolvers.length) {
-                throw Error("“customResolvers” option must be a non-empty array or falsy");
-            }
-
-            this.resolvers.push(...customResolvers);
-        }
-
-        if (!this.resolvers.length) {
-            throw Error("No resolvers were added for your options!");
-        }
+        
+        this.resolvers = options?.resolvers || RedefinedResolver.createDefaultResolvers();
     }
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]> {
@@ -89,12 +32,47 @@ export class RedefinedResolver implements Resolver {
         ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
 
-    private getDefaultResolvers(): ResolverService[] {
+    static createDefaultResolvers(options?: ResolversParams) {
         return [
-            new RedefinedUsernameResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves),
-            new RedefinedEmailResolverService(this.nodes.redefinedNode, this.allowDefaultEvmResolves),
-            new EnsResolverService(this.nodes.ensNode),
-            new UnstoppableResolverService({ mainnet: this.nodes.unsMainnetNode, polygonMainnet: this.nodes.unsPolygonMainnetNode }),
+            ...this.createRedefinedResolvers(options?.redefined),
+            this.createEnsResolver(options?.ens),
+            this.createUnstoppableResolver(options?.unstoppable),
         ]
+    }
+    
+    static createRedefinedResolvers(options?: RedefinedParams) {
+        return [
+            this.createRedefinedUsernameResolver(options),
+            this.createRedefinedEmailResolver(options),
+        ]
+    }
+    
+    static createRedefinedEmailResolver(options?: RedefinedParams) {
+        return new RedefinedEmailResolverService(
+            options?.node || config.REDEFINED_NODE,
+            options?.allowDefaultEvmResolves !== undefined
+                ? options.allowDefaultEvmResolves
+                : true,
+        );
+    }
+    
+    static createRedefinedUsernameResolver(options?: RedefinedParams) {
+        return new RedefinedUsernameResolverService(
+            options?.node || config.REDEFINED_NODE,
+            options?.allowDefaultEvmResolves !== undefined
+                ? options.allowDefaultEvmResolves
+                : true,
+        );
+    }
+    
+    static createEnsResolver(options?: EnsParams) {
+        return new EnsResolverService(options?.node || config.ENS_NODE);
+    }
+    
+    static createUnstoppableResolver(options?: UnstoppableParams) {
+        return new UnstoppableResolverService({
+            mainnet: options?.mainnetNode || config.UNS_MAINNET_NODE,
+            polygonMainnet: options?.polygonMainnetNode || config.UNS_POLYGON_MAINNET_NODE,
+        });
     }
 }

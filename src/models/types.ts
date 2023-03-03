@@ -4,20 +4,12 @@ export type ResolverVendor = "redefined" | "ens" | "unstoppable" | string
 
 export type NodeNetwork = "redefinedNode" | "ensNode" | "unsMainnetNode" | "unsPolygonMainnetNode";
 
-export type Nodes = {
-    [key in NodeNetwork]: string
-}
-
 export type NodeOptions = {
     [key in NodeNetwork]?: string
 }
 
 export type ResolverOptions = {
-    defaultResolvers?: ResolverVendor[],
-    useDefaultResolvers?: boolean,
-    nodes?: NodeOptions
-    allowDefaultEvmResolves?: boolean,
-    customResolvers?: ResolverService[],
+    resolvers: ResolverService[]
 }
 
 export type Account = {
@@ -36,7 +28,19 @@ export type CustomResolverServiceOptions = ResolverServiceOptions | {
 }
 
 export interface Resolver {
-    options?: ResolverOptions;
 
     resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]>;
+}
+
+
+export type EnsParams = { node: string };
+
+export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: string };
+
+export type RedefinedParams = { node?: string, allowDefaultEvmResolves?: boolean };
+
+export type ResolversParams = {
+    redefined?: RedefinedParams,
+    unstoppable?: UnstoppableParams,
+    ens?: EnsParams,
 }
