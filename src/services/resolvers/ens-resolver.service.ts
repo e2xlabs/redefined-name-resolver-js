@@ -25,11 +25,13 @@ export class EnsResolverService extends ResolverService {
                 return [];
             }
 
-            return [{
-                address: await resolver.getAddress(ETH_COIN_TYPE),
+            const address = await resolver.getAddress(ETH_COIN_TYPE);
+            
+            return address ? [{
+                address,
                 network: "eth",
                 from: this.vendor,
-            }]
+            }] : [];
         } catch (e: any) {
             if (!throwErrorOnInvalidDomain && e.message.includes("Illegal char")) {
                 return [];

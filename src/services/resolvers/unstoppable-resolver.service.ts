@@ -38,11 +38,13 @@ export class UnstoppableResolverService extends ResolverService {
                 return [];
             }
 
-            return [{
-                address: await this.resolution.addr(domain, "ETH"),
+            const address = await this.resolution.addr(domain, "ETH");
+            
+            return address ? [{
+                address,
                 network: "eth",
                 from: this.vendor,
-            }]
+            }] : []
         } catch (e: any) {
 
             if (!throwErrorOnInvalidDomain && (e.message.includes("is invalid") || e.message.includes("is not supported"))) {
