@@ -39,6 +39,68 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
         "type": "event"
     },
     {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "key",
+                "type": "string"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "network",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "addr",
+                        "type": "string"
+                    }
+                ],
+                "indexed": false,
+                "internalType": "struct EmailNameService.Record[]",
+                "name": "_records",
+                "type": "tuple[]"
+            }
+        ],
+        "name": "RegisterDomain",
+        "type": "event"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": false,
+                "internalType": "string",
+                "name": "key",
+                "type": "string"
+            },
+            {
+                "components": [
+                    {
+                        "internalType": "string",
+                        "name": "network",
+                        "type": "string"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "addr",
+                        "type": "string"
+                    }
+                ],
+                "indexed": false,
+                "internalType": "struct EmailNameService.Record[]",
+                "name": "_records",
+                "type": "tuple[]"
+            }
+        ],
+        "name": "UpdateDomain",
+        "type": "event"
+    },
+    {
         "inputs": [
             {
                 "internalType": "address",
@@ -65,6 +127,19 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
                 "internalType": "bool",
                 "name": "",
                 "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "domainsCount",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "",
+                "type": "uint256"
             }
         ],
         "stateMutability": "view",
@@ -102,6 +177,25 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "string",
+                "name": "_key",
+                "type": "string"
+            }
+        ],
+        "name": "isVirgin",
+        "outputs": [
+            {
+                "internalType": "bool",
+                "name": "",
+                "type": "bool"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "owner",
         "outputs": [
@@ -134,9 +228,9 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
                         "type": "string"
                     },
                     {
-                        "internalType": "address",
+                        "internalType": "string",
                         "name": "addr",
-                        "type": "address"
+                        "type": "string"
                     }
                 ],
                 "internalType": "struct EmailNameService.Record[]",
@@ -167,6 +261,19 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
         "type": "function"
     },
     {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "_newVerificationAddress",
+                "type": "address"
+            }
+        ],
+        "name": "removeBackendVerificationAddress",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+    },
+    {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -191,9 +298,9 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
                         "type": "string"
                     },
                     {
-                        "internalType": "address",
+                        "internalType": "string",
                         "name": "addr",
-                        "type": "address"
+                        "type": "string"
                     }
                 ],
                 "internalType": "struct EmailNameService.Record[]",
@@ -263,9 +370,9 @@ export const redefinedEmailResolverAbi: AbiItem[] = [
                         "type": "string"
                     },
                     {
-                        "internalType": "address",
+                        "internalType": "string",
                         "name": "addr",
-                        "type": "address"
+                        "type": "string"
                     }
                 ],
                 "internalType": "struct EmailNameService.Record[]",
