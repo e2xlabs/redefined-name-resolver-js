@@ -55,9 +55,9 @@ export const redefinedNicknameResolverAbi: AbiItem[] = [
             "type": "string"
           },
           {
-            "internalType": "address",
+            "internalType": "string",
             "name": "addr",
-            "type": "address"
+            "type": "string"
           }
         ],
         "indexed": false,
@@ -86,9 +86,9 @@ export const redefinedNicknameResolverAbi: AbiItem[] = [
             "type": "string"
           },
           {
-            "internalType": "address",
+            "internalType": "string",
             "name": "addr",
-            "type": "address"
+            "type": "string"
           }
         ],
         "indexed": false,
@@ -241,9 +241,9 @@ export const redefinedNicknameResolverAbi: AbiItem[] = [
             "type": "string"
           },
           {
-            "internalType": "address",
+            "internalType": "string",
             "name": "addr",
-            "type": "address"
+            "type": "string"
           }
         ],
         "internalType": "struct NickNameService.Record[]",
@@ -298,9 +298,9 @@ export const redefinedNicknameResolverAbi: AbiItem[] = [
             "type": "string"
           },
           {
-            "internalType": "address",
+            "internalType": "string",
             "name": "addr",
-            "type": "address"
+            "type": "string"
           }
         ],
         "internalType": "struct NickNameService.Record[]",
@@ -395,9 +395,9 @@ export const redefinedNicknameResolverAbi: AbiItem[] = [
             "type": "string"
           },
           {
-            "internalType": "address",
+            "internalType": "string",
             "name": "addr",
-            "type": "address"
+            "type": "string"
           }
         ],
         "internalType": "struct NickNameService.Record[]",
