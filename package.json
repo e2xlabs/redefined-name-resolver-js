@@ -1,6 +1,6 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "JS lib to resolve crypto names",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
