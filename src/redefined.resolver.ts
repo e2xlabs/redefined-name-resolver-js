@@ -19,16 +19,14 @@ export class RedefinedResolver implements Resolver {
         if (options && !options.resolvers.length) {
             throw Error("“resolvers” option must be a non-empty array or falsy")
         }
-        
+
         this.resolvers = options?.resolvers || RedefinedResolver.createDefaultResolvers();
     }
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]> {
         const customOptions = options || {};
-        // throwErrorOnInvalidDomain - non-rewritable parameter
-        // If it is true, then everything will fall on an error in one resolver
-        return flatten(
-          await Promise.all(this.resolvers.map(it => it.resolve(domain, { ...customOptions, throwErrorOnInvalidDomain: false }, networks)))
+        return flatten(// @ts-ignore
+          await Promise.all(this.resolvers.map(it => it.resolve(domain, { throwErrorOnInvalidDomain: false, ...customOptions }, networks)))
         ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
 
@@ -39,14 +37,14 @@ export class RedefinedResolver implements Resolver {
             this.createUnstoppableResolver(options?.unstoppable),
         ]
     }
-    
+
     static createRedefinedResolvers(options?: RedefinedParams) {
         return [
             this.createRedefinedUsernameResolver(options),
             this.createRedefinedEmailResolver(options),
         ]
     }
-    
+
     static createRedefinedEmailResolver(options?: RedefinedParams) {
         return new RedefinedEmailResolverService(
             options?.node || config.REDEFINED_NODE,
@@ -55,7 +53,7 @@ export class RedefinedResolver implements Resolver {
                 : true,
         );
     }
-    
+
     static createRedefinedUsernameResolver(options?: RedefinedParams) {
         return new RedefinedUsernameResolverService(
             options?.node || config.REDEFINED_NODE,
@@ -64,11 +62,11 @@ export class RedefinedResolver implements Resolver {
                 : true,
         );
     }
-    
+
     static createEnsResolver(options?: EnsParams) {
         return new EnsResolverService(options?.node || config.ENS_NODE);
     }
-    
+
     static createUnstoppableResolver(options?: UnstoppableParams) {
         return new UnstoppableResolverService({
             mainnet: options?.mainnetNode || config.UNS_MAINNET_NODE,
