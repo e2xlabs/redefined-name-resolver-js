@@ -2,7 +2,7 @@ import config from "@resolver/config";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { AccountRecord } from "@resolver/models/types";
 
-describe('redefined-username-resolver.service', () => {
+describe('redefined-username-username-resolver.service', () => {
     const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedUsernameResolverService, "resolveDomain");
@@ -29,15 +29,15 @@ describe('redefined-username-resolver.service', () => {
 
     test('SHOULD get addresses IF domain resolved without target networks', async () => {
         expect(await redefinedUsernameResolverService.resolve("cifrex.eth")).toEqual([
-            { address: "0x123", network: "eth", from: "redefined", },
-            { address: "0x323", network: "sol", from: "redefined", },
-            { address: "0x323", network: "evm", from: "redefined", },
+            { address: "0x123", network: "eth", from: "redefined-username", },
+            { address: "0x323", network: "sol", from: "redefined-username", },
+            { address: "0x323", network: "evm", from: "redefined-username", },
         ]);
     });
 
     test('SHOULD get addresses IF domain resolved with target networks', async () => {
         expect(await redefinedUsernameResolverService.resolve("cifrex.eth", undefined, ["eth"])).toEqual([
-            { address: "0x123", network: "eth", from: "redefined", },
+            { address: "0x123", network: "eth", from: "redefined-username", },
         ]);
     });
 

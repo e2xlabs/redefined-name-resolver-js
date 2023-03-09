@@ -60,7 +60,7 @@ describe('ens-resolver.service', () => {
         expect(response).toEqual([]);
     });
 
-    test('SHOULD throw Error IF domain is invalid', async () => {
+    test('SHOULD throw Error IF address is invalid', async () => {
         mockImplementationGetAddress(getErrorFn("invalid address"));
         const response = await ensResolverService.resolve("nick.eth", { throwErrorOnInvalidDomain: false });
         expect(response).toEqual([]);

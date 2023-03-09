@@ -79,10 +79,13 @@ describe('redefined.resolver', () => {
     resetRedefinedImplementationWithNetworks(networks)
 
     const callTest = async (network: string) => {
-      expect(await resolver.resolve("cifrex.eth", [network])).toEqual([
-        { address: "0xUsername", network, from: "redefined" },
-        { address: "0xEmail", network, from: "redefined" },
-      ]);
+      expect(await resolver.resolve("cifrex.eth", [network])).toEqual({
+        errors: [],
+        response: [
+          { address: "0xUsername", network, from: "redefined-username" },
+          { address: "0xEmail", network, from: "redefined-email" },
+        ]
+      });
     }
 
     await Promise.all(networks.map((it) => callTest(it)));
@@ -96,10 +99,13 @@ describe('redefined.resolver', () => {
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
-    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([
-      { address: "0xUsername", network: "evm", from: "redefined" },
-      { address: "0xEmail", network: "evm", from: "redefined" },
-    ]);
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual({
+      errors: [],
+      response: [
+        { address: "0xUsername", network: "evm", from: "redefined-username" },
+        { address: "0xEmail", network: "evm", from: "redefined-email" },
+      ]
+    });
   });
 
   test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
@@ -110,10 +116,13 @@ describe('redefined.resolver', () => {
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
-    expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual([
-      { address: "0xUsername", network: "eth", from: "redefined" },
-      { address: "0xEmail", network: "eth", from: "redefined" },
-    ]);
+    expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual({
+      errors: [],
+      response: [
+        { address: "0xUsername", network: "eth", from: "redefined-username" },
+        { address: "0xEmail", network: "eth", from: "redefined-email" },
+      ]
+    });
   });
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
@@ -126,7 +135,10 @@ describe('redefined.resolver', () => {
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
-    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([]);
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual({
+      errors: [],
+      response: [],
+    });
   });
 
   test('SHOULD use custom resolver IF provided', async () => {
@@ -139,7 +151,7 @@ describe('redefined.resolver', () => {
       ]
     });
 
-    await resolver.resolve("domain");
+    await resolver.resolve("ivan.eth", undefined, { throwErrorOnInvalidDomain: true,});
 
     expect(spyRedefinedEmailResolve).toHaveBeenCalled()
     expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
@@ -195,5 +207,22 @@ describe('redefined.resolver', () => {
     await resolver.resolve("domain", undefined, { customOption: "customOption" });
 
     expect(spyResolve).toHaveBeenLastCalledWith("domain", { throwErrorOnInvalidDomain: false, customOption: "customOption" }, undefined)
+  });
+
+  test('SHOULD get errors in response IF resolver failed', async () => {
+    const customResolver = new CustomResolver();
+
+    jest.spyOn(customResolver, 'resolve').mockImplementation(async () => {
+      throw Error("Custom error")
+    });
+
+    const resolver = new RedefinedResolver({ resolvers: [customResolver] });
+
+    const response = await resolver.resolve("domain");
+
+    expect(response).toEqual({
+      errors: [{ vendor: customResolver.vendor, error: "Custom error" }],
+      response: [],
+    })
   });
 });

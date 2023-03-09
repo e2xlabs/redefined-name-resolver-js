@@ -1,4 +1,8 @@
-import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
+import {
+    defaultResolverServiceOptions,
+    ResolverService,
+    ResolverServiceOptions
+} from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import { ethers } from 'ethers'
@@ -22,13 +26,13 @@ export class EnsResolverService extends ResolverService {
             const resolver = await provider.getResolver(domain);
 
             if (!resolver) {
-                throw Error(`Cant resolve name ${domain}`)
+                throw Error(`Cant resolve ${domain}`)
             }
 
             const address = await resolver.getAddress(ETH_COIN_TYPE);
 
             if (!address) {
-                throw Error(`Name is not registered ${domain}`)
+                throw Error(`${domain} is not registered`)
             }
 
             return [{
@@ -42,8 +46,8 @@ export class EnsResolverService extends ResolverService {
             if (
                 !throwErrorOnInvalidDomain
                 && (
-                    error.includes("Cant resolve name")
-                    || error.includes("Name is not registered")
+                    error.includes("Cant resolve")
+                    || error.includes("is not registered")
                     || error.includes("Illegal char")
                     || error.includes("invalid address")
                 )

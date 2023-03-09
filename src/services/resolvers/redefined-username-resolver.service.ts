@@ -6,6 +6,8 @@ import { RedefinedResolverService } from "@resolver/services/resolvers/redefined
 
 export class RedefinedUsernameResolverService extends RedefinedResolverService {
 
+    vendor = "redefined-username";
+
     constructor(
         public node: string,
         public allowDefaultEvmResolves: boolean,

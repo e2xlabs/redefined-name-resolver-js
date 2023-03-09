@@ -7,6 +7,8 @@ import { RedefinedResolverService } from "@resolver/services/resolvers/redefined
 
 export class RedefinedEmailResolverService extends RedefinedResolverService {
 
+    vendor = "redefined-email";
+
     constructor(
         public node: string,
         public allowDefaultEvmResolves: boolean,
