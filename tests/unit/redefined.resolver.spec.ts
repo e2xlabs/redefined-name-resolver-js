@@ -213,16 +213,21 @@ describe('redefined.resolver', () => {
     const customResolver = new CustomResolver();
 
     jest.spyOn(customResolver, 'resolve').mockImplementation(async () => {
-      throw Error("Custom error")
+      throw Error("Custom error")g
     });
 
-    const resolver = new RedefinedResolver({ resolvers: [customResolver] });
+    const resolver = new RedefinedResolver({ resolvers: [...RedefinedResolver.createRedefinedResolvers(), customResolver] });
 
     const response = await resolver.resolve("domain");
 
     expect(response).toEqual({
-      errors: [{ vendor: customResolver.vendor, error: "Custom error" }],
-      response: [],
+      response: [
+        { address: "0xUsername", network: "eth", from: "redefined-username" },
+        { address: "0xEmail", network: "eth", from: "redefined-email" },
+      ],
+      errors: [
+        { vendor: customResolver.vendor, error: "Custom error" }
+      ],
     })
   });
 });
