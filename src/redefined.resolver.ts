@@ -28,7 +28,7 @@ export class RedefinedResolver implements Resolver {
         // throwErrorOnInvalidDomain - non-rewritable parameter
         // If it is true, then everything will fall on an error in one resolver
         return flatten(
-          await Promise.all(this.resolvers.map(it => it.resolve(domain.toLowerCase(), { ...customOptions, throwErrorOnInvalidDomain: false }, networks)))
+          await Promise.all(this.resolvers.map(it => it.resolve(domain, { ...customOptions, throwErrorOnInvalidDomain: false }, networks)))
         ).filter(it => !networks || networks.includes(it.network) || it.network === "evm")
     }
 
