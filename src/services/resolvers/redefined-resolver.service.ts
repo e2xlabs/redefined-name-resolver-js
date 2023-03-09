@@ -35,22 +35,21 @@ export abstract class RedefinedResolverService extends ResolverService {
                 : [];
         } catch (e: any) {
 
+            const error = e.message;
+
             if (
-                e.message.includes("Name is not registered")
-                || (
-                    !throwErrorOnInvalidDomain
-                    && (
-                        e.message.includes("Invalid character")
-                        || e.message.includes("Name should be at")
-                        || e.message.includes("Name has incorrect length")
-                    )
+                !throwErrorOnInvalidDomain
+                && (
+                    error.includes("Name is not registered")
+                    || error.includes("Invalid character")
+                    || error.includes("Name should be at")
+                    || error.includes("Name has incorrect length")
                 )
             ) {
                 return [];
             }
 
-            console.error(e);
-            throw Error(`redefined Error: ${e.message}`);
+            throw Error(`redefined Error: ${error}`);
         }
     }
 

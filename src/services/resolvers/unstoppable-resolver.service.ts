@@ -35,24 +35,31 @@ export class UnstoppableResolverService extends ResolverService {
     async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
         try {
             if (!(await this.resolution.isRegistered(domain))) {
-                return [];
+                throw Error(`Name is not registered ${domain} `)
             }
 
             const address = await this.resolution.addr(domain, "ETH");
-            
+
             return address ? [{
                 address,
                 network: "evm",
                 from: this.vendor,
             }] : []
         } catch (e: any) {
+            const error = e.message;
 
-            if (!throwErrorOnInvalidDomain && (e.message.includes("is invalid") || e.message.includes("is not supported"))) {
+            if (
+                !throwErrorOnInvalidDomain
+                && (
+                    error.includes("Name is not registered")
+                    || error.includes("is invalid")
+                    || error.includes("is not supported")
+                )
+            ) {
                 return [];
             }
 
-            console.error(e);
-            throw Error(`Unstoppable Error: ${e.message}`);
+            throw Error(`Unstoppable Error: ${error}`);
         }
     }
 }

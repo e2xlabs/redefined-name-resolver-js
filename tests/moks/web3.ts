@@ -4,11 +4,6 @@ import type { AccountRecord } from "@resolver/models/types";
 EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
   (node: string) => ({
     eth: {
-      ens: {
-        async getAddress(domain: string): Promise<string> {
-          return "0x123"
-        },
-      },
       Contract: class Contract {
         methods = {
           resolve(domain: string) {

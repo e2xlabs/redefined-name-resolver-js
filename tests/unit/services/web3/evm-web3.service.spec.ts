@@ -6,7 +6,6 @@ describe('evm-web3.service', () => {
     const web3 = EvmWeb3Service.getWeb3(config.REDEFINED_NODE);
     expect(web3).not.toBe(undefined);
     expect(web3.eth).not.toBe(undefined);
-    expect(web3.eth.ens).not.toBe(undefined);
     expect(web3.eth.Contract).not.toBe(undefined);
   });
 });

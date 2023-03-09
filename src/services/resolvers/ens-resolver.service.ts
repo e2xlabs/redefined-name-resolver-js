@@ -20,25 +20,38 @@ export class EnsResolverService extends ResolverService {
 
         try {
             const resolver = await provider.getResolver(domain);
-            
+
             if (!resolver) {
-                return [];
+                throw Error(`Cant resolve name ${domain}`)
             }
 
             const address = await resolver.getAddress(ETH_COIN_TYPE);
-            
-            return address ? [{
+
+            if (!address) {
+                throw Error(`Name is not registered ${domain}`)
+            }
+
+            return [{
                 address,
                 network: "evm",
                 from: this.vendor,
-            }] : [];
+            }];
         } catch (e: any) {
-            if (!throwErrorOnInvalidDomain && e.message.includes("Illegal char")) {
+            const error = e.message;
+
+            if (
+                !throwErrorOnInvalidDomain
+                && (
+                    error.includes("Cant resolve name")
+                    || error.includes("Name is not registered")
+                    || error.includes("Illegal char")
+                    || error.includes("invalid address")
+                )
+            ) {
                 return [];
             }
 
-            console.error(e);
-            throw Error(`ENS Error: ${e.message}`);
+            throw Error(`ENS Error: ${error}`);
         }
     }
 }
