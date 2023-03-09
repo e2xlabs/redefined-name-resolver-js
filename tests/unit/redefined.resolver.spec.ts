@@ -213,7 +213,7 @@ describe('redefined.resolver', () => {
     const customResolver = new CustomResolver();
 
     jest.spyOn(customResolver, 'resolve').mockImplementation(async () => {
-      throw Error("Custom error")g
+      throw Error("Custom error")
     });
 
     const resolver = new RedefinedResolver({ resolvers: [...RedefinedResolver.createRedefinedResolvers(), customResolver] });
