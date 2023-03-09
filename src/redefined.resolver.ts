@@ -31,8 +31,7 @@ export class RedefinedResolver implements Resolver {
         const result = await Promise.allSettled(
             this.resolvers.map(async resolver => {
                 try {
-                    // @ts-ignore
-                    return await resolver.resolve(domain, { throwErrorOnInvalidDomain: false, ...(options || {}), }, networks)
+                    return await resolver.resolve(domain, networks, options)
                 } catch (e: any) {
                     throw Error(JSON.stringify({ vendor: resolver.vendor, error: e.message }))
                 }

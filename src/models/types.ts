@@ -1,4 +1,4 @@
-import type { ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 
 export type ResolverVendor = "redefined" | "ens" | "unstoppable" | string
 
@@ -17,7 +17,7 @@ export type AccountRecord = {
     network: string,
 }
 
-export type CustomResolverServiceOptions = ResolverServiceOptions | {
+export type CustomResolverServiceOptions = {
     [key: string]: any,
 }
 

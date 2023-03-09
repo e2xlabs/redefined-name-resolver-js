@@ -1,8 +1,4 @@
-import {
-    defaultResolverServiceOptions,
-    ResolverService,
-    ResolverServiceOptions
-} from "@resolver/services/resolvers/resolver.service";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import { ethers } from 'ethers'
@@ -19,7 +15,7 @@ export class EnsResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
+    async resolve(domain: string): Promise<Account[]> {
         const provider = new ethers.providers.JsonRpcProvider(this.node);
 
         try {
@@ -41,21 +37,7 @@ export class EnsResolverService extends ResolverService {
                 from: this.vendor,
             }];
         } catch (e: any) {
-            const error = e.message;
-
-            if (
-                !throwErrorOnInvalidDomain
-                && (
-                    error.includes("Cant resolve")
-                    || error.includes("is not registered")
-                    || error.includes("Illegal char")
-                    || error.includes("invalid address")
-                )
-            ) {
-                return [];
-            }
-
-            throw Error(`ENS Error: ${error}`);
+            throw Error(`ENS Error: ${e.message}`);
         }
     }
 }

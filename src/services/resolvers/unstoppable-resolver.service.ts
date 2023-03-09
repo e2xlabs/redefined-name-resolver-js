@@ -1,8 +1,4 @@
-import {
-    defaultResolverServiceOptions,
-    ResolverService,
-    ResolverServiceOptions
-} from "@resolver/services/resolvers/resolver.service";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import Resolution  from "@unstoppabledomains/resolution";
 import { ResolverVendor } from "@resolver/models/types";
@@ -36,7 +32,7 @@ export class UnstoppableResolverService extends ResolverService {
         });
     }
 
-    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
+    async resolve(domain: string): Promise<Account[]> {
         try {
             if (!(await this.resolution.isRegistered(domain))) {
                 throw Error(`${domain} is not registered`)
@@ -50,20 +46,7 @@ export class UnstoppableResolverService extends ResolverService {
                 from: this.vendor,
             }] : []
         } catch (e: any) {
-            const error = e.message;
-
-            if (
-                !throwErrorOnInvalidDomain
-                && (
-                    error.includes("is not registered")
-                    || error.includes("is invalid")
-                    || error.includes("is not supported")
-                )
-            ) {
-                return [];
-            }
-
-            throw Error(`Unstoppable Error: ${error}`);
+            throw Error(`Unstoppable Error: ${e.message}`);
         }
     }
 }

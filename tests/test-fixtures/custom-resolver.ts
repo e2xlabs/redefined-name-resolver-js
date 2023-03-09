@@ -1,10 +1,10 @@
-import { ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
-import { Account } from "@resolver/models/types";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { Account, CustomResolverServiceOptions } from "@resolver/models/types";
 
 export class CustomResolver extends ResolverService {
   vendor = "some-custom-resolver"
 
-  async resolve(domain: string, options?: ResolverServiceOptions, networks?: string[]): Promise<Account[]> {
+  async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]> {
     return [{
       address: "0x123",
       network: "eth",

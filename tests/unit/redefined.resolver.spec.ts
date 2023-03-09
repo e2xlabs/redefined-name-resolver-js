@@ -206,7 +206,7 @@ describe('redefined.resolver', () => {
 
     await resolver.resolve("domain", undefined, { customOption: "customOption" });
 
-    expect(spyResolve).toHaveBeenLastCalledWith("domain", { throwErrorOnInvalidDomain: false, customOption: "customOption" }, undefined)
+    expect(spyResolve).toHaveBeenLastCalledWith("domain", undefined, { customOption: "customOption" })
   });
 
   test('SHOULD get errors in response IF resolver failed', async () => {
