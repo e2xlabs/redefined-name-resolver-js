@@ -42,7 +42,7 @@ export class RedefinedResolver {
                     data.errors.push({ vendor: resolver.vendor, error: e.message })
                 }
             })
-        );git 
+        );
 
         return data
     }
