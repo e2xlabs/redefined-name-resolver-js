@@ -16,63 +16,63 @@ const resolver = new RedefinedResolver();
 
 // resolve redefined names
 const emailResult = await resolver.resolve("ik@e2xlabs.com");
-/* result: {
-    [
+/* result: [
+    {
         address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
         network: "evm",
         from: "redefined"
-    ], [
+    }, {
         address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
         network: "zil",
         from: "redefined"
-    ]
-}*/
+    }
+]*/
 const nicknameResult = await resolver.resolve("gigachadivan");
-/* result: {
-    [
+/* result: [
+    {
         address: "GsYPSWAbXw4YsSEeowuTf7nqjExVxKS5tS1Yy9WwFAPG",
         network: "sol",
         from: "redefined"
-    ]
-}*/
+    }
+]*/
 
 // resolve ENS names
 const ensResult = await resolver.resolve("ivan.eth");
-/* result: {
-    [
+/* result: [
+    {
         address: "0x25428d29a6FA3629ff401c6DADe418B19CB2D615",
         network: "evm",
         from: "ens"
-    ]
-}*/
+    }
+]*/
 
 // resolve Unstoppable names
 const unstoppableResult = await resolver.resolve("nick.crypto");
-/* result: {
-    [
+/* result: [
+    {
         address: "0x16d94b922bF11981DBa2C4A6cAEd9938F00d5d0C",
         network: "evm",
         from: "unstoppable"
-    ]
-}*/
+    }
+]*/
 
 // resolve specific network
 const zilResult = await resolver.resolve("ik@e2xlabs.com", ["zil"]);
-/* result: {
-    [
+/* result: [
+    {
         address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
         network: "zil",
         from: "redefined"
-    ]
-}*/
+    }
+]*/
 const bscFromUnstoppable = await resolver.resolve("nick.crypto", ["bsc"]);
-/* result: {
-    [
+/* result: [
+    {
         address: "0x16d94b922bF11981DBa2C4A6cAEd9938F00d5d0C",
         network: "evm",
         from: "unstoppable"
-    ]
-}*/
+    }
+]*/
 ```
 
 ## Priorties of resolution of EVM-compatible
