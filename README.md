@@ -13,65 +13,78 @@ or download the lib from NPM registry manually: [https://www.npmjs.com/package/@
 ```typescript
 // initialize resolver
 const resolver = new RedefinedResolver();
-
+2
 // resolve redefined names
 const emailResult = await resolver.resolve("ik@e2xlabs.com");
-/* result: {
-    [
-        address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
-        network: "evm",
-        from: "redefined"
-    ], [
-        address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
-        network: "zil",
-        from: "redefined"
-    ]
+/* {
+    response: [
+        {
+            address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
+            network: "evm",
+            from: "redefined"
+        }, {
+            address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
+            network: "zil",
+            from: "redefined"
+        }
+    ],
+    errors: [
+        {
+            vendor: "ens",
+            error: "Invalid domain",
+        },
+    ],
 }*/
 const nicknameResult = await resolver.resolve("gigachadivan");
-/* result: {
-    [
+/* {
+    response: [{
         address: "GsYPSWAbXw4YsSEeowuTf7nqjExVxKS5tS1Yy9WwFAPG",
         network: "sol",
         from: "redefined"
-    ]
+    }],
+    errors: [],
 }*/
 
 // resolve ENS names
 const ensResult = await resolver.resolve("ivan.eth");
-/* result: {
-    [
+/* {
+    response: [{
         address: "0x25428d29a6FA3629ff401c6DADe418B19CB2D615",
         network: "evm",
         from: "ens"
-    ]
+    }],
+    errors: [],
 }*/
 
 // resolve Unstoppable names
 const unstoppableResult = await resolver.resolve("nick.crypto");
-/* result: {
-    [
+/* {
+    response: [{
         address: "0x16d94b922bF11981DBa2C4A6cAEd9938F00d5d0C",
         network: "evm",
         from: "unstoppable"
-    ]
+    }],
+    errors: [],
 }*/
 
 // resolve specific network
 const zilResult = await resolver.resolve("ik@e2xlabs.com", ["zil"]);
-/* result: {
-    [
+/* {
+    response: [{
         address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
         network: "zil",
         from: "redefined"
-    ]
+    }],
+    errors: [],
 }*/
 const bscFromUnstoppable = await resolver.resolve("nick.crypto", ["bsc"]);
-/* result: {
-    [
+/* {
+    response: [{
         address: "0x16d94b922bF11981DBa2C4A6cAEd9938F00d5d0C",
         network: "evm",
         from: "unstoppable"
-    ]
+    }],
+    errors: [],
 }*/
 ```
 
@@ -141,7 +154,7 @@ Please see github for sources: [https://github.com/e2xlabs/redefined-name-resolv
 ```typescript
 export abstract class ResolverService {
     abstract vendor: ResolverVendor;
-    abstract resolve(domain: string, options?: ResolverServiceOptions, networks?: string[]): Promise<Account[]>;
+    abstract resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]>;
 }
 ```
 
@@ -158,7 +171,7 @@ export class KeyValueResolverService extends ResolverService {
         "andrey": "0x3",
     }
 
-    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
+    async resolve(domain: string): Promise<Account[]> {
         const address = registry[domain];
         return address ? [{ address, network: "evm", from: this.vendor }] : [];
     }
@@ -180,7 +193,7 @@ Or combine it with existing built-in resolver services:
 ```typescript
 const resolver = new RedefinedResolver({
       resolvers: [
-            ...RedefinedResolver.createRedefinedResolvers(),
+            ...RedefinedResolver.createDefaultResolvers(),
             new KeyValueResolverService(),
       ]
 });
