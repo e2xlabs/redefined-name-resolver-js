@@ -6,13 +6,6 @@ describe('redefined-email-resolver.service', () => {
 
     const spyResolveDomain = jest.spyOn(redefinedEmailResolverService, "resolveDomain");
 
-    function spyOnThrowInvalidDomainError() {
-        spyResolveDomain.mockReset();
-        spyResolveDomain.mockImplementation(() => {
-            throw Error("Invalid character")
-        })
-    }
-
     beforeEach(() => {
         spyResolveDomain.mockReset();
         spyResolveDomain.mockImplementation(async () => ([
@@ -24,34 +17,15 @@ describe('redefined-email-resolver.service', () => {
 
     test('SHOULD get addresses IF domain resolved without target network', async () => {
         expect(await redefinedEmailResolverService.resolve("cifrex.eth")).toEqual([
-            { address: "0x123", network: "eth", from: "redefined", },
-            { address: "0x323", network: "sol", from: "redefined", },
-            { address: "0x323", network: "evm", from: "redefined", },
+            { address: "0x123", network: "eth", from: "redefined-email", },
+            { address: "0x323", network: "sol", from: "redefined-email", },
+            { address: "0x323", network: "evm", from: "redefined-email", },
         ]);
     });
-    
+
     test('SHOULD get addresses IF domain resolved with target networks', async () => {
-        expect(await redefinedEmailResolverService.resolve("cifrex.eth", undefined, ["eth"])).toEqual([
-            { address: "0x123", network: "eth", from: "redefined", },
+        expect(await redefinedEmailResolverService.resolve("cifrex.eth", ["eth"])).toEqual([
+            { address: "0x123", network: "eth", from: "redefined-email", },
         ]);
-    });
-
-    test('SHOULD NOT throw Error IF domain is invalid', async () => {
-        spyOnThrowInvalidDomainError();
-
-        const response = await redefinedEmailResolverService.resolve("theseif.eth", { throwErrorOnInvalidDomain: false });
-        expect(response).toEqual([]);
-    });
-
-    test('SHOULD throw Error IF domain is invalid', async () => {
-        spyOnThrowInvalidDomainError();
-
-        let error = "";
-        try {
-            await redefinedEmailResolverService.resolve("theseif.eth", { throwErrorOnInvalidDomain: true });
-        } catch (e: any) {
-            error = e.message;
-        }
-        expect(error).toBe("redefined Error: Invalid character")
     });
 });

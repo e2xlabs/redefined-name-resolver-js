@@ -46,7 +46,7 @@ describe('redefined.resolver', () => {
     expect(spyEnsResolve).toHaveBeenCalled()
     expect(spyUnsResolve).not.toHaveBeenCalled()
   });
-  
+
   test('SHOULD throw error on set resolvers IF provided nothing', async () => {
     let error = "";
     try {
@@ -54,7 +54,7 @@ describe('redefined.resolver', () => {
     } catch (e: any) {
       error = e.message;
     }
-    
+
     expect(error).toBe("“resolvers” option must be a non-empty array or falsy");
   });
 
@@ -79,10 +79,13 @@ describe('redefined.resolver', () => {
     resetRedefinedImplementationWithNetworks(networks)
 
     const callTest = async (network: string) => {
-      expect(await resolver.resolve("cifrex.eth", [network])).toEqual([
-        { address: "0xUsername", network, from: "redefined" },
-        { address: "0xEmail", network, from: "redefined" },
-      ]);
+      expect(await resolver.resolve("cifrex.eth", [network])).toEqual({
+        errors: [],
+        response: [
+          { address: "0xUsername", network, from: "redefined-username" },
+          { address: "0xEmail", network, from: "redefined-email" },
+        ]
+      });
     }
 
     await Promise.all(networks.map((it) => callTest(it)));
@@ -96,24 +99,30 @@ describe('redefined.resolver', () => {
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
-    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([
-      { address: "0xUsername", network: "evm", from: "redefined" },
-      { address: "0xEmail", network: "evm", from: "redefined" },
-    ]);
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual({
+      errors: [],
+      response: [
+        { address: "0xUsername", network: "evm", from: "redefined-username" },
+        { address: "0xEmail", network: "evm", from: "redefined-email" },
+      ]
+    });
   });
 
   test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
     const resolver = new RedefinedResolver({
       resolvers: RedefinedResolver.createRedefinedResolvers()
     });
-    
+
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
-    expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual([
-      { address: "0xUsername", network: "eth", from: "redefined" },
-      { address: "0xEmail", network: "eth", from: "redefined" },
-    ]);
+    expect(await resolver.resolve("cifrex.eth", ["eth"])).toEqual({
+      errors: [],
+      response: [
+        { address: "0xUsername", network: "eth", from: "redefined-username" },
+        { address: "0xEmail", network: "eth", from: "redefined-email" },
+      ]
+    });
   });
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
@@ -126,7 +135,10 @@ describe('redefined.resolver', () => {
     const networks = ["eth", "evm"];
     resetRedefinedImplementationWithNetworks(networks)
 
-    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual([]);
+    expect(await resolver.resolve("cifrex.eth", ["bsc"])).toEqual({
+      errors: [],
+      response: [],
+    });
   });
 
   test('SHOULD use custom resolver IF provided', async () => {
@@ -139,7 +151,7 @@ describe('redefined.resolver', () => {
       ]
     });
 
-    await resolver.resolve("domain");
+    await resolver.resolve("ivan.eth", undefined, { throwErrorOnInvalidDomain: true,});
 
     expect(spyRedefinedEmailResolve).toHaveBeenCalled()
     expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
@@ -150,7 +162,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD use custom resolver with selected predefined IF provided', async () => {
     const spyCustomResolve = jest.spyOn(CustomResolver.prototype, 'resolve');
-  
+
     const resolver = new RedefinedResolver({
       resolvers: [
         RedefinedResolver.createEnsResolver(),
@@ -159,7 +171,7 @@ describe('redefined.resolver', () => {
     });
 
     await resolver.resolve("domain");
-  
+
     expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
     expect(spyRedefinedUsernameResolve).not.toHaveBeenCalled()
     expect(spyUnsResolve).not.toHaveBeenCalled()
@@ -170,11 +182,11 @@ describe('redefined.resolver', () => {
   test('SHOULD use only custom resolver IF options provided', async () => {
     const customResolver = new CustomResolver();
     const spyCustomResolve = jest.spyOn(customResolver, 'resolve');
-  
+
     const resolver = new RedefinedResolver({
       resolvers: [customResolver],
     });
-    
+
     await resolver.resolve("domain");
 
     expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
@@ -183,17 +195,39 @@ describe('redefined.resolver', () => {
     expect(spyUnsResolve).not.toHaveBeenCalled()
     expect(spyCustomResolve).toHaveBeenCalled()
   });
-  
+
   test('SHOULD call resolve with custom options IF provided', async () => {
     const customResolver = new CustomResolver();
     const spyResolve = jest.spyOn(customResolver, 'resolve');
-  
+
     const resolver = new RedefinedResolver({
       resolvers: [customResolver],
     });
-    
+
     await resolver.resolve("domain", undefined, { customOption: "customOption" });
-    
-    expect(spyResolve).toHaveBeenLastCalledWith("domain", { throwErrorOnInvalidDomain: false, customOption: "customOption" }, undefined)
+
+    expect(spyResolve).toHaveBeenLastCalledWith("domain", undefined, { customOption: "customOption" })
+  });
+
+  test('SHOULD get errors in response IF resolver failed', async () => {
+    const customResolver = new CustomResolver();
+
+    jest.spyOn(customResolver, 'resolve').mockImplementation(async () => {
+      throw Error("Custom error")
+    });
+
+    const resolver = new RedefinedResolver({ resolvers: [...RedefinedResolver.createRedefinedResolvers(), customResolver] });
+
+    const response = await resolver.resolve("domain");
+
+    expect(response).toEqual({
+      response: [
+        { address: "0xUsername", network: "eth", from: "redefined-username" },
+        { address: "0xEmail", network: "eth", from: "redefined-email" },
+      ],
+      errors: [
+        { vendor: customResolver.vendor, error: "Custom error" }
+      ],
+    })
   });
 });

@@ -1,12 +1,6 @@
-import type { ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 
-export type ResolverVendor = "redefined" | "ens" | "unstoppable" | string
-
-export type NodeNetwork = "redefinedNode" | "ensNode" | "unsMainnetNode" | "unsPolygonMainnetNode";
-
-export type NodeOptions = {
-    [key in NodeNetwork]?: string
-}
+export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | string
 
 export type ResolverOptions = {
     resolvers: ResolverService[]
@@ -23,15 +17,19 @@ export type AccountRecord = {
     network: string,
 }
 
-export type CustomResolverServiceOptions = ResolverServiceOptions | {
+export type CustomResolverServiceOptions = {
     [key: string]: any,
 }
 
-export interface Resolver {
-
-    resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]>;
+export type ResolverServiceError = {
+    vendor: ResolverVendor,
+    error: string
 }
 
+export type ResolverResponse = {
+    response: Account[],
+    errors:  ResolverServiceError[],
+}
 
 export type EnsParams = { node: string };
 

@@ -1,4 +1,4 @@
-import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
+import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import { ethers } from 'ethers'
@@ -7,7 +7,9 @@ const ETH_COIN_TYPE = 60;
 
 export class EnsResolverService extends ResolverService {
 
-    vendor: ResolverVendor = "ens"
+    get vendor(): ResolverVendor {
+        return "ens";
+    }
 
     constructor(
         public node: string,
@@ -15,29 +17,28 @@ export class EnsResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions): Promise<Account[]> {
+    async resolve(domain: string): Promise<Account[]> {
         const provider = new ethers.providers.JsonRpcProvider(this.node);
 
         try {
             const resolver = await provider.getResolver(domain);
-            
+
             if (!resolver) {
-                return [];
+                throw Error(`Cant resolve ${domain}`)
             }
 
             const address = await resolver.getAddress(ETH_COIN_TYPE);
-            
-            return address ? [{
+
+            if (!address) {
+                throw Error(`${domain} is not registered`)
+            }
+
+            return [{
                 address,
                 network: "evm",
                 from: this.vendor,
-            }] : [];
+            }];
         } catch (e: any) {
-            if (!throwErrorOnInvalidDomain && e.message.includes("Illegal char")) {
-                return [];
-            }
-
-            console.error(e);
             throw Error(`ENS Error: ${e.message}`);
         }
     }

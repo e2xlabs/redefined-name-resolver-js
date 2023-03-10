@@ -1,10 +1,11 @@
-import { defaultResolverServiceOptions, ResolverService, ResolverServiceOptions } from "@resolver/services/resolvers/resolver.service";
+import {
+    ResolverService,
+} from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { AccountRecord, ResolverVendor } from "@resolver/models/types";
 
 export abstract class RedefinedResolverService extends ResolverService {
-
-    vendor: ResolverVendor = "redefined"
+    abstract readonly vendor: ResolverVendor
 
     protected constructor(
       public allowDefaultEvmResolves: boolean,
@@ -12,7 +13,7 @@ export abstract class RedefinedResolverService extends ResolverService {
         super();
     }
 
-    async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions, networks?: string[]): Promise<Account[]> {
+    async resolve(domain: string, networks?: string[]): Promise<Account[]> {
         try {
             const accounts: Account[] = (await this.resolveDomain(domain.toLowerCase())).map((it: AccountRecord) => ({
                 address: it.addr,
@@ -34,22 +35,6 @@ export abstract class RedefinedResolverService extends ResolverService {
                 ? accounts
                 : [];
         } catch (e: any) {
-
-            if (
-                e.message.includes("Name is not registered")
-                || (
-                    !throwErrorOnInvalidDomain
-                    && (
-                        e.message.includes("Invalid character")
-                        || e.message.includes("Name should be at")
-                        || e.message.includes("Name has incorrect length")
-                    )
-                )
-            ) {
-                return [];
-            }
-
-            console.error(e);
             throw Error(`redefined Error: ${e.message}`);
         }
     }
