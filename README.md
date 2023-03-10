@@ -8,7 +8,10 @@ npm i @redefined/name-resolver-js
 
 or download the lib from NPM registry manually: [https://www.npmjs.com/package/@redefined/name-resolver-js](https://www.npmjs.com/package/@redefined/name-resolver-js)
 
-## Usage v2.0.0
+## Full documentation
+- [Gitbook](https://redefined.gitbook.io/connect/)
+
+## Usage
 
 ```typescript
 // initialize resolver
