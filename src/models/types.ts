@@ -21,9 +21,14 @@ export type CustomResolverServiceOptions = {
     [key: string]: any,
 }
 
+export type ResolverServiceError = {
+    vendor: ResolverVendor,
+    error: string
+}
+
 export type ResolverResponse = {
     response: Account[],
-    errors:  { vendor: ResolverVendor, error: string }[],
+    errors:  ResolverServiceError[],
 }
 
 export interface Resolver {

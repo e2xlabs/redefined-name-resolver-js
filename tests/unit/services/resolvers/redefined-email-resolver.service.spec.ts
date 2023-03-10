@@ -1,7 +1,7 @@
 import config from "@resolver/config";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 
-describe('redefined-email-email-resolver.service', () => {
+describe('redefined-email-resolver.service', () => {
     const redefinedEmailResolverService = new RedefinedEmailResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedEmailResolverService, "resolveDomain");
