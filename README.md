@@ -13,7 +13,7 @@ or download the lib from NPM registry manually: [https://www.npmjs.com/package/@
 ```typescript
 // initialize resolver
 const resolver = new RedefinedResolver();
-2
+
 // resolve redefined names
 const emailResult = await resolver.resolve("ik@e2xlabs.com");
 /* {
@@ -21,11 +21,11 @@ const emailResult = await resolver.resolve("ik@e2xlabs.com");
         {
             address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
             network: "evm",
-            from: "redefined"
+            from: "redefined-email"
         }, {
             address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
-            network: "zil",
-            from: "redefined"
+            network: "bsc",
+            from: "redefined-email"
         }
     ],
     errors: [
@@ -40,7 +40,7 @@ const nicknameResult = await resolver.resolve("gigachadivan");
     response: [{
         address: "GsYPSWAbXw4YsSEeowuTf7nqjExVxKS5tS1Yy9WwFAPG",
         network: "sol",
-        from: "redefined"
+        from: "redefined-username"
     }],
     errors: [],
 }*/
@@ -53,7 +53,12 @@ const ensResult = await resolver.resolve("ivan.eth");
         network: "evm",
         from: "ens"
     }],
-    errors: [],
+    errors: [
+        {
+            vendor: "redefiend-email",
+            error: "Domain is not registered",
+        },
+    ],
 }*/
 
 // resolve Unstoppable names
@@ -68,12 +73,12 @@ const unstoppableResult = await resolver.resolve("nick.crypto");
 }*/
 
 // resolve specific network
-const zilResult = await resolver.resolve("ik@e2xlabs.com", ["zil"]);
+const ethResult = await resolver.resolve("ik@e2xlabs.com", ["eth"]);
 /* {
     response: [{
         address: "0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04",
-        network: "zil",
-        from: "redefined"
+        network: "eth",
+        from: "redefined-email"
     }],
     errors: [],
 }*/
