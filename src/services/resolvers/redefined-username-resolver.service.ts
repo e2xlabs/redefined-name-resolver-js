@@ -3,11 +3,14 @@ import config from "@resolver/config";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedNicknameResolverAbi from "@resolver/services/abis/redefined-nickname-resolver.abi";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
+import { ResolverVendor } from "@resolver/models/types";
 
 export class RedefinedUsernameResolverService extends RedefinedResolverService {
-
-    vendor = "redefined-username";
-
+    
+    get vendor(): ResolverVendor {
+        return "redefined-username";
+    }
+    
     constructor(
         public node: string,
         public allowDefaultEvmResolves: boolean,

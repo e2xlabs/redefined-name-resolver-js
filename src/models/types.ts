@@ -31,12 +31,6 @@ export type ResolverResponse = {
     errors:  ResolverServiceError[],
 }
 
-export interface Resolver {
-
-    resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<ResolverResponse>;
-}
-
-
 export type EnsParams = { node: string };
 
 export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: string };

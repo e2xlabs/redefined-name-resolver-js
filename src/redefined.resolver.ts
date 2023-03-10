@@ -1,4 +1,4 @@
-import type { RedefinedParams, Resolver, UnstoppableParams } from "@resolver/models/types";
+import type { RedefinedParams, UnstoppableParams } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
@@ -13,12 +13,12 @@ import {
     ResolversParams
 } from "@resolver/models/types";
 
-export class RedefinedResolver implements Resolver {
+export class RedefinedResolver {
 
     private resolvers: ResolverService[];
 
     constructor(
-      public options?: ResolverOptions
+      private options?: ResolverOptions
     ) {
         if (options && !options.resolvers.length) {
             throw Error("“resolvers” option must be a non-empty array or falsy")
@@ -28,28 +28,21 @@ export class RedefinedResolver implements Resolver {
     }
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<ResolverResponse> {
-        const result = await Promise.allSettled(
-            this.resolvers.map(async resolver => {
-                try {
-                    return await resolver.resolve(domain, networks, options)
-                } catch (e: any) {
-                    throw Error(JSON.stringify({ vendor: resolver.vendor, error: e.message }))
-                }
-            })
-        );
-
         const data: ResolverResponse = {
             response: [],
             errors: [],
         }
-
-        result.forEach(it => {
-            if (it.status === "fulfilled") {
-                data.response.push(...it.value.filter(it => !networks || networks.includes(it.network) || it.network === "evm"))
-            } else if (it.status === "rejected") {
-                data.errors.push(JSON.parse(it.reason.message))
-            }
-        })
+        
+        await Promise.allSettled(
+            this.resolvers.map(async resolver => {
+                try {
+                    const accounts = await resolver.resolve(domain, networks, options);
+                    data.response.push(...accounts.filter(it => !networks || networks.includes(it.network) || it.network === "evm"))
+                } catch (e: any) {
+                    data.errors.push({ vendor: resolver.vendor, error: e.message })
+                }
+            })
+        );
 
         return data
     }

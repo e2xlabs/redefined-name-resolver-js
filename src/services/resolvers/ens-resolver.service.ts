@@ -7,7 +7,9 @@ const ETH_COIN_TYPE = 60;
 
 export class EnsResolverService extends ResolverService {
 
-    vendor: ResolverVendor = "ens"
+    get vendor(): ResolverVendor {
+        return "ens";
+    }
 
     constructor(
         public node: string,

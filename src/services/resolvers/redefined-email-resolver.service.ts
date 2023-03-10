@@ -4,11 +4,14 @@ import { sha256 } from "js-sha256";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedEmailResolverAbi from "@resolver/services/abis/redefined-email-resolver.abi";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
+import { ResolverVendor } from "@resolver/models/types";
 
 export class RedefinedEmailResolverService extends RedefinedResolverService {
 
-    vendor = "redefined-email";
-
+    get vendor(): ResolverVendor {
+        return "redefined-email";
+    }
+    
     constructor(
         public node: string,
         public allowDefaultEvmResolves: boolean,

@@ -5,7 +5,9 @@ import { ResolverVendor } from "@resolver/models/types";
 
 export class UnstoppableResolverService extends ResolverService {
 
-    vendor: ResolverVendor = "unstoppable"
+    get vendor(): ResolverVendor {
+        return "unstoppable";
+    }
 
     private resolution: Resolution
 

@@ -5,7 +5,7 @@ import type { Account } from "@resolver/models/types";
 import { AccountRecord, ResolverVendor } from "@resolver/models/types";
 
 export abstract class RedefinedResolverService extends ResolverService {
-    abstract vendor: ResolverVendor
+    abstract readonly vendor: ResolverVendor
 
     protected constructor(
       public allowDefaultEvmResolves: boolean,
