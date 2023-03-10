@@ -14,7 +14,7 @@ export abstract class RedefinedResolverService extends ResolverService {
 
     async resolve(domain: string, { throwErrorOnInvalidDomain }: ResolverServiceOptions = defaultResolverServiceOptions, networks?: string[]): Promise<Account[]> {
         try {
-            const accounts: Account[] = (await this.resolveDomain(domain)).map((it: AccountRecord) => ({
+            const accounts: Account[] = (await this.resolveDomain(domain.toLowerCase())).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
                 from: this.vendor,
