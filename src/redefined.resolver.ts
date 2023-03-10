@@ -33,7 +33,7 @@ export class RedefinedResolver {
             errors: [],
         }
         
-        await Promise.allSettled(
+        await Promise.all(
             this.resolvers.map(async resolver => {
                 try {
                     const accounts = await resolver.resolve(domain, networks, options);
@@ -42,7 +42,7 @@ export class RedefinedResolver {
                     data.errors.push({ vendor: resolver.vendor, error: e.message })
                 }
             })
-        );
+        );git 
 
         return data
     }
