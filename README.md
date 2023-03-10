@@ -8,7 +8,7 @@ npm i @redefined/name-resolver-js
 
 or download the lib from NPM registry manually: [https://www.npmjs.com/package/@redefined/name-resolver-js](https://www.npmjs.com/package/@redefined/name-resolver-js)
 
-## Usage
+## Usage v2.0.0
 
 ```typescript
 // initialize resolver
@@ -178,7 +178,10 @@ export class KeyValueResolverService extends ResolverService {
 
     async resolve(domain: string): Promise<Account[]> {
         const address = registry[domain];
-        return address ? [{ address, network: "evm", from: this.vendor }] : [];
+        
+        if (!address) throw Error("Domain is not registered")
+        
+        return [{ address, network: "evm", from: this.vendor }];
     }
 }
 ```
