@@ -28,4 +28,14 @@ describe('redefined-username-resolver.service', () => {
             { address: "0x123", network: "eth", from: "redefined-username", },
         ]);
     });
+
+    test('SHOULD fix domain username IF provided with "@"', async () => {
+        await redefinedUsernameResolverService.resolve("@badass-ivan", ["eth"])
+        expect(spyResolveDomain).toHaveBeenCalledWith("badass-ivan");
+    });
+
+    test('SHOULD NOT fix domain username IF provided without "@"', async () => {
+        await redefinedUsernameResolverService.resolve("badass-ivan", ["eth"])
+        expect(spyResolveDomain).toHaveBeenCalledWith("badass-ivan");
+    });
 });
