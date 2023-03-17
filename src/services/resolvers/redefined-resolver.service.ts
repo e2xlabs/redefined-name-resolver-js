@@ -14,8 +14,10 @@ export abstract class RedefinedResolverService extends ResolverService {
     }
 
     async resolve(domain: string, networks?: string[]): Promise<Account[]> {
+        const parsedDomain = domain.startsWith("@") ? domain.slice(1) : domain;
+
         try {
-            const accounts: Account[] = (await this.resolveDomain(domain.toLowerCase())).map((it: AccountRecord) => ({
+            const accounts: Account[] = (await this.resolveDomain(parsedDomain.toLowerCase())).map((it: AccountRecord) => ({
                 address: it.addr,
                 network: it.network,
                 from: this.vendor,
