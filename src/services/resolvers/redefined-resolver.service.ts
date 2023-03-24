@@ -22,6 +22,10 @@ export abstract class RedefinedResolverService extends ResolverService {
                 network: it.network,
                 from: this.vendor,
             }));
+            
+            if (!accounts.length) {
+                throw Error(`No records found for domain ${domain}`)
+            }
 
             const targetAccountsWithoutEvm = accounts.filter(it => (
                 networks
