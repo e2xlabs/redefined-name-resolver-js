@@ -42,3 +42,13 @@ export type ResolversParams = {
     unstoppable?: UnstoppableParams,
     ens?: EnsParams,
 }
+
+export enum SidChainId {
+    BSC = "56",
+    ARB = "42161"
+}
+
+export enum SidResolverData {
+    ARB1 = "ARB1",
+    ARB_NOVA = "ARB_NOVA"
+}
