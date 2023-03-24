@@ -10,7 +10,8 @@
     "baseUrl": ".",
     "paths": {
       "@resolver/*": ["./src/*"]
-    }
+    },
+    "esModuleInterop": true
   },
   "lib": [
     "es2020"
