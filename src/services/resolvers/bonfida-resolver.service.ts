@@ -3,9 +3,11 @@ import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import { getDomainKeySync, NameRegistryState } from "@bonfida/spl-name-service";
 import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
-import { Cluster } from "@solana/web3.js";
+import { Cluster, Connection } from "@solana/web3.js";
 
 export class BonfidaResolverService extends ResolverService {
+
+    private readonly connection: Connection;
 
     get vendor(): ResolverVendor {
         return "bonfida";
@@ -15,14 +17,14 @@ export class BonfidaResolverService extends ResolverService {
         public cluster: Cluster = "mainnet-beta",
     ) {
         super();
+        this.connection = SolWeb3Service.getWeb3(this.cluster);
     }
 
     async resolve(domain: string): Promise<Account[]> {
         try {
-            const {pubkey} = getDomainKeySync(domain);
-            const connection = SolWeb3Service.getWeb3(this.cluster);
+            const { pubkey } = getDomainKeySync(domain);
 
-            const {registry} = await NameRegistryState.retrieve(connection, pubkey);
+            const { registry } = await NameRegistryState.retrieve(this.connection, pubkey);
 
             return [{
                 address: registry.owner.toString(),
