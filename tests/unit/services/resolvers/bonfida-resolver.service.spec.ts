@@ -19,21 +19,21 @@ jest.spyOn(SolWeb3Service, "getWeb3").mockImplementation((cluster: Cluster) => {
 describe('bonfida-resolver.service', () => {
     const bonfidaResolverService = new BonfidaResolverService();
 
-    const spyAddr = jest.spyOn(NameRegistryState, 'retrieve');
+    const spyRetrieve = jest.spyOn(NameRegistryState, 'retrieve');
 
     beforeEach(() => {
-        spyAddr.mockReset();
+        spyRetrieve.mockReset();
+    })
 
-        spyAddr.mockImplementation(async (connection: Connection, pubKey: PublicKey) => ({
+    test('SHOULD get addresses for domain with network IF is valid', async () => {
+        spyRetrieve.mockImplementation(async (connection: Connection, pubKey: PublicKey) => ({
             registry: {
                 owner: new PublicKey("4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i")
             } as NameRegistryState,
             nftOwner: undefined
         }));
-    })
 
-    test('SHOULD get addresses for domain with network IF is valid', async () => {
-        expect(await bonfidaResolverService.resolve("pizdec")).toEqual([{
+        expect(await bonfidaResolverService.resolve("beautiful-domain")).toEqual([{
             address: "4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i",
             network: "sol",
             from: "bonfida"

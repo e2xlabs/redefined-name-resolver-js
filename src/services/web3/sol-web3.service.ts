@@ -1,4 +1,4 @@
-import {Connection, clusterApiUrl, Cluster} from "@solana/web3.js";
+import { Connection, clusterApiUrl, Cluster } from "@solana/web3.js";
 
 export default class SolWeb3Service {
 
