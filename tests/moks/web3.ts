@@ -21,3 +21,9 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
     }
   }),
 );
+
+EvmWeb3Service.getWeb3Http = jest.fn().mockImplementation(
+  (node: string) => ({
+    host: node,
+  }),
+);

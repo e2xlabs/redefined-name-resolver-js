@@ -1,6 +1,6 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "JS lib to resolve crypto names",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -31,6 +31,7 @@
     "test:unit": "jest"
   },
   "dependencies": {
+    "@siddomains/sidjs": "^0.1.22",
     "@bonfida/spl-name-service": "^0.1.67",
     "@solana/web3.js": "^1.74.0",
     "@unstoppabledomains/resolution": "^8.4.0",

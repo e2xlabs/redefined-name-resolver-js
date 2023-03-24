@@ -1,4 +1,4 @@
-import type { RedefinedParams, UnstoppableParams } from "@resolver/models/types";
+import type { RedefinedParams, SidParams, UnstoppableParams } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
@@ -10,8 +10,9 @@ import {
     CustomResolverServiceOptions,
     EnsParams,
     ResolverResponse,
-    ResolversParams
+    ResolversParams, SidChainId, SidResolverData
 } from "@resolver/models/types";
+import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 
 export class RedefinedResolver {
 
@@ -52,6 +53,7 @@ export class RedefinedResolver {
             ...this.createRedefinedResolvers(options?.redefined),
             this.createEnsResolver(options?.ens),
             this.createUnstoppableResolver(options?.unstoppable),
+            ...this.createSidResolvers(options?.sid),
         ]
     }
 
@@ -89,5 +91,25 @@ export class RedefinedResolver {
             mainnet: options?.mainnetNode || config.UNS_MAINNET_NODE,
             polygonMainnet: options?.polygonMainnetNode || config.UNS_POLYGON_MAINNET_NODE,
         });
+    }
+    
+    static createSidResolvers(options?: SidParams) {
+        return [
+            this.createSidBscResolver(options?.bscNode),
+            this.createSidArbOneResolver(options?.arbitrumOneNode),
+            this.createSidArbNovaResolver(options?.arbitrumOneNode),
+        ]
+    }
+    
+    static createSidBscResolver(node?: string) {
+        return new SidResolverService(node || config.SID_BSC_NODE, SidChainId.BSC, "bsc");
+    }
+    
+    static createSidArbOneResolver(node?: string) {
+        return new SidResolverService(node || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-one", SidResolverData.ARB1);
+    }
+    
+    static createSidArbNovaResolver(node?: string) {
+        return new SidResolverService(node || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-nova", SidResolverData.ARB_NOVA);
     }
 }
