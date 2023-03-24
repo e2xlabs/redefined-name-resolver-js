@@ -37,10 +37,15 @@ export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: str
 
 export type RedefinedParams = { node?: string, allowDefaultEvmResolves?: boolean };
 
+export type SidServiceParams = { node: string };
+
+export type SidParams = { bsc: SidServiceParams, arb: SidServiceParams };
+
 export type ResolversParams = {
     redefined?: RedefinedParams,
     unstoppable?: UnstoppableParams,
     ens?: EnsParams,
+    sid?: SidParams,
 }
 
 export enum SidChainId {

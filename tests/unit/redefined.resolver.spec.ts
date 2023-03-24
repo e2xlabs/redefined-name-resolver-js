@@ -4,12 +4,17 @@ import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/r
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { RedefinedResolver } from "@resolver/redefined.resolver";
 import { CustomResolver } from "../test-fixtures/custom-resolver";
+import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
+import '@siddomains/sidjs'
+import * as fs from "fs";
+jest.mock('@siddomains/sidjs');
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
   const spyRedefinedEmailResolve = jest.spyOn(RedefinedEmailResolverService.prototype, 'resolveDomain');
   const spyEnsResolve = jest.spyOn(EnsResolverService.prototype, 'resolve');
   const spyUnsResolve = jest.spyOn(UnstoppableResolverService.prototype, 'resolve');
+  const spySidResolve = jest.spyOn(SidResolverService.prototype, 'resolve');
 
   function resetRedefinedImplementationWithNetworks(networks: string[]) {
     spyRedefinedUsernameResolve.mockReset()
@@ -24,11 +29,13 @@ describe('redefined.resolver', () => {
     spyRedefinedEmailResolve.mockReset();
     spyEnsResolve.mockReset();
     spyUnsResolve.mockReset();
-
+    spySidResolve.mockReset();
+    
     spyRedefinedUsernameResolve.mockImplementation(async () => [{ addr: "0xUsername", network: "eth" }]);
     spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail", network: "eth" }]);
     spyEnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "ens" }]);
     spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "unstoppable" }]);
+    spySidResolve.mockImplementation(async () => [{ address: "0x123", network: "bsc", from: "sid" }]);
   })
 
   test('SHOULD call resolvers IF provided', async () => {
@@ -62,11 +69,22 @@ describe('redefined.resolver', () => {
     const resolver = new RedefinedResolver();
 
     await resolver.resolve("cifrex.evm", ["eth"]);
+    
+    expect(resolver["resolvers"].length).toBe([
+      RedefinedUsernameResolverService,
+      RedefinedEmailResolverService,
+      EnsResolverService,
+      UnstoppableResolverService,
+      SidResolverService, // bsc
+      SidResolverService, // arb-1
+      SidResolverService, // arb-nova
+    ].length);
 
     expect(spyRedefinedEmailResolve).toHaveBeenCalled()
     expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
     expect(spyEnsResolve).toHaveBeenCalled()
     expect(spyUnsResolve).toHaveBeenCalled()
+    expect(spySidResolve).toHaveBeenCalledTimes(3)
   });
 
   test('SHOULD resolve only with target network IF provided', async () => {
@@ -127,8 +145,8 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createDefaultResolvers({
-        redefined: { allowDefaultEvmResolves: false }
+      resolvers: RedefinedResolver.createRedefinedResolvers({
+        allowDefaultEvmResolves: false,
       })
     });
 
@@ -229,5 +247,18 @@ describe('redefined.resolver', () => {
         { vendor: customResolver.vendor, error: "Custom error" }
       ],
     })
+  });
+  
+  test('SHOULD implement all files in "resolvers" folder', async () => {
+    const resolversFolder = 'src/services/resolvers/';
+    const mainResolverFile = 'src/redefined.resolver.ts';
+    
+    const resolverFilesNames = fs.readdirSync(resolversFolder)
+        .filter(it => it.includes("-resolver.service.ts") && it !== "redefined-resolver.service.ts")
+        .map(it => it.slice(0, it.length - 3));
+  
+    const resolverFileText = fs.readFileSync(mainResolverFile, 'utf8');
+    
+    expect(resolverFilesNames.every(it => resolverFileText.includes(it))).toBe(true)
   });
 });
