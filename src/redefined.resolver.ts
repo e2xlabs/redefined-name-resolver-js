@@ -13,6 +13,7 @@ import {
     ResolversParams, SidChainId, SidResolverData
 } from "@resolver/models/types";
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
+import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 
 export class RedefinedResolver {
 
@@ -54,6 +55,7 @@ export class RedefinedResolver {
             this.createEnsResolver(options?.ens),
             this.createUnstoppableResolver(options?.unstoppable),
             ...this.createSidResolvers(options?.sid),
+            this.createBonfidaResolver()
         ]
     }
 
@@ -111,5 +113,9 @@ export class RedefinedResolver {
     
     static createSidArbNovaResolver(node?: string) {
         return new SidResolverService(node || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-nova", SidResolverData.ARB_NOVA);
+    }
+
+    static createBonfidaResolver() {
+        return new BonfidaResolverService();
     }
 }
