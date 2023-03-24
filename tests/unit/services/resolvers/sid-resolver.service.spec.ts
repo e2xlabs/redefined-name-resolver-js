@@ -62,4 +62,18 @@ describe('sid-resolver.service', () => {
         }
         expect(err).toBe("SID Error: Domain ivan.bnb is not registered");
     });
+    
+    test('SHOULD get error IF getAddress failed', async () => {
+        mockSidGetAddressWithCb(() => {
+            throw Error("Invalid name")
+        });
+        
+        let err = "";
+        try {
+            await sidBscResolverService.resolve("ivan_+!@dasd")
+        } catch (e: any) {
+            err = e.message;
+        }
+        expect(err).toBe("SID Error: Invalid name");
+    });
 });
