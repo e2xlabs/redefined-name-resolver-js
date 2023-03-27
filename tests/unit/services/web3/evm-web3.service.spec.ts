@@ -8,4 +8,10 @@ describe('evm-web3.service', () => {
     expect(web3.eth).not.toBe(undefined);
     expect(web3.eth.Contract).not.toBe(undefined);
   });
+  
+  test('SHOULD get web3 http provider', () => {
+    const web3 = EvmWeb3Service.getWeb3Http(config.REDEFINED_NODE);
+    expect(web3).not.toBe(undefined);
+    expect(web3.host).not.toBe(undefined);
+  });
 });
