@@ -1,4 +1,5 @@
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { Cluster } from "@solana/web3.js";
 
 export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | string
 
@@ -37,8 +38,24 @@ export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: str
 
 export type RedefinedParams = { node?: string, allowDefaultEvmResolves?: boolean };
 
+export type SidParams = { bscNode: string, arbitrumOneNode: string };
+
+export type BonfidaParams = { cluster: Cluster };
+
 export type ResolversParams = {
     redefined?: RedefinedParams,
     unstoppable?: UnstoppableParams,
     ens?: EnsParams,
+    sid?: SidParams,
+    bonfida?: BonfidaParams
+}
+
+export enum SidChainId {
+    BSC = "56",
+    ARB = "42161"
+}
+
+export enum SidResolverData {
+    ARB1 = "ARB1",
+    ARB_NOVA = "ARB_NOVA"
 }
