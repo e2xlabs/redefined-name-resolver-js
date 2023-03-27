@@ -7,7 +7,9 @@ import { SidChainId, SidResolverData } from "@resolver/models/types";
 const sidGetAddress = jest.fn()
 
 jest.mock('@siddomains/sidjs', () => {
+
     return {
+        __esModule: true,
         default: class SID {
             constructor(params: { provider: any, sidAddress: any }) {}
 
