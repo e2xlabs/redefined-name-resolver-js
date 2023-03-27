@@ -8,6 +8,7 @@ describe('redefined-username-resolver.service', () => {
     
     function mockResolve(cb: () => any) {
         spyResolveDomain.mockReset();
+
         spyResolveDomain.mockImplementation(async () => cb())
     }
     

@@ -8,6 +8,7 @@ describe('redefined-email-resolver.service', () => {
     
     function mockResolve(cb: () => any) {
         spyResolveDomain.mockReset();
+
         spyResolveDomain.mockImplementation(async () => cb())
     }
 
