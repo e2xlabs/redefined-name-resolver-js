@@ -1,6 +1,6 @@
 {
   "name": "@redefined/name-resolver-js",
-  "version": "2.2.0",
+  "version": "2.2.1",
   "description": "JS lib to resolve crypto names",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -39,7 +39,10 @@
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
-    "web3": "^1.8.1"
+    "web3": "^1.8.1",
+    "@babel/compat-data": "^7.9.0",
+    "@babel/preset-env": "^7.9.0",
+    "crypto-addr-codec": "git@github.com:e2xlabs/crypto-addr-serialize.git"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",
