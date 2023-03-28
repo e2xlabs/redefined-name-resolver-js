@@ -4,6 +4,7 @@ const ETH_MAIN_NODE = "https://attentive-blue-choice.discover.quiknode.pro/a6d16
 const POLYGON_MAIN_NODE = "https://nameless-small-tree.matic.discover.quiknode.pro/1c4a2e33a0f87bf379039694c7de15aff5e0aaf5/";
 const BSC_MAIN_NODE = "https://bsc-dataseed.binance.org";
 const ARB_ONE_MAIN_NODE = "https://arb1.arbitrum.io/rpc";
+const SOLANA_MAIN_NODE = "https://rpc.ankr.com/solana"
 
 export const config = {
     REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS: "0x0925Ea6420355a70dB0eab2Ca7d39F9F5E0f880B",
@@ -14,6 +15,7 @@ export const config = {
     UNS_POLYGON_MAINNET_NODE: POLYGON_MAIN_NODE,
     SID_BSC_NODE: BSC_MAIN_NODE,
     SID_ARB_ONE_NODE: ARB_ONE_MAIN_NODE,
+    SOLANA_NODE: SOLANA_MAIN_NODE
 }
 
 export default config

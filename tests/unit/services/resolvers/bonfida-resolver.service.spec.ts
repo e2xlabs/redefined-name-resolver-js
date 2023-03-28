@@ -1,7 +1,8 @@
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
-import { Cluster, Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { getDomainKeySync, NameRegistryState } from "@bonfida/spl-name-service";
+import config from "@resolver/config";
 
 jest.mock("@bonfida/spl-name-service");
 const mockedGetDomainKey = jest.mocked(getDomainKeySync);
@@ -12,12 +13,12 @@ mockedGetDomainKey.mockReturnValue({
     hashed: new Buffer("123")
 });
 
-jest.spyOn(SolWeb3Service, "getWeb3").mockImplementation((cluster: Cluster) => {
+jest.spyOn(SolWeb3Service, "getWeb3").mockImplementation(() => {
     return {} as Connection
 })
 
 describe('bonfida-resolver.service', () => {
-    const bonfidaResolverService = new BonfidaResolverService();
+    const bonfidaResolverService = new BonfidaResolverService(config.SOLANA_NODE);
 
     const spyRetrieve = jest.spyOn(NameRegistryState, 'retrieve');
 

@@ -1,8 +1,8 @@
-import { Connection, clusterApiUrl, Cluster } from "@solana/web3.js";
+import { Connection } from "@solana/web3.js";
 
 export default class SolWeb3Service {
 
-  static getWeb3(cluster: Cluster): Connection {
-      return new Connection(clusterApiUrl(cluster), "confirmed")
+  static getWeb3(cluster: string): Connection {
+      return new Connection(cluster)
   }
 }

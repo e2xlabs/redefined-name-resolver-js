@@ -1,5 +1,4 @@
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import { Cluster } from "@solana/web3.js";
 
 export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | string
 
@@ -40,7 +39,7 @@ export type RedefinedParams = { node?: string, allowDefaultEvmResolves?: boolean
 
 export type SidParams = { bscNode: string, arbitrumOneNode: string };
 
-export type BonfidaParams = { cluster: Cluster };
+export type BonfidaParams = { cluster: string };
 
 export type ResolversParams = {
     redefined?: RedefinedParams,

@@ -3,7 +3,7 @@ import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import { getDomainKeySync, NameRegistryState } from "@bonfida/spl-name-service";
 import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
-import { Cluster, Connection } from "@solana/web3.js";
+import { Connection } from "@solana/web3.js";
 
 export class BonfidaResolverService extends ResolverService {
 
@@ -14,7 +14,7 @@ export class BonfidaResolverService extends ResolverService {
     }
 
     constructor(
-        public cluster: Cluster = "mainnet-beta",
+        public cluster: string
     ) {
         super();
         this.connection = SolWeb3Service.getWeb3(this.cluster);
