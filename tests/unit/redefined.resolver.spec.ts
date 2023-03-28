@@ -6,9 +6,7 @@ import { RedefinedResolver } from "@resolver/redefined.resolver";
 import { CustomResolver } from "../test-fixtures/custom-resolver";
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
-import '@siddomains/sidjs'
 import * as fs from "fs";
-jest.mock('@siddomains/sidjs');
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
@@ -73,7 +71,7 @@ describe('redefined.resolver', () => {
     const resolver = new RedefinedResolver();
 
     await resolver.resolve("cifrex.evm", ["eth"]);
-    
+
     expect(resolver["resolvers"].length).toBe([
       RedefinedUsernameResolverService,
       RedefinedEmailResolverService,
@@ -254,17 +252,17 @@ describe('redefined.resolver', () => {
       ],
     })
   });
-  
+
   test('SHOULD implement all files in "resolvers" folder', async () => {
     const resolversFolder = 'src/services/resolvers/';
     const mainResolverFile = 'src/redefined.resolver.ts';
-    
+
     const resolverFilesNames = fs.readdirSync(resolversFolder)
         .filter(it => it.includes("-resolver.service.ts") && it !== "redefined-resolver.service.ts")
         .map(it => it.slice(0, it.length - 3));
-  
+
     const resolverFileText = fs.readFileSync(mainResolverFile, 'utf8');
-    
+
     expect(resolverFilesNames.every(it => resolverFileText.includes(it))).toBe(true)
   });
 });
