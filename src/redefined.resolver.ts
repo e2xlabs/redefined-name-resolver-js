@@ -116,6 +116,6 @@ export class RedefinedResolver {
     }
 
     static createBonfidaResolver(options?: BonfidaParams) {
-        return new BonfidaResolverService(options?.cluster);
+        return new BonfidaResolverService(options?.cluster || config.SOLANA_NODE);
     }
 }
