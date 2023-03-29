@@ -31,6 +31,7 @@ describe('sid-resolver.service', () => {
     });
 
     test('SHOULD get error IF getAddress failed', async () => {
+        
         sidGetAddress.mockImplementation(()=> { 
             throw new Error("Invalid name")
         });
