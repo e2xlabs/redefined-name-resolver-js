@@ -15,7 +15,6 @@ import {
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
-import { ApolloClient, InMemoryCache } from "@apollo/client/core";
 
 export class RedefinedResolver {
 
