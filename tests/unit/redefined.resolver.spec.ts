@@ -61,6 +61,7 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD throw error on set resolvers IF provided nothing', async () => {
+    
     let error = "";
     try {
       new RedefinedResolver({ resolvers: [] })
