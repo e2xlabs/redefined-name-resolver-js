@@ -41,12 +41,15 @@ export type SidParams = { bscNode: string, arbitrumOneNode: string };
 
 export type BonfidaParams = { cluster: string };
 
+export type LensParams = { apiUrl: string };
+
 export type ResolversParams = {
     redefined?: RedefinedParams,
     unstoppable?: UnstoppableParams,
     ens?: EnsParams,
     sid?: SidParams,
-    bonfida?: BonfidaParams
+    bonfida?: BonfidaParams,
+    lens?: LensParams
 }
 
 export enum SidChainId {

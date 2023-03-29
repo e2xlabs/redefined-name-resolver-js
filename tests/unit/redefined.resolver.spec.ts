@@ -7,6 +7,7 @@ import { CustomResolver } from "../test-fixtures/custom-resolver";
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import * as fs from "fs";
+import { LensResolverService } from "@resolver/services/resolvers/lens-resolver.service";
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
@@ -15,6 +16,7 @@ describe('redefined.resolver', () => {
   const spyUnsResolve = jest.spyOn(UnstoppableResolverService.prototype, 'resolve');
   const spySidResolve = jest.spyOn(SidResolverService.prototype, 'resolve');
   const spySolResolve = jest.spyOn(BonfidaResolverService.prototype, 'resolve');
+  const spyLensResolve = jest.spyOn(LensResolverService.prototype, 'resolve');
 
   function resetRedefinedImplementationWithNetworks(networks: string[]) {
     spyRedefinedUsernameResolve.mockReset()
@@ -31,6 +33,7 @@ describe('redefined.resolver', () => {
     spyUnsResolve.mockReset();
     spySidResolve.mockReset();
     spySolResolve.mockReset();
+    spyLensResolve.mockReset();
 
     spyRedefinedUsernameResolve.mockImplementation(async () => [{ addr: "0xUsername", network: "eth" }]);
     spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail", network: "eth" }]);
@@ -38,6 +41,7 @@ describe('redefined.resolver', () => {
     spyUnsResolve.mockImplementation(async () => [{ address: "0x123", network: "eth", from: "unstoppable" }]);
     spySidResolve.mockImplementation(async () => [{ address: "0x123", network: "bsc", from: "sid" }]);
     spySolResolve.mockImplementation(async () => [{ address: "4DbiZPib1MvF", network: "sol", from: "bonfida" }]);
+    spyLensResolve.mockImplementation(async () => [{ address: "0x123", network: "evm", from: "lens" }]);
   })
 
   test('SHOULD call resolvers IF provided', async () => {
@@ -80,7 +84,8 @@ describe('redefined.resolver', () => {
       SidResolverService, // bsc
       SidResolverService, // arb-1
       SidResolverService, // arb-nova
-      BonfidaResolverService
+      BonfidaResolverService,
+      LensResolverService
     ].length);
 
     expect(spyRedefinedEmailResolve).toHaveBeenCalled()
@@ -89,6 +94,7 @@ describe('redefined.resolver', () => {
     expect(spyUnsResolve).toHaveBeenCalled()
     expect(spySidResolve).toHaveBeenCalledTimes(3)
     expect(spySolResolve).toHaveBeenCalledTimes(1)
+    expect(spyLensResolve).toHaveBeenCalledTimes(1)
   });
 
   test('SHOULD resolve only with target network IF provided', async () => {

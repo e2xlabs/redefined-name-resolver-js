@@ -11,7 +11,8 @@
     "paths": {
       "@resolver/*": ["./src/*"]
     },
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "noImplicitAny": false
   },
   "lib": [
     "es2020"

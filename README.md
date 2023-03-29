@@ -249,3 +249,21 @@ const resolver = new RedefinedResolver({
       })
 });
 ```
+
+## Warning
+Some of the libraries we use may not be properly configured.
+We try to minimize the damage to the users, but sometimes it doesn't work.
+If you are using Vite builder you may need to apply this code.
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script>window.require = () => {}</script>
+    <script type="module">
+        import { Buffer } from "buffer";
+        window.Buffer = Buffer;
+    </script>
+    ....
+  </head>
+</html>
+```
