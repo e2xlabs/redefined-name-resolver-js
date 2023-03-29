@@ -1,4 +1,4 @@
-import type { BonfidaParams, RedefinedParams, SidParams, UnstoppableParams } from "@resolver/models/types";
+import type { BonfidaParams, LensParams, RedefinedParams, SidParams, UnstoppableParams } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
@@ -14,6 +14,8 @@ import {
 } from "@resolver/models/types";
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
+import { LensResolverService } from "./services/resolvers/lens-resolver.service";
+import { ApolloClient, InMemoryCache } from "@apollo/client/core";
 
 export class RedefinedResolver {
 
@@ -55,7 +57,8 @@ export class RedefinedResolver {
             this.createEnsResolver(options?.ens),
             this.createUnstoppableResolver(options?.unstoppable),
             ...this.createSidResolvers(options?.sid),
-            this.createBonfidaResolver(options?.bonfida)
+            this.createBonfidaResolver(options?.bonfida),
+            this.createLensResolver(options?.lens)
         ]
     }
 
@@ -117,5 +120,12 @@ export class RedefinedResolver {
 
     static createBonfidaResolver(options?: BonfidaParams) {
         return new BonfidaResolverService(options?.cluster || config.SOLANA_NODE);
+    }
+
+    static createLensResolver(options?: LensParams) {
+        return new LensResolverService(new ApolloClient({
+            uri: options?.apiUrl || config.LENS_API_URL,
+            cache: new InMemoryCache()
+        }));
     }
 }

@@ -5,6 +5,7 @@ const POLYGON_MAIN_NODE = "https://nameless-small-tree.matic.discover.quiknode.p
 const BSC_MAIN_NODE = "https://bsc-dataseed.binance.org";
 const ARB_ONE_MAIN_NODE = "https://arb1.arbitrum.io/rpc";
 const SOLANA_MAIN_NODE = "https://rpc.ankr.com/solana"
+const LENS_API_URL = "https://api.lens.dev";
 
 export const config = {
     REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS: "0x0925Ea6420355a70dB0eab2Ca7d39F9F5E0f880B",
@@ -15,7 +16,8 @@ export const config = {
     UNS_POLYGON_MAINNET_NODE: POLYGON_MAIN_NODE,
     SID_BSC_NODE: BSC_MAIN_NODE,
     SID_ARB_ONE_NODE: ARB_ONE_MAIN_NODE,
-    SOLANA_NODE: SOLANA_MAIN_NODE
+    SOLANA_NODE: SOLANA_MAIN_NODE,
+    LENS_API_URL: LENS_API_URL
 }
 
 export default config
