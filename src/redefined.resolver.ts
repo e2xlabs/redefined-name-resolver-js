@@ -123,9 +123,6 @@ export class RedefinedResolver {
     }
 
     static createLensResolver(options?: LensParams) {
-        return new LensResolverService(new ApolloClient({
-            uri: options?.apiUrl || config.LENS_API_URL,
-            cache: new InMemoryCache()
-        }));
+        return new LensResolverService(options?.apiUrl || config.LENS_API_URL);
     }
 }

@@ -1,16 +1,23 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
-import { ApolloClient, InMemoryCache, gql, NormalizedCacheObject, NormalizedCache } from '@apollo/client/core'
+import { ApolloClient, InMemoryCache, gql, NormalizedCacheObject } from '@apollo/client/core'
 
 export class LensResolverService extends ResolverService {
+
+    private api: ApolloClient<NormalizedCacheObject>
 
     get vendor(): ResolverVendor {
         return "lens";
     }
 
-    constructor(private api: ApolloClient<NormalizedCacheObject>) {
+    constructor(apiUrl: string) {
         super()
+    
+        this.api = new ApolloClient({
+            uri: apiUrl,
+            cache: new InMemoryCache()
+        })
     }
 
     async resolve(domain: string): Promise<Account[]> {

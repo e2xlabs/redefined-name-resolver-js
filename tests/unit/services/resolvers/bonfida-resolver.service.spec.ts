@@ -44,10 +44,6 @@ describe('bonfida-resolver.service', () => {
     test('SHOULD do not get addresses for domain with network IF is invalid', async () => {
         spyRetrieve.mockRejectedValue(new Error("Invalid name account provided"));
 
-        try {
-            await bonfidaResolverService.resolve("beautiful-domain");
-        } catch (err: any) {
-            expect(err.message).toBe("Bonfida Error: Invalid name account provided");
-        }
+        expect(bonfidaResolverService.resolve("beautiful-domain")).rejects.toThrow("Bonfida Error: Invalid name account provided");
     });
 });

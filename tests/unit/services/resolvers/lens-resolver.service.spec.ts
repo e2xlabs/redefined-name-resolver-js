@@ -1,19 +1,13 @@
-import { ApolloClient, InMemoryCache, NormalizedCacheObject } from "@apollo/client/core";
 import { LensResolverService } from "@resolver/services/resolvers/lens-resolver.service";
+import { lensQuery } from "../../../moks/lens";
 
 describe('lens-resolver.service', () => {
 
-    const apolloClientMock: any = {}
-
-    const lensResolverService = new LensResolverService(apolloClientMock as ApolloClient<NormalizedCacheObject>);
-
-    beforeEach(() => {
-        apolloClientMock.query = undefined
-    })
+    const lensResolverService = new LensResolverService("fake-url");
 
     test('SHOULD get addresses for domain with network IF is valid', async () => {
 
-        apolloClientMock.query = ()=> ({
+        lensQuery.mockReturnValue({
             data: {
                 profile: {
                     ownedBy: "0x123"
@@ -29,41 +23,31 @@ describe('lens-resolver.service', () => {
     });
 
    
-    test('SHOULD get addresses for domain with network IF is not registered', async () => {
+    test('SHOULD do not get addresses for domain with network IF is not registered', async () => {
 
-        apolloClientMock.query = ()=> ({
+        lensQuery.mockReturnValue({
             data: {
                 profile: null
             }
         })
 
-        try {
-            await lensResolverService.resolve("beautiful-domain");
-        } catch (err: any) {
-            expect(err.message).toBe("Lens Error: beautiful-domain is not registered");
-        }
+        expect(lensResolverService.resolve("beautiful-domain")).rejects.toThrow("Lens Error: beautiful-domain is not registered")
     });
 
-    test('SHOULD get addresses for domain with network IF is invalid', async () => {
+    test('SHOULD do not get addresses for domain with network IF is invalid', async () => {
 
-        apolloClientMock.query = ()=> { 
-            throw {
-                networkError: {
-                    result: {
-                        errors: [
-                            {
-                                message: "xxxx Handle must be xxxx"
-                            }
-                        ]
-                    }
+        lensQuery.mockRejectedValue({
+            networkError: {
+                result: {
+                    errors: [
+                        {
+                            message: "xxxx Handle must be xxxx"
+                        }
+                    ]
                 }
             }
-        }
+        })
 
-        try {
-            await lensResolverService.resolve("beautiful-domain");
-        } catch (err: any) {
-            expect(err.message).toBe("Lens Error: incorrect domain");
-        }
+        expect(lensResolverService.resolve("beautiful-domain")).rejects.toThrow("Lens Error: incorrect domain")
     });
 });
