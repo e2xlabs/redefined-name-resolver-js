@@ -21,7 +21,7 @@ describe('lens-resolver.service', () => {
             }
         })
 
-        expect(await lensResolverService.resolve("beautiful-domain")).toEqual([{
+        expect(await lensResolverService.resolve("aaveaave.lens")).toEqual([{
             address: "0x123",
             network: "evm",
             from: "lens"

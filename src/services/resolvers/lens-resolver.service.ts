@@ -25,13 +25,13 @@ export class LensResolverService extends ResolverService {
                 },
 
                 body: JSON.stringify({
-                    query: `{
-                        query Profile($handle: Handle!) {
+                    query: `
+                        query Profile {
                             profile(request: { handle: "${domain}" }) {
                                 ownedBy
                             }
                         }
-                    }`
+                    `,
                 })
             })).json() as any
 
@@ -39,7 +39,7 @@ export class LensResolverService extends ResolverService {
                 throw Error("Incorrect domain");
             }
             else if(errors && errors.length) {
-                throw Error(errors)
+                throw Error(JSON.stringify(errors))
             }
             else if(!data) {
                 throw Error("Unexpected error")
