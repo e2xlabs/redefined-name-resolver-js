@@ -5,7 +5,7 @@ describe('redefined-email-resolver.service', () => {
     const redefinedEmailResolverService = new RedefinedEmailResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedEmailResolverService, "resolveDomain");
-    
+
     function mockResolve(cb: () => any) {
         spyResolveDomain.mockReset();
 
@@ -21,7 +21,7 @@ describe('redefined-email-resolver.service', () => {
     })
 
     test('SHOULD get addresses IF domain resolved without target network', async () => {
-        expect(await redefinedEmailResolverService.resolve("cifrex.eth")).toEqual([
+        expect(await redefinedEmailResolverService.resolve("cifrex@e2xlabs.com")).toEqual([
             { address: "0x123", network: "eth", from: "redefined-email", },
             { address: "0x323", network: "sol", from: "redefined-email", },
             { address: "0x323", network: "evm", from: "redefined-email", },
@@ -29,19 +29,19 @@ describe('redefined-email-resolver.service', () => {
     });
 
     test('SHOULD get addresses IF domain resolved with target networks', async () => {
-        expect(await redefinedEmailResolverService.resolve("cifrex.eth", ["eth"])).toEqual([
+        expect(await redefinedEmailResolverService.resolve("cifrex@e2xlabs.com", ["eth"])).toEqual([
             { address: "0x123", network: "eth", from: "redefined-email", },
         ]);
     });
-    
+
     test('SHOULD get error IF no records found for domain', async () => {
         mockResolve(() => []);
         let err = "";
         try {
-            await redefinedEmailResolverService.resolve("cifrex.eth", ["eth"])
+            await redefinedEmailResolverService.resolve("cifrex@e2xlabs.com", ["eth"])
         } catch (e: any) {
             err = e.message;
         }
-        expect(err).toBe("redefined Error: No records found for domain cifrex.eth");
+        expect(err).toBe("redefined Error: No records found for domain cifrex@e2xlabs.com");
     });
 });

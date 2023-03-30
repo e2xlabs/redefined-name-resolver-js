@@ -34,7 +34,7 @@ describe('bonfida-resolver.service', () => {
             nftOwner: undefined
         }));
 
-        expect(await bonfidaResolverService.resolve("beautiful-domain")).toEqual([{
+        expect(await bonfidaResolverService.resolve("nick.sol")).toEqual([{
             address: "4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i",
             network: "sol",
             from: "bonfida"
@@ -44,6 +44,6 @@ describe('bonfida-resolver.service', () => {
     test('SHOULD do not get addresses for domain with network IF is invalid', async () => {
         spyRetrieve.mockRejectedValue(new Error("Invalid name account provided"));
 
-        expect(bonfidaResolverService.resolve("beautiful-domain")).rejects.toThrow("Bonfida Error: Invalid name account provided");
+        expect(bonfidaResolverService.resolve("nick.sol")).rejects.toThrow("Bonfida Error: Invalid name account provided");
     });
 });

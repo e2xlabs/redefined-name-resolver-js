@@ -5,13 +5,13 @@ describe('redefined-username-resolver.service', () => {
     const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedUsernameResolverService, "resolveDomain");
-    
+
     function mockResolve(cb: () => any) {
         spyResolveDomain.mockReset();
 
         spyResolveDomain.mockImplementation(async () => cb())
     }
-    
+
     beforeEach(() => {
         mockResolve(async () => ([
             { addr: "0x123", network: "eth" },
@@ -21,7 +21,7 @@ describe('redefined-username-resolver.service', () => {
     })
 
     test('SHOULD get addresses IF domain resolved without target networks', async () => {
-        expect(await redefinedUsernameResolverService.resolve("cifrex.eth")).toEqual([
+        expect(await redefinedUsernameResolverService.resolve("badass-ivan")).toEqual([
             { address: "0x123", network: "eth", from: "redefined-username", },
             { address: "0x323", network: "sol", from: "redefined-username", },
             { address: "0x323", network: "evm", from: "redefined-username", },
@@ -29,7 +29,7 @@ describe('redefined-username-resolver.service', () => {
     });
 
     test('SHOULD get addresses IF domain resolved with target networks', async () => {
-        expect(await redefinedUsernameResolverService.resolve("cifrex.eth", ["eth"])).toEqual([
+        expect(await redefinedUsernameResolverService.resolve("badass-ivan", ["eth"])).toEqual([
             { address: "0x123", network: "eth", from: "redefined-username", },
         ]);
     });
@@ -43,7 +43,7 @@ describe('redefined-username-resolver.service', () => {
         await redefinedUsernameResolverService.resolve("badass-ivan", ["eth"])
         expect(spyResolveDomain).toHaveBeenCalledWith("badass-ivan");
     });
-    
+
     test('SHOULD get error IF no records found for domain', async () => {
         mockResolve(() => []);
         let err = "";
