@@ -1,7 +1,6 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
-import { ApolloClient, InMemoryCache, gql, NormalizedCacheObject } from '@apollo/client/core'
 
 export class LensResolverService extends ResolverService {
 
@@ -11,7 +10,7 @@ export class LensResolverService extends ResolverService {
 
     constructor(private apiUrl: string) {
         super()
-    
+
     }
 
     async resolve(domain: string): Promise<Account[]> {
@@ -20,11 +19,11 @@ export class LensResolverService extends ResolverService {
 
             const { data, errors } = await (await fetch(this.apiUrl, {
                 method: 'POST',
-            
+
                 headers: {
                     "Content-Type": "application/json"
                 },
-            
+
                 body: JSON.stringify({
                     query: `{
                         query Profile($handle: Handle!) {
