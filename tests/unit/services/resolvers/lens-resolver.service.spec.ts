@@ -1,13 +1,19 @@
 import { LensResolverService } from "@resolver/services/resolvers/lens-resolver.service";
-import { lensQuery } from "../../../moks/lens";
+
+const mockedFetch = jest.fn();
+(global as any).fetch = ()=> ({
+    json() {
+        return mockedFetch()
+    }
+})
 
 describe('lens-resolver.service', () => {
 
-    const lensResolverService = new LensResolverService("fake-url");
+    const lensResolverService = new LensResolverService("https://api.lens.dev");
 
     test('SHOULD get addresses for domain with network IF is valid', async () => {
 
-        lensQuery.mockReturnValue({
+        mockedFetch.mockReturnValue({
             data: {
                 profile: {
                     ownedBy: "0x123"
@@ -22,10 +28,9 @@ describe('lens-resolver.service', () => {
         }]);
     });
 
-   
     test('SHOULD do not get addresses for domain with network IF is not registered', async () => {
 
-        lensQuery.mockReturnValue({
+        mockedFetch.mockReturnValue({
             data: {
                 profile: null
             }
@@ -36,18 +41,14 @@ describe('lens-resolver.service', () => {
 
     test('SHOULD do not get addresses for domain with network IF is invalid', async () => {
 
-        lensQuery.mockRejectedValue({
-            networkError: {
-                result: {
-                    errors: [
-                        {
-                            message: "xxxx Handle must be xxxx"
-                        }
-                    ]
+        mockedFetch.mockReturnValue({
+            errors: [
+                {
+                    message: "xxxx Handle must be xxxx"
                 }
-            }
+            ]
         })
 
-        expect(lensResolverService.resolve("beautiful-domain")).rejects.toThrow("Lens Error: incorrect domain")
+        expect(lensResolverService.resolve("beautiful-domain")).rejects.toThrow("Lens Error: Incorrect domain")
     });
 });

@@ -1,55 +1,61 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
-import { ApolloClient, InMemoryCache, gql, NormalizedCacheObject } from '@apollo/client/core'
 
 export class LensResolverService extends ResolverService {
-
-    private api: ApolloClient<NormalizedCacheObject>
 
     get vendor(): ResolverVendor {
         return "lens";
     }
 
-    constructor(apiUrl: string) {
+    constructor(private apiUrl: string) {
         super()
-    
-        this.api = new ApolloClient({
-            uri: apiUrl,
-            cache: new InMemoryCache()
-        })
+
     }
 
     async resolve(domain: string): Promise<Account[]> {
 
         try {
 
-            const { data: { profile } } = await this.api.query({
-                query: gql`
-                    query Profile($handle: Handle!) {
-                        profile(request: { handle: $handle }) {
-                            ownedBy
-                        }
-                    }
-                `,
-                variables: { handle: domain }
-            }) as any
+            const { data, errors } = await (await fetch(this.apiUrl, {
+                method: 'POST',
 
-            if(!profile) throw Error(`${domain} is not registered`)
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    query: `{
+                        query Profile($handle: Handle!) {
+                            profile(request: { handle: "${domain}" }) {
+                                ownedBy
+                            }
+                        }
+                    }`
+                })
+            })).json() as any
+
+            if(errors?.find((it: any) => it.message.includes("Handle must be"))) {
+                throw Error("Incorrect domain");
+            }
+            else if(errors && errors.length) {
+                throw Error(errors)
+            }
+            else if(!data) {
+                throw Error("Unexpected error")
+            }
+
+            if(!data.profile) throw Error(`${domain} is not registered`)
 
             return [{
-                address: profile.ownedBy,
+                address: data.profile.ownedBy,
                 network: "evm",
                 from: this.vendor,
             }];
 
         } catch (e: any) {
 
-            if(e.networkError?.result?.errors?.find((it: any) => it.message.includes("Handle must be"))) {
-
-                throw Error(`Lens Error: incorrect domain`);
-            }
-            else throw Error(`Lens Error: ${e.message}`);
+            throw Error(`Lens Error: ${e.message}`);
         }
     }
 }
