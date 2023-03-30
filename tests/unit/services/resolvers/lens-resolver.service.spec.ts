@@ -36,7 +36,7 @@ describe('lens-resolver.service', () => {
             }
         })
 
-        expect(lensResolverService.resolve("beautiful-domain")).rejects.toThrow("Lens Error: beautiful-domain is not registered")
+        expect(lensResolverService.resolve("aaveaave.lens")).rejects.toThrow("Lens Error: aaveaave.lens is not registered")
     });
 
     test('SHOULD do not get addresses for domain with network IF is invalid', async () => {
@@ -49,6 +49,6 @@ describe('lens-resolver.service', () => {
             ]
         })
 
-        expect(lensResolverService.resolve("beautiful-domain")).rejects.toThrow("Lens Error: Incorrect domain")
+        expect(lensResolverService.resolve("aaveaave.lens")).rejects.toThrow("Lens Error: Incorrect domain")
     });
 });
