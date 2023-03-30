@@ -46,4 +46,9 @@ describe('bonfida-resolver.service', () => {
 
         expect(bonfidaResolverService.resolve("nick.sol")).rejects.toThrow("Bonfida Error: Invalid name account provided");
     });
+
+    test('SHOULD do not get addresses for domain with network IF domain ends without .sol', async () => {
+        expect(bonfidaResolverService.resolve("nick")).rejects.toThrow("Bonfida Error: nick is not supported");
+    });
+
 });
