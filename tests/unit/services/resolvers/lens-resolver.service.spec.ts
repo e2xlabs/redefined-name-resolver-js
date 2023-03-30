@@ -51,4 +51,26 @@ describe('lens-resolver.service', () => {
 
         expect(lensResolverService.resolve("aaveaave.lens")).rejects.toThrow("Lens Error: Incorrect domain")
     });
+
+    test('SHOULD attach .lens for domain IF it is not specified', async () => {
+
+        mockedFetch.mockReturnValue({
+            data: {
+                profile: null
+            }
+        })
+
+        expect(lensResolverService.resolve("aaveaave")).rejects.toThrow("Lens Error: aaveaave.lens is not registered")
+    });
+
+    test('SHOULD NOT attach .lens for domain IF it is specified', async () => {
+
+        mockedFetch.mockReturnValue({
+            data: {
+                profile: null
+            }
+        })
+
+        expect(lensResolverService.resolve("aaveaave.lens")).rejects.toThrow("Lens Error: aaveaave.lens is not registered")
+    });
 });
