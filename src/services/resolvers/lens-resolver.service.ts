@@ -13,11 +13,10 @@ export class LensResolverService extends ResolverService {
     }
 
     async resolve(domain: string): Promise<Account[]> {
-        if (!domain.endsWith(".lens")) {
-            throw Error(`Lens Error: ${domain} is not supported`);
-        }
-
         try {
+            if (!domain.endsWith(".lens")) {
+                throw Error(`${domain} is not supported`);
+            }
 
             const { data, errors } = await (await fetch(this.apiUrl, {
                 method: 'POST',

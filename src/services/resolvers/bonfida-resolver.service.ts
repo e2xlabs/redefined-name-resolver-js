@@ -21,10 +21,11 @@ export class BonfidaResolverService extends ResolverService {
     }
 
     async resolve(domain: string): Promise<Account[]> {
-        if (!domain.endsWith(".sol")) {
-            throw Error(`Bonfida Error: ${domain} is not supported`);
-        }
         try {
+            if (!domain.endsWith(".sol")) {
+                throw Error(`${domain} is not supported`);
+            }
+
             const { pubkey } = getDomainKeySync(domain);
 
             const { registry } = await NameRegistryState.retrieve(this.connection, pubkey);
