@@ -10,13 +10,13 @@ export class LensResolverService extends ResolverService {
 
     constructor(private apiUrl: string) {
         super()
-
     }
 
     async resolve(domain: string): Promise<Account[]> {
-        const preparedDomain = domain.endsWith(".lens") ? domain : `${domain}.lens`
-
         try {
+            if (!domain.endsWith(".lens")) {
+                throw Error(`${domain} is not supported`);
+            }
 
             const { data, errors } = await (await fetch(this.apiUrl, {
                 method: 'POST',
@@ -28,7 +28,7 @@ export class LensResolverService extends ResolverService {
                 body: JSON.stringify({
                     query: `
                         query Profile {
-                            profile(request: { handle: "${preparedDomain}" }) {
+                            profile(request: { handle: "${domain}" }) {
                                 ownedBy
                             }
                         }
@@ -46,7 +46,7 @@ export class LensResolverService extends ResolverService {
                 throw Error("Unexpected error")
             }
 
-            if(!data.profile) throw Error(`${preparedDomain} is not registered`)
+            if(!data.profile) throw Error(`${domain} is not registered`)
 
             return [{
                 address: data.profile.ownedBy,
