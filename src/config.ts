@@ -4,7 +4,7 @@ const ETH_MAIN_NODE = "https://attentive-blue-choice.discover.quiknode.pro/a6d16
 const POLYGON_MAIN_NODE = "https://nameless-small-tree.matic.discover.quiknode.pro/1c4a2e33a0f87bf379039694c7de15aff5e0aaf5/";
 const BSC_MAIN_NODE = "https://bsc-dataseed.binance.org";
 const ARB_ONE_MAIN_NODE = "https://arb1.arbitrum.io/rpc";
-const SOLANA_MAIN_NODE = "https://rpc.ankr.com/solana"
+const SOLANA_MAIN_NODE = "https://try-rpc.mainnet.solana.blockdaemon.tech"
 const LENS_API_URL = "https://api.lens.dev";
 
 export const config = {
