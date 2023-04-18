@@ -47,7 +47,7 @@ describe('redefined.resolver', () => {
   test('SHOULD call resolvers IF provided', async () => {
     const resolver = new RedefinedResolver({
       resolvers: [
-        ...RedefinedResolver.createRedefinedResolvers(),
+        ...[RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()],
         RedefinedResolver.createEnsResolver(),
       ]
     })
@@ -61,7 +61,7 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD throw error on set resolvers IF provided nothing', async () => {
-    
+
     let error = "";
     try {
       new RedefinedResolver({ resolvers: [] })
@@ -102,7 +102,7 @@ describe('redefined.resolver', () => {
     const networks= ["eth", "sol", "zil", "bsc"];
 
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers()
+      resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
     });
 
     resetRedefinedImplementationWithNetworks(networks)
@@ -122,7 +122,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD resolve with evm network IF target network not resolved', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers()
+      resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
     });
 
     const networks = ["eth", "evm"];
@@ -139,7 +139,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers()
+      resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
     });
 
     const networks = ["eth", "evm"];
@@ -156,9 +156,13 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers({
-        allowDefaultEvmResolves: false,
-      })
+      resolvers: [
+        RedefinedResolver.createRedefinedEmailResolver({
+          allowDefaultEvmResolves: false,
+        }),
+        RedefinedResolver.createRedefinedUsernameResolver({
+          allowDefaultEvmResolves: false,
+        })]
     });
 
     const networks = ["eth", "evm"];
@@ -245,7 +249,7 @@ describe('redefined.resolver', () => {
       throw Error("Custom error")
     });
 
-    const resolver = new RedefinedResolver({ resolvers: [...RedefinedResolver.createRedefinedResolvers(), customResolver] });
+    const resolver = new RedefinedResolver({ resolvers: [...[RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()], customResolver] });
 
     const response = await resolver.resolve("domain");
 

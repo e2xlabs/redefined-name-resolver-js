@@ -1,4 +1,4 @@
-import type { BonfidaParams, LensParams, RedefinedParams, SidParams, UnstoppableParams } from "@resolver/models/types";
+import type { BonfidaParams, LensParams, RedefinedParams, UnstoppableParams } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
@@ -15,6 +15,7 @@ import {
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
+import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
 
 export class RedefinedResolver {
 
@@ -52,19 +53,15 @@ export class RedefinedResolver {
 
     static createDefaultResolvers(options?: ResolversParams) {
         return [
-            ...this.createRedefinedResolvers(options?.redefined),
-            this.createEnsResolver(options?.ens),
-            this.createUnstoppableResolver(options?.unstoppable),
-            ...this.createSidResolvers(options?.sid),
-            this.createBonfidaResolver(options?.bonfida),
-            this.createLensResolver(options?.lens)
-        ]
-    }
-
-    static createRedefinedResolvers(options?: RedefinedParams) {
-        return [
-            this.createRedefinedUsernameResolver(options),
-            this.createRedefinedEmailResolver(options),
+            new BulkProxy<RedefinedParams, RedefinedEmailResolverService>(options?.redefined, this.createRedefinedEmailResolver),
+            new BulkProxy<RedefinedParams, RedefinedUsernameResolverService>(options?.redefined, this.createRedefinedUsernameResolver),
+            new BulkProxy<EnsParams, EnsResolverService>(options?.ens, this.createEnsResolver),
+            new BulkProxy<UnstoppableParams, UnstoppableResolverService>(options?.unstoppable, this.createUnstoppableResolver),
+            new BulkProxy<string, SidResolverService>(options?.sid?.arbitrumOneNode, this.createSidArbOneResolver),
+            new BulkProxy<string, SidResolverService>(options?.sid?.arbitrumOneNode, this.createSidArbNovaResolver),
+            new BulkProxy<string, SidResolverService>(options?.sid?.bscNode, this.createSidBscResolver),
+            new BulkProxy<BonfidaParams, BonfidaResolverService>(options?.bonfida, this.createBonfidaResolver),
+            new BulkProxy<LensParams, LensResolverService>(options?.lens, this.createLensResolver),
         ]
     }
 
@@ -96,15 +93,7 @@ export class RedefinedResolver {
             polygonMainnet: options?.polygonMainnetNode || config.UNS_POLYGON_MAINNET_NODE,
         });
     }
-    
-    static createSidResolvers(options?: SidParams) {
-        return [
-            this.createSidBscResolver(options?.bscNode),
-            this.createSidArbOneResolver(options?.arbitrumOneNode),
-            this.createSidArbNovaResolver(options?.arbitrumOneNode),
-        ]
-    }
-    
+
     static createSidBscResolver(node?: string) {
         return new SidResolverService(node || config.SID_BSC_NODE, SidChainId.BSC, "bsc");
     }
