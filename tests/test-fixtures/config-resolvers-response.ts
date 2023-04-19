@@ -26,6 +26,12 @@ export const mockConfigResolvers = {
     "ens": [
         {
             "node": "https://mockurl"
+        },
+        {
+            "node": "https://mockurl2"
+        },
+        {
+            "node": "https://mockurl3"
         }
     ],
     "sid": [
