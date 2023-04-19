@@ -8,6 +8,15 @@ import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.se
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import * as fs from "fs";
 import { LensResolverService } from "@resolver/services/resolvers/lens-resolver.service";
+import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
+import { mockConfigResolvers } from "../test-fixtures/config-resolvers-response";
+import config from "@resolver/config";
+
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve(mockConfigResolvers),
+    }),
+) as jest.Mock;
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
@@ -228,6 +237,32 @@ describe('redefined.resolver', () => {
     expect(spyEnsResolve).not.toHaveBeenCalled()
     expect(spyUnsResolve).not.toHaveBeenCalled()
     expect(spyCustomResolve).toHaveBeenCalled()
+  });
+
+  test('SHOULD wrapped resolver in proxy IF create default resolver', async () => {
+    RedefinedResolver.createDefaultResolvers().forEach(r => {
+      expect(r).toBeInstanceOf(BulkProxy);
+    })
+  });
+
+  test('SHOULD fetch configs for resolvers IF custom resolvers not provided', async () => {
+    const resolver = new RedefinedResolver();
+
+    await resolver.resolve("domain");
+
+    expect((global as any).fetch).toHaveBeenCalled();
+    expect((global as any).fetch).toHaveBeenCalledWith(config.CONFIGS_URL);
+  });
+
+  test('SHOULD NOT fetch configs for resolvers IF custom resolvers provided', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [RedefinedResolver.createEnsResolver()]
+    });
+
+    await resolver.resolve("domain");
+
+    expect((global as any).fetch).not.toHaveBeenCalled();
+    expect((global as any).fetch).not.toHaveBeenCalledWith(config.CONFIGS_URL);
   });
 
   test('SHOULD call resolve with custom options IF provided', async () => {
