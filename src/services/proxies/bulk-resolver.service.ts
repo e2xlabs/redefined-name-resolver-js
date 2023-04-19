@@ -7,10 +7,11 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
   private readonly configuredResolvers: R[] = [];
 
   constructor(configs: C[] | undefined, instanceRef: (config: C | undefined) => R) {
-    this.configuredResolvers = configs?.map(n => instanceRef(n)) ?? [instanceRef(undefined)];
+    this.configuredResolvers = configs?.map(n => instanceRef(n)) || [];
+    this.configuredResolvers.push(instanceRef(undefined));
     this.vendor = this.configuredResolvers[0].vendor;
     if (uniqBy(this.configuredResolvers, "vendor").length !== 1) {
-      throw Error("Resolver must be only 1 vendor");
+      throw Error("Resolver must have only 1 vendor");
     }
   }
 

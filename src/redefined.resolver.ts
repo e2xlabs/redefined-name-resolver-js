@@ -1,4 +1,4 @@
-import type { BonfidaParams, LensParams, RedefinedParams, UnstoppableParams } from "@resolver/models/types";
+import type {BonfidaParams, LensParams, RedefinedParams, SidParams, UnstoppableParams} from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
@@ -28,10 +28,15 @@ export class RedefinedResolver {
             throw Error("“resolvers” option must be a non-empty array or falsy")
         }
 
-        this.resolvers = options?.resolvers || RedefinedResolver.createDefaultResolvers();
+        this.resolvers = options?.resolvers || [];
     }
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<ResolverResponse> {
+        if (!this.resolvers.length) {
+            const configs = await (await fetch(config.CONFIGS_URL)).json();
+            this.resolvers = RedefinedResolver.createDefaultResolvers(configs);
+        }
+
         const data: ResolverResponse = {
             response: [],
             errors: [],
@@ -57,9 +62,9 @@ export class RedefinedResolver {
             new BulkProxy<RedefinedParams, RedefinedUsernameResolverService>(options?.redefined, this.createRedefinedUsernameResolver),
             new BulkProxy<EnsParams, EnsResolverService>(options?.ens, this.createEnsResolver),
             new BulkProxy<UnstoppableParams, UnstoppableResolverService>(options?.unstoppable, this.createUnstoppableResolver),
-            new BulkProxy<string, SidResolverService>(options?.sid?.arbitrumOneNode, this.createSidArbOneResolver),
-            new BulkProxy<string, SidResolverService>(options?.sid?.arbitrumOneNode, this.createSidArbNovaResolver),
-            new BulkProxy<string, SidResolverService>(options?.sid?.bscNode, this.createSidBscResolver),
+            new BulkProxy<SidParams, SidResolverService>(options?.sid, this.createSidArbOneResolver),
+            new BulkProxy<SidParams, SidResolverService>(options?.sid, this.createSidArbNovaResolver),
+            new BulkProxy<SidParams, SidResolverService>(options?.sid, this.createSidBscResolver),
             new BulkProxy<BonfidaParams, BonfidaResolverService>(options?.bonfida, this.createBonfidaResolver),
             new BulkProxy<LensParams, LensResolverService>(options?.lens, this.createLensResolver),
         ]
@@ -94,16 +99,16 @@ export class RedefinedResolver {
         });
     }
 
-    static createSidBscResolver(node?: string) {
-        return new SidResolverService(node || config.SID_BSC_NODE, SidChainId.BSC, "bsc");
+    static createSidBscResolver(options?: SidParams) {
+        return new SidResolverService(options?.bscNode || config.SID_BSC_NODE, SidChainId.BSC, "bsc");
     }
     
-    static createSidArbOneResolver(node?: string) {
-        return new SidResolverService(node || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-one", SidResolverData.ARB1);
+    static createSidArbOneResolver(options?: SidParams) {
+        return new SidResolverService(options?.arbitrumOneNode || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-one", SidResolverData.ARB1);
     }
     
-    static createSidArbNovaResolver(node?: string) {
-        return new SidResolverService(node || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-nova", SidResolverData.ARB_NOVA);
+    static createSidArbNovaResolver(options?: SidParams) {
+        return new SidResolverService(options?.arbitrumOneNode || config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-nova", SidResolverData.ARB_NOVA);
     }
 
     static createBonfidaResolver(options?: BonfidaParams) {

@@ -37,7 +37,7 @@ export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: str
 
 export type RedefinedParams = { node?: string, allowDefaultEvmResolves?: boolean };
 
-export type SidParams = { bscNode: string[], arbitrumOneNode: string[] };
+export type SidParams = { bscNode: string, arbitrumOneNode: string };
 
 export type BonfidaParams = { cluster: string };
 
@@ -47,7 +47,7 @@ export type ResolversParams = {
     redefined?: RedefinedParams[],
     unstoppable?: UnstoppableParams[],
     ens?: EnsParams[],
-    sid?: SidParams,
+    sid?: SidParams[],
     bonfida?: BonfidaParams[],
     lens?: LensParams[]
 }

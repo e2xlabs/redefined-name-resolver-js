@@ -47,7 +47,8 @@ describe('redefined.resolver', () => {
   test('SHOULD call resolvers IF provided', async () => {
     const resolver = new RedefinedResolver({
       resolvers: [
-        ...[RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()],
+        RedefinedResolver.createRedefinedUsernameResolver(),
+        RedefinedResolver.createRedefinedEmailResolver(),
         RedefinedResolver.createEnsResolver(),
       ]
     })
