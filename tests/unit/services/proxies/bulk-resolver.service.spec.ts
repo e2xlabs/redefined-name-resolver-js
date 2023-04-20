@@ -103,4 +103,18 @@ describe('bulk-resolver.service', () => {
         expect(EnsResolverService).toHaveBeenCalledTimes(4);
         expect(await proxy.resolve("domain")).toEqual([{address: "0x123", network: "eth", from: "ens"}])
     });
+
+    test('SHOULD return resolve result IF last middle resolver successfully worked', async () => {
+        mockResolveResult.mockRejectedValueOnce(new Error("1 error"));
+        mockResolveResult.mockRejectedValueOnce(new Error("2 error"));
+        mockResolveResult.mockResolvedValueOnce([{address: "0x123", network: "eth", from: "ens"}]);
+        mockResolveResult.mockRejectedValueOnce(new Error("3 error"));
+        const mockConfig = mockConfigResolvers;
+        const instanceRef = (conf: EnsParams | undefined) => new EnsResolverService(conf?.node || config.ENS_NODE);
+
+        const proxy = new BulkProxy<EnsParams | undefined, EnsResolverService>(mockConfig.ens, instanceRef);
+
+        expect(EnsResolverService).toHaveBeenCalledTimes(4);
+        expect(await proxy.resolve("domain")).toEqual([{address: "0x123", network: "eth", from: "ens"}])
+    });
 });
