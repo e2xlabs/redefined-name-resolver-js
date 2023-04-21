@@ -1,4 +1,4 @@
-import type {BonfidaParams, LensParams, RedefinedParams, SidParams, UnstoppableParams} from "@resolver/models/types";
+import type { BonfidaParams, LensParams, RedefinedParams, SidParams, UnstoppableParams } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";

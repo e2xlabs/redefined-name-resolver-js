@@ -104,7 +104,7 @@ describe('bulk-resolver.service', () => {
         expect(await proxy.resolve("domain")).toEqual([{address: "0x123", network: "eth", from: "ens"}])
     });
 
-    test('SHOULD return resolve result IF last middle resolver successfully worked', async () => {
+    test('SHOULD return resolve result IF middle resolver successfully worked', async () => {
         mockResolveResult.mockRejectedValueOnce(new Error("1 error"));
         mockResolveResult.mockRejectedValueOnce(new Error("2 error"));
         mockResolveResult.mockResolvedValueOnce([{address: "0x123", network: "eth", from: "ens"}]);
