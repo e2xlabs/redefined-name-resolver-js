@@ -3,6 +3,8 @@ import { Account, CustomResolverServiceOptions, ResolverVendor } from "@resolver
 
 export class BulkProxy<C extends any, R extends ResolverService> implements ResolverService {
 
+  readonly vendor: ResolverVendor = "";
+
   private readonly configuredResolvers: R[] = [];
 
   constructor(configs: C[] | undefined, instanceRef: (config: C | undefined) => R) {
@@ -10,8 +12,6 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
     this.configuredResolvers.push(instanceRef(undefined));
     this.vendor = this.configuredResolvers[0].vendor;
   }
-
-  readonly vendor: ResolverVendor = "";
 
   async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]> {
     let lastError: any;

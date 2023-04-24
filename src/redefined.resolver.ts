@@ -33,8 +33,7 @@ export class RedefinedResolver {
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<ResolverResponse> {
         if (!this.resolvers.length) {
-            const configs = await (await fetch(config.CONFIGS_URL)).json();
-            this.resolvers = RedefinedResolver.createDefaultResolvers(configs);
+            this.resolvers = await RedefinedResolver.configResolvers();
         }
 
         const data: ResolverResponse = {
@@ -54,6 +53,11 @@ export class RedefinedResolver {
         );
 
         return data
+    }
+
+    private static async configResolvers() {
+        const configs = await (await fetch(config.CONFIGS_URL)).json();
+        return RedefinedResolver.createDefaultResolvers(configs);
     }
 
     static createDefaultResolvers(options?: ResolversParams) {
