@@ -246,12 +246,13 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD fetch configs for resolvers IF custom resolvers not provided', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-01-01'));
     const resolver = new RedefinedResolver();
 
     await resolver.resolve("domain");
 
     expect((global as any).fetch).toHaveBeenCalled();
-    expect((global as any).fetch).toHaveBeenCalledWith(config.CONFIGS_URL);
+    expect((global as any).fetch).toHaveBeenCalledWith(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`);
   });
 
   test('SHOULD NOT fetch configs for resolvers IF custom resolvers provided', async () => {

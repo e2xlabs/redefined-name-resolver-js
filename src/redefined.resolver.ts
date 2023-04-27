@@ -56,7 +56,7 @@ export class RedefinedResolver {
     }
 
     private static async configResolvers() {
-        const configs = await (await fetch(config.CONFIGS_URL)).json();
+        const configs = await (await fetch(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`)).json();
         return RedefinedResolver.createDefaultResolvers(configs);
     }
 

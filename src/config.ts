@@ -6,11 +6,11 @@ const BSC_MAIN_NODE = "https://bsc-dataseed.binance.org";
 const ARB_ONE_MAIN_NODE = "https://arb1.arbitrum.io/rpc";
 const SOLANA_MAIN_NODE = "https://aged-few-shard.solana-mainnet.quiknode.pro/7823e0f3ad9d6dbefe8b0807ffc5a1119dd03a10/";
 const LENS_API_URL = "https://api.lens.dev";
-const CONFIGS_URL = `https://assets.redefined.org/configs/config-resolvers.json?v=${new Date().valueOf()}`
+const CONFIGS_URL = `https://assets.redefined.org/configs/config-resolvers.json`
 
 export const config = {
-    REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS: "0x0925Ea6420355a70dB0eab2Ca7d39F9F5E0f880B",
-    REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS: "0x0a809f8c4D0b899F202cf0b7d6B53e9a3c729Bd5",
+    REDEFINED_EMAIL_RESOLVER_CONTRACT_ADDRESS: "0xCbBE86E645112c90e5197c24cc0E24347074f06E",
+    REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS: "0x3d7a5822f845A2C6c2A76829b04357D02D336932",
     REDEFINED_NODE: ETH_GOERLI_NODE,
     ENS_NODE: ETH_MAIN_NODE,
     UNS_MAINNET_NODE: ETH_MAIN_NODE,
