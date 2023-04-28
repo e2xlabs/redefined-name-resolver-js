@@ -44,12 +44,12 @@ export type BonfidaParams = { cluster: string };
 export type LensParams = { apiUrl: string };
 
 export type ResolversParams = {
-    redefined?: RedefinedParams,
-    unstoppable?: UnstoppableParams,
-    ens?: EnsParams,
-    sid?: SidParams,
-    bonfida?: BonfidaParams,
-    lens?: LensParams
+    redefined?: RedefinedParams[],
+    unstoppable?: UnstoppableParams[],
+    ens?: EnsParams[],
+    sid?: SidParams[],
+    bonfida?: BonfidaParams[],
+    lens?: LensParams[]
 }
 
 export enum SidChainId {

@@ -8,6 +8,15 @@ import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.se
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import * as fs from "fs";
 import { LensResolverService } from "@resolver/services/resolvers/lens-resolver.service";
+import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
+import { mockConfigResolvers } from "../test-fixtures/config-resolvers-response";
+import config from "@resolver/config";
+
+global.fetch = jest.fn(() =>
+    Promise.resolve({
+      json: () => Promise.resolve(mockConfigResolvers),
+    }),
+) as jest.Mock;
 
 describe('redefined.resolver', () => {
   const spyRedefinedUsernameResolve = jest.spyOn(RedefinedUsernameResolverService.prototype, 'resolveDomain');
@@ -47,7 +56,8 @@ describe('redefined.resolver', () => {
   test('SHOULD call resolvers IF provided', async () => {
     const resolver = new RedefinedResolver({
       resolvers: [
-        ...RedefinedResolver.createRedefinedResolvers(),
+        RedefinedResolver.createRedefinedUsernameResolver(),
+        RedefinedResolver.createRedefinedEmailResolver(),
         RedefinedResolver.createEnsResolver(),
       ]
     })
@@ -61,7 +71,7 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD throw error on set resolvers IF provided nothing', async () => {
-    
+
     let error = "";
     try {
       new RedefinedResolver({ resolvers: [] })
@@ -102,7 +112,7 @@ describe('redefined.resolver', () => {
     const networks= ["eth", "sol", "zil", "bsc"];
 
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers()
+      resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
     });
 
     resetRedefinedImplementationWithNetworks(networks)
@@ -122,7 +132,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD resolve with evm network IF target network not resolved', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers()
+      resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
     });
 
     const networks = ["eth", "evm"];
@@ -139,7 +149,7 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF target network resolved', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers()
+      resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
     });
 
     const networks = ["eth", "evm"];
@@ -156,9 +166,13 @@ describe('redefined.resolver', () => {
 
   test('SHOULD NOT resolve with evm network IF provided option', async () => {
     const resolver = new RedefinedResolver({
-      resolvers: RedefinedResolver.createRedefinedResolvers({
-        allowDefaultEvmResolves: false,
-      })
+      resolvers: [
+        RedefinedResolver.createRedefinedEmailResolver({
+          allowDefaultEvmResolves: false,
+        }),
+        RedefinedResolver.createRedefinedUsernameResolver({
+          allowDefaultEvmResolves: false,
+        })]
     });
 
     const networks = ["eth", "evm"];
@@ -225,6 +239,33 @@ describe('redefined.resolver', () => {
     expect(spyCustomResolve).toHaveBeenCalled()
   });
 
+  test('SHOULD wrapped resolver in proxy IF create default resolver', async () => {
+    RedefinedResolver.createDefaultResolvers().forEach(r => {
+      expect(r).toBeInstanceOf(BulkProxy);
+    })
+  });
+
+  test('SHOULD fetch configs for resolvers IF custom resolvers not provided', async () => {
+    jest.useFakeTimers().setSystemTime(new Date('2023-01-01'));
+    const resolver = new RedefinedResolver();
+
+    await resolver.resolve("domain");
+
+    expect((global as any).fetch).toHaveBeenCalled();
+    expect((global as any).fetch).toHaveBeenCalledWith(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`);
+  });
+
+  test('SHOULD NOT fetch configs for resolvers IF custom resolvers provided', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [RedefinedResolver.createEnsResolver()]
+    });
+
+    await resolver.resolve("domain");
+
+    expect((global as any).fetch).not.toHaveBeenCalled();
+    expect((global as any).fetch).not.toHaveBeenCalledWith(config.CONFIGS_URL);
+  });
+
   test('SHOULD call resolve with custom options IF provided', async () => {
     const customResolver = new CustomResolver();
     const spyResolve = jest.spyOn(customResolver, 'resolve');
@@ -245,7 +286,7 @@ describe('redefined.resolver', () => {
       throw Error("Custom error")
     });
 
-    const resolver = new RedefinedResolver({ resolvers: [...RedefinedResolver.createRedefinedResolvers(), customResolver] });
+    const resolver = new RedefinedResolver({ resolvers: [...[RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()], customResolver] });
 
     const response = await resolver.resolve("domain");
 
