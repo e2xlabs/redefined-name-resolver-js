@@ -28,7 +28,7 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
       try {
         return await resolver.resolve(domain, networks, options);
       } catch (e: any) {
-        if (this.notFoundMessages.some(it => e.message.includes(it))) {
+        if (this.notFoundMessages.some(msg => e.message.includes(msg))) {
           throw e;
         }
         lastError = e;
