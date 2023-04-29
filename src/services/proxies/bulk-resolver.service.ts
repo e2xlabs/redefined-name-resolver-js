@@ -7,6 +7,15 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
 
   private readonly configuredResolvers: R[] = [];
 
+  private readonly notFoundMessages = [
+    "Cant resolve",
+    "Invalid characters, allowed only lowercase alphanumeric and -_",
+    "is not registered",
+    "is invalid",
+    "is not supported",
+    "Invalid name"
+  ]
+
   constructor(configs: C[] | undefined, instanceRef: (config: C | undefined) => R) {
     this.configuredResolvers = configs?.map(n => instanceRef(n)) || [];
     this.configuredResolvers.push(instanceRef(undefined));
@@ -19,6 +28,9 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
       try {
         return await resolver.resolve(domain, networks, options);
       } catch (e: any) {
+        if (this.notFoundMessages.some(it => e.message.includes(it))) {
+          throw e;
+        }
         lastError = e;
       }
     }
