@@ -7,7 +7,7 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
 
   private readonly configuredResolvers: R[] = [];
 
-  private readonly notFoundMessages = [
+  private readonly allowableErrorMessages = [
     "Cant resolve",
     "Invalid characters, allowed only lowercase alphanumeric and -_",
     "is not registered",
@@ -34,7 +34,7 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
       try {
         return await resolver.resolve(domain, networks, options);
       } catch (e: any) {
-        if (this.notFoundMessages.some(msg => e.message.includes(msg))) {
+        if (this.allowableErrorMessages.some(msg => e.message.includes(msg))) {
           throw e;
         }
         lastError = e;
