@@ -21,7 +21,7 @@ export class RedefinedResolver {
 
     private resolvers: ResolverService[];
 
-    private config: Promise<any> | undefined = undefined;
+    private config: Promise<ResolversParams> | undefined = undefined;
 
     constructor(
       private options?: ResolverOptions
@@ -30,20 +30,21 @@ export class RedefinedResolver {
             throw Error("“resolvers” option must be a non-empty array or falsy")
         }
 
+        if (!options && !this.config) {
+            this.config = new Promise(async (resolve) => {
+                try {
+                    resolve(await (await fetch(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`)).json());
+                } catch (e) {
+                    console.log(e);
+                }
+            });
+        }
+
         this.resolvers = options?.resolvers || [];
     }
 
     async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<ResolverResponse> {
         if (!this.resolvers.length) {
-            if (!this.config) {
-                this.config = new Promise((resolve) => {
-                    try {
-                        resolve(fetch(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`).then(n => n.json()));
-                    } catch (e) {
-                        console.log(e);
-                    }
-                });
-            }
             this.resolvers = RedefinedResolver.createDefaultResolvers(await this.config);
         }
 
