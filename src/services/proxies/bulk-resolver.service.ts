@@ -7,7 +7,7 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
 
   private readonly configuredResolvers: R[] = [];
 
-  private readonly allowableErrorMessages = new Map<string, string[]>([
+  private readonly allowableErrorMessages = new Map<ResolverVendor, string[]>([
       ["sid", ["Invalid name", "is not registered"]],
       ["ens", ["Cant resolve"]],
       ["unstoppable", ["is not registered", "is invalid", "is not supported"]],

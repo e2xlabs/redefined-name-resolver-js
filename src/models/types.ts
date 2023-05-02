@@ -1,6 +1,6 @@
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 
-export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | string
+export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | "lens" | "bonfida" | "sid" | string
 
 export type ResolverOptions = {
     resolvers: ResolverService[]
