@@ -28,7 +28,9 @@ export class RedefinedResolver {
     ) {
         if (options && !options.resolvers.length) {
             throw Error("“resolvers” option must be a non-empty array or falsy")
-        } else {
+        }
+
+        if (!options) {
             this.config = new Promise(async (resolve) => {
                 try {
                     resolve(await (await fetch(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`)).json());
