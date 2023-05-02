@@ -15,7 +15,11 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
     "is not supported",
     "Invalid name",
     "Incorrect domain",
-    "No records found for domain"
+    "No records found for domain",
+    "Name has incorrect length",
+    "Name should be at least 4 characters",
+    "Name should be at most 63 characters",
+    "Name should start with a letter"
   ]
 
   constructor(configs: C[] | undefined, instanceRef: (config: C | undefined) => R) {
