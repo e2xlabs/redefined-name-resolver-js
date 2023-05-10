@@ -26,7 +26,7 @@ describe('bonfida-resolver.service', () => {
         spyRetrieve.mockReset();
     })
 
-    test('SHOULD get addresses for domain with network IF is valid', async () => {
+    test('SHOULD use address for domain from registry.owner IF is valid AND nftOwner is empty', async () => {
         spyRetrieve.mockImplementation(async (connection: Connection, pubKey: PublicKey) => ({
             registry: {
                 owner: new PublicKey("4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i")
@@ -36,6 +36,21 @@ describe('bonfida-resolver.service', () => {
 
         expect(await bonfidaResolverService.resolve("nick.sol")).toEqual([{
             address: "4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i",
+            network: "sol",
+            from: "bonfida"
+        }]);
+    });
+    
+    test('SHOULD use address for domain from nftOwner IF is valid AND nftOwner is not empty', async () => {
+        spyRetrieve.mockImplementation(async (connection: Connection, pubKey: PublicKey) => ({
+            registry: {
+                owner: new PublicKey("FcRTh2D4Jip59xMfQxJiE7DAZ1Q1ZPnE39ow9a1cVD8V")
+            } as NameRegistryState,
+            nftOwner: new PublicKey("BFbCgHxJasyZ4XCYBft7oQqozwGybrgjzVtixdBdds6F")
+        }));
+        
+        expect(await bonfidaResolverService.resolve("tag.sol")).toEqual([{
+            address: "BFbCgHxJasyZ4XCYBft7oQqozwGybrgjzVtixdBdds6F",
             network: "sol",
             from: "bonfida"
         }]);
@@ -50,5 +65,4 @@ describe('bonfida-resolver.service', () => {
     test('SHOULD do not get addresses for domain with network IF domain ends without .sol', async () => {
         expect(bonfidaResolverService.resolve("nick")).rejects.toThrow("Bonfida Error: nick is not supported");
     });
-
 });
