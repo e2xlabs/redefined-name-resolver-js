@@ -28,10 +28,10 @@ export class BonfidaResolverService extends ResolverService {
 
             const { pubkey } = getDomainKeySync(domain);
 
-            const { registry } = await NameRegistryState.retrieve(this.connection, pubkey);
+            const { registry, nftOwner } = await NameRegistryState.retrieve(this.connection, pubkey);
 
             return [{
-                address: registry.owner.toString(),
+                address: nftOwner?.toString() || registry.owner.toString(),
                 network: "sol",
                 from: this.vendor,
             }];
