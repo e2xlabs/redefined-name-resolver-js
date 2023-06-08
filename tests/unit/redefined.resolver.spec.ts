@@ -89,6 +89,25 @@ describe('redefined.resolver', () => {
     expect(spySolResolve).toHaveBeenCalledTimes(3)
   });
 
+  test('SHOULD remove reresolved .sol name from result', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [
+        RedefinedResolver.createRedefinedEmailResolver(),
+        RedefinedResolver.createBonfidaResolver(),
+      ]
+    })
+
+    spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail.sol", network: "sol" }]);
+
+    spySolResolve.mockImplementation(async (address) => address == "0xEmail.sol" ? [{ address: "4DbiZPib1MvF", network: "sol", from: "bonfida" }] : []);
+
+    const result = await resolver.resolve("testA");
+
+    expect(spyRedefinedEmailResolve).toHaveBeenCalled()
+    expect(spySolResolve).toHaveBeenCalledTimes(2)
+    expect(result).toEqual({"errors": [], "response": [{"address": "4DbiZPib1MvF", "from": "bonfida", "network": "sol"}]})
+  });
+
   test('SHOULD NOT reresolve .sol IF provided from redefined resolvers AND not in sol network', async () => {
     const resolver = new RedefinedResolver({
       resolvers: [

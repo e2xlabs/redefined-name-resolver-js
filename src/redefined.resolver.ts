@@ -16,6 +16,7 @@ import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.se
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
 import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
+import { remove } from "lodash";
 
 export class RedefinedResolver {
 
@@ -62,10 +63,12 @@ export class RedefinedResolver {
                         const bonfida = this.resolvers.find(it => it.vendor == "bonfida");
 
                         if(bonfida) {
+
+                            const toMap = remove(accounts, it => it.network == "sol" && it.address.endsWith(".sol"))
+
                             accounts.push(
-                                ...(await Promise.all(accounts
-                                    .filter(it => it.network == "sol" && it.address.endsWith(".sol"))
-                                    .map(it => bonfida.resolve(it.address, networks, options))
+                                ...(await Promise.all(
+                                    toMap.map(it => bonfida.resolve(it.address, networks, options))
                                 )).flat()
                             )
                         }
