@@ -57,6 +57,20 @@ export class RedefinedResolver {
             this.resolvers.map(async resolver => {
                 try {
                     const accounts = await resolver.resolve(domain, networks, options);
+
+                    if(resolver.vendor == "redefined-username" || resolver.vendor == "redefined-email") {
+                        const bonfida = this.resolvers.find(it => it.vendor == "bonfida");
+
+                        if(bonfida) {
+                            accounts.push(
+                                ...(await Promise.all(accounts
+                                    .filter(it => it.network == "sol" && it.address.endsWith(".sol"))
+                                    .map(it => bonfida.resolve(it.address, networks, options))
+                                )).flat()
+                            )
+                        }
+                    }
+
                     data.response.push(...accounts.filter(it => !networks || networks.includes(it.network) || it.network === "evm"))
                 } catch (e: any) {
                     data.errors.push({ vendor: resolver.vendor, error: e.message })
