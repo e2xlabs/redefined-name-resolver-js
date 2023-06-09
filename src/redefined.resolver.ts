@@ -16,6 +16,7 @@ import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.se
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
 import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
+import { remove } from "lodash";
 
 export class RedefinedResolver {
 
@@ -57,6 +58,22 @@ export class RedefinedResolver {
             this.resolvers.map(async resolver => {
                 try {
                     const accounts = await resolver.resolve(domain, networks, options);
+
+                    if(resolver.vendor == "redefined-username" || resolver.vendor == "redefined-email") {
+                        const bonfida = this.resolvers.find(it => it.vendor == "bonfida");
+
+                        if(bonfida) {
+
+                            const toMap = remove(accounts, it => it.network == "sol" && it.address.endsWith(".sol"))
+
+                            accounts.push(
+                                ...(await Promise.all(
+                                    toMap.map(it => bonfida.resolve(it.address, networks, options))
+                                )).flat()
+                            )
+                        }
+                    }
+
                     data.response.push(...accounts.filter(it => !networks || networks.includes(it.network) || it.network === "evm"))
                 } catch (e: any) {
                     data.errors.push({ vendor: resolver.vendor, error: e.message })
