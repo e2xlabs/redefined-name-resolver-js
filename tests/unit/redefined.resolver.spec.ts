@@ -89,6 +89,44 @@ describe('redefined.resolver', () => {
     expect(spySolResolve).toHaveBeenCalledTimes(3)
   });
 
+  test('SHOULD resolve .sol only using bonfida IF vendors args is set to ["bonfida"]', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [
+        RedefinedResolver.createRedefinedUsernameResolver(),
+        RedefinedResolver.createRedefinedEmailResolver(),
+        RedefinedResolver.createBonfidaResolver(),
+      ]
+    })
+
+    spyRedefinedUsernameResolve.mockImplementation(async () => [{ addr: "0xUsername.sol", network: "sol" }]);
+    spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail.sol", network: "sol" }]);
+
+    await resolver.resolve("testA", undefined, undefined, ["bonfida"]);
+
+    expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
+    expect(spyRedefinedUsernameResolve).not.toHaveBeenCalled()
+    expect(spySolResolve).toHaveBeenCalled()
+  });
+
+  test('SHOULD resolve .sol only using bonfida and redefined-username IF vendors args is set to ["bonfida", "redefined-username"]', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [
+        RedefinedResolver.createRedefinedUsernameResolver(),
+        RedefinedResolver.createRedefinedEmailResolver(),
+        RedefinedResolver.createBonfidaResolver(),
+      ]
+    })
+
+    spyRedefinedUsernameResolve.mockImplementation(async () => [{ addr: "0xUsername.sol", network: "sol" }]);
+    spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail.sol", network: "sol" }]);
+
+    await resolver.resolve("testA", undefined, undefined, ["bonfida", "redefined-username"]);
+
+    expect(spyRedefinedEmailResolve).not.toHaveBeenCalled()
+    expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
+    expect(spySolResolve).toHaveBeenCalledTimes(2)
+  });
+
   test('SHOULD remove reresolved .sol name from result', async () => {
     const resolver = new RedefinedResolver({
       resolvers: [
