@@ -44,7 +44,7 @@ export class RedefinedResolver {
         this.resolvers = options?.resolvers || [];
     }
 
-    async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<ResolverResponse> {
+    async resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions, vendors?: string[]): Promise<ResolverResponse> {
         if (!this.resolvers.length) {
             this.resolvers = RedefinedResolver.createDefaultResolvers(await this.config);
         }
@@ -55,30 +55,31 @@ export class RedefinedResolver {
         }
         
         await Promise.all(
-            this.resolvers.map(async resolver => {
-                try {
-                    const accounts = await resolver.resolve(domain, networks, options);
+            this.resolvers.filter(it => !vendors || vendors.includes(it.vendor))
+                .map(async resolver => {
+                    try {
+                        const accounts = await resolver.resolve(domain, networks, options);
 
-                    if(resolver.vendor == "redefined-username" || resolver.vendor == "redefined-email") {
-                        const bonfida = this.resolvers.find(it => it.vendor == "bonfida");
+                        if(resolver.vendor == "redefined-username" || resolver.vendor == "redefined-email") {
+                            const bonfida = this.resolvers.find(it => it.vendor == "bonfida");
 
-                        if(bonfida) {
+                            if(bonfida) {
 
-                            const toMap = remove(accounts, it => it.network == "sol" && it.address.endsWith(".sol"))
+                                const toMap = remove(accounts, it => it.network == "sol" && it.address.endsWith(".sol"))
 
-                            accounts.push(
-                                ...(await Promise.all(
-                                    toMap.map(it => bonfida.resolve(it.address, networks, options))
-                                )).flat()
-                            )
+                                accounts.push(
+                                    ...(await Promise.all(
+                                        toMap.map(it => bonfida.resolve(it.address, networks, options))
+                                    )).flat()
+                                )
+                            }
                         }
-                    }
 
-                    data.response.push(...accounts.filter(it => !networks || networks.includes(it.network) || it.network === "evm"))
-                } catch (e: any) {
-                    data.errors.push({ vendor: resolver.vendor, error: e.message })
-                }
-            })
+                        data.response.push(...accounts.filter(it => !networks || networks.includes(it.network) || it.network === "evm"))
+                    } catch (e: any) {
+                        data.errors.push({ vendor: resolver.vendor, error: e.message })
+                    }
+                })
         );
 
         return data
