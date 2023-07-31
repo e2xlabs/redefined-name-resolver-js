@@ -36,7 +36,7 @@ export class RedefinedResolver {
             this.config = Promise.resolve(this.resolversParams);
         }
 
-        if (!options || !this.resolversParams) {
+        if (!options && !this.resolversParams) {
             this.config = new Promise(async (resolve) => {
                 try {
                     resolve(await (await fetch(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`)).json());
