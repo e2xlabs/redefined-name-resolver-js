@@ -25,13 +25,18 @@ export class RedefinedResolver {
     private config: Promise<ResolversParams> | undefined = undefined;
 
     constructor(
-      private options?: ResolverOptions
+      private options?: ResolverOptions,
+      private resolversParams?: ResolversParams,
     ) {
         if (options && !options.resolvers.length) {
             throw Error("“resolvers” option must be a non-empty array or falsy")
         }
 
-        if (!options) {
+        if (this.resolversParams) {
+            this.config = Promise.resolve(this.resolversParams);
+        }
+
+        if (!options && !this.resolversParams) {
             this.config = new Promise(async (resolve) => {
                 try {
                     resolve(await (await fetch(`${config.CONFIGS_URL}?v=${new Date().valueOf()}`)).json());
