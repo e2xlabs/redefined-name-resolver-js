@@ -1,9 +1,15 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { Account } from "@resolver/models/types";
+import type { Account, ReverseAccount } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
-import { getDomainKeySync, NameRegistryState } from "@bonfida/spl-name-service";
+import {
+    getAllDomains,
+    getDomainKeySync,
+    NameRegistryState,
+    performReverseLookup,
+    reverseLookup
+} from "@bonfida/spl-name-service";
 import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
-import { Connection } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 
 export class BonfidaResolverService extends ResolverService {
 
@@ -37,6 +43,35 @@ export class BonfidaResolverService extends ResolverService {
             }];
         } catch (e: any) {
             throw Error(`Bonfida Error: ${e.message}`);
+        }
+    }
+
+    async reverse(address: string): Promise<ReverseAccount[]> {
+        try {
+            if (!this.isValidAddress(address)) {
+                throw Error(`${address} is not supported`);
+            }
+
+            const ownerKey = new PublicKey(address);
+            const domainKeys = await getAllDomains(this.connection, ownerKey);
+            const domains = await Promise.all(domainKeys.map(it => reverseLookup(this.connection, it)));
+
+            return domains.map(domain => ({
+                domain, // add .sol?
+                network: "sol",
+                from: this.vendor,
+            }))
+        } catch (e: any) {
+            throw Error(`Bonfida Error: ${e.message}`);
+        }
+    }
+
+    private isValidAddress(address) {
+        try {
+            const publicKey = new PublicKey(address);
+            return publicKey.toBase58() === address;
+        } catch (error) {
+            return false;
         }
     }
 }

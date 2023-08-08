@@ -1,6 +1,6 @@
 import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { Account } from "@resolver/models/types";
-import Resolution  from "@unstoppabledomains/resolution";
+import type { Account, ReverseAccount } from "@resolver/models/types";
+import Resolution from "@unstoppabledomains/resolution";
 import { ResolverVendor } from "@resolver/models/types";
 
 export class UnstoppableResolverService extends ResolverService {
@@ -44,6 +44,20 @@ export class UnstoppableResolverService extends ResolverService {
 
             return address ? [{
                 address,
+                network: "evm",
+                from: this.vendor,
+            }] : []
+        } catch (e: any) {
+            throw Error(`Unstoppable Error: ${e.message}`);
+        }
+    }
+
+    async reverse(address: string): Promise<ReverseAccount[]> {
+        try {
+            const domain = await this.resolution.reverse(address);
+
+            return domain ? [{
+                domain,
                 network: "evm",
                 from: this.vendor,
             }] : []
