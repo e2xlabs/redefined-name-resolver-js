@@ -51,7 +51,6 @@ export class SidResolverService extends ResolverService {
 
             return [{
                 domain,
-                network: this.network,
                 from: this.vendor
             }]
         } catch (e: any) {

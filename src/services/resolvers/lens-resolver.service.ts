@@ -96,7 +96,6 @@ export class LensResolverService extends ResolverService {
             if(data && data.profiles && data.profiles.items) {
                 return data.profiles.items.map(it => ({
                     domain: it.handle,
-                    network: "evm",
                     from: this.vendor
                 }))
             } else throw Error(`${address} is not registered`);

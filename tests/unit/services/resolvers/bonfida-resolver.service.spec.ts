@@ -82,7 +82,6 @@ describe('bonfida-resolver.service', () => {
 
         const result = domains.map(it => ({
             domain: it,
-            network: "sol",
             from: "bonfida"
         }))
 

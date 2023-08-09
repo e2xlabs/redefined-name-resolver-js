@@ -1,4 +1,5 @@
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { BN } from "ethereumjs-util";
 
 export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | "lens" | "bonfida" | "sid" | string
 
@@ -14,9 +15,10 @@ export type Account = {
 
 export type ReverseAccount = {
     domain: string,
-    network: string,
     from: ResolverVendor,
 }
+
+export type RedefinedReverseResponse = [BN, string]
 
 export type AccountRecord = {
     addr: string,

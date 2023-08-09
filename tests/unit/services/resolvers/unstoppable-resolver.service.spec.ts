@@ -4,7 +4,10 @@ import config from "@resolver/config";
 
 describe('unstoppable-resolver.service', () => {
 
-    const unstoppableResolverService = new UnstoppableResolverService({ mainnet: config.UNS_MAINNET_NODE, polygonMainnet: config.UNS_POLYGON_MAINNET_NODE });
+    const unstoppableResolverService = new UnstoppableResolverService({
+        mainnet: config.UNS_MAINNET_NODE,
+        polygonMainnet: config.UNS_POLYGON_MAINNET_NODE
+    });
 
     const spyIsRegistered = jest.spyOn(Resolution.prototype, 'isRegistered');
     const spyAddr = jest.spyOn(Resolution.prototype, 'addr');
@@ -26,7 +29,10 @@ describe('unstoppable-resolver.service', () => {
     });
 
     test('SHOULD get domain for address IF it is registered and available', async () => {
-        expect(await unstoppableResolverService.reverse("0x88bc9b6c56743a38223335fac05825d9355e9f83")).toEqual([{ domain: "jim.crypto", network: "evm", from: "unstoppable"}])
+        expect(await unstoppableResolverService.reverse("0x88bc9b6c56743a38223335fac05825d9355e9f83")).toEqual([{
+            domain: "jim.crypto",
+            from: "unstoppable"
+        }])
     });
 
     test('SHOULD throw error IF address is invalid', async () => {

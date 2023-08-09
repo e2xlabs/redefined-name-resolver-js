@@ -70,7 +70,6 @@ describe('lens-resolver.service', () => {
         expect(await lensResolverService.reverse("0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04"))
             .toEqual(handles.map(it => ({
                 domain: it.handle,
-                network: "evm",
                 from: "lens"
             })));
     });

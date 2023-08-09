@@ -59,7 +59,6 @@ export class EnsResolverService extends ResolverService {
 
             return [{
                 domain,
-                network: "evm",
                 from: this.vendor,
             }];
         } catch (e: any) {

@@ -57,7 +57,6 @@ export class BonfidaResolverService extends ResolverService {
 
             return domains.map(domain => ({
                 domain, // add .sol?
-                network: "sol",
                 from: this.vendor,
             }))
         } catch (e: any) {

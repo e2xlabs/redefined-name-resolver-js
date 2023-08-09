@@ -63,7 +63,6 @@ export class UnstoppableResolverService extends ResolverService {
 
             return domain ? [{
                 domain,
-                network: "evm",
                 from: this.vendor,
             }] : []
         } catch (e: any) {

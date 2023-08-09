@@ -1,14 +1,15 @@
 import {
     ResolverService,
 } from "@resolver/services/resolvers/resolver.service";
-import type { Account } from "@resolver/models/types";
+import type { Account, RedefinedReverseResponse, ReverseAccount } from "@resolver/models/types";
 import { AccountRecord, ResolverVendor } from "@resolver/models/types";
+import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 
 export abstract class RedefinedResolverService extends ResolverService {
     abstract readonly vendor: ResolverVendor
 
     protected constructor(
-      public allowDefaultEvmResolves: boolean,
+        public allowDefaultEvmResolves: boolean,
     ) {
         super();
     }
@@ -22,7 +23,7 @@ export abstract class RedefinedResolverService extends ResolverService {
                 network: it.network,
                 from: this.vendor,
             }));
-            
+
             if (!accounts.length) {
                 throw Error(`No records found for domain ${domain}`)
             }
@@ -45,5 +46,30 @@ export abstract class RedefinedResolverService extends ResolverService {
         }
     }
 
+    async reverse(address: string, networks?: string[]): Promise<ReverseAccount[]> {
+        try {
+            if (!EvmWeb3Service.isValidAddress(address)) {
+                throw Error(`Invalid address: ${address}`);
+            }
+
+            const reverseData = await this.reverseAddress(address.toLowerCase());
+
+            if (!reverseData[1]) {
+                throw Error(`No records found for address ${address}`)
+            }
+
+            const domainsRaw = JSON.parse(reverseData[1]) as string[];
+
+            return domainsRaw.map((it) => ({
+                domain: it,
+                from: this.vendor,
+            }));
+        } catch (e: any) {
+            throw Error(`redefined Error: ${e.message}`);
+        }
+    }
+
     abstract resolveDomain(domain: string): Promise<AccountRecord[]>;
+
+    abstract reverseAddress(domain: string): Promise<RedefinedReverseResponse>;
 }
