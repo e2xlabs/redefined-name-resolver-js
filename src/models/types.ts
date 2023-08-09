@@ -39,6 +39,11 @@ export type ResolverResponse = {
     errors:  ResolverServiceError[],
 }
 
+export type ResolverReverseResponse = {
+    response: ReverseAccount[],
+    errors:  ResolverServiceError[],
+}
+
 export type EnsParams = { node: string };
 
 export type UnstoppableParams = { mainnetNode?: string, polygonMainnetNode?: string };

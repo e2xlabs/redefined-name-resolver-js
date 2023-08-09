@@ -48,10 +48,6 @@ export abstract class RedefinedResolverService extends ResolverService {
 
     async reverse(address: string, networks?: string[]): Promise<ReverseAccount[]> {
         try {
-            if (!EvmWeb3Service.isValidAddress(address)) {
-                throw Error(`Invalid address: ${address}`);
-            }
-
             const reverseData = await this.reverseAddress(address.toLowerCase());
 
             if (!reverseData[1]) {
