@@ -43,11 +43,11 @@ export class SidResolverService extends ResolverService {
 
     async reverse(address: string): Promise<ReverseAccount[]> {
         try {
-            const domain = await this.sid.getName(address);
+            if (!EvmWeb3Service.isValidAddress(address)) {
+                throw Error(`Invalid address: ${address}`);
+            }
 
-            // if (address === "0x0000000000000000000000000000000000000000") {
-            //     throw Error(`Domain ${domain} is not registered`)
-            // }
+            const domain = await this.sid.getName(address);
 
             return [{
                 domain,

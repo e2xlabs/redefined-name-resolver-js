@@ -5,7 +5,6 @@ import {
     getAllDomains,
     getDomainKeySync,
     NameRegistryState,
-    performReverseLookup,
     reverseLookup
 } from "@bonfida/spl-name-service";
 import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
@@ -48,8 +47,8 @@ export class BonfidaResolverService extends ResolverService {
 
     async reverse(address: string): Promise<ReverseAccount[]> {
         try {
-            if (!this.isValidAddress(address)) {
-                throw Error(`${address} is not supported`);
+            if (!SolWeb3Service.isValidAddress(address)) {
+                throw Error(`Invalid address: ${address}`);
             }
 
             const ownerKey = new PublicKey(address);
@@ -63,15 +62,6 @@ export class BonfidaResolverService extends ResolverService {
             }))
         } catch (e: any) {
             throw Error(`Bonfida Error: ${e.message}`);
-        }
-    }
-
-    private isValidAddress(address) {
-        try {
-            const publicKey = new PublicKey(address);
-            return publicKey.toBase58() === address;
-        } catch (error) {
-            return false;
         }
     }
 }

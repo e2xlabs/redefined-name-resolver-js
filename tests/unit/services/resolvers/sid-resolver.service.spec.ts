@@ -7,21 +7,22 @@ describe('sid-resolver.service', () => {
     const sidBscResolverService = new SidResolverService(config.SID_BSC_NODE, SidChainId.BSC, "bsc");
     const sidArbOneResolverService = new SidResolverService(config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-one", SidResolverData.ARB1);
     const sidArbNovaResolverService = new SidResolverService(config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-nova", SidResolverData.ARB_NOVA);
+    const address = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
 
     beforeEach(() => {
-        sidGetAddress.mockReturnValue("0x123")
+        sidGetAddress.mockReturnValue(address)
     });
 
     test('SHOULD get bsc addresses for domain with network IF is valid', async () => {
-        expect(await sidBscResolverService.resolve("ivan.bnb")).toEqual([{ address: "0x123", network: "bsc", from: "sid", }]);
+        expect(await sidBscResolverService.resolve("ivan.bnb")).toEqual([{ address, network: "bsc", from: "sid", }]);
     });
 
     test('SHOULD get arbitrum-one addresses for domain with network IF is valid', async () => {
-        expect(await sidArbOneResolverService.resolve("nick.arb")).toEqual([{ address: "0x123", network: "arbitrum-one", from: "sid", }]);
+        expect(await sidArbOneResolverService.resolve("nick.arb")).toEqual([{ address, network: "arbitrum-one", from: "sid", }]);
     });
 
     test('SHOULD get arbitrum-nova addresses for domain with network IF is valid', async () => {
-        expect(await sidArbNovaResolverService.resolve("nick.arb")).toEqual([{ address: "0x123", network: "arbitrum-nova", from: "sid", }]);
+        expect(await sidArbNovaResolverService.resolve("nick.arb")).toEqual([{ address, network: "arbitrum-nova", from: "sid", }]);
     });
 
     test('SHOULD get error IF domain is not registered', async () => {
@@ -41,16 +42,20 @@ describe('sid-resolver.service', () => {
 
     test('SHOULD get bsc domain for address with network IF is valid', async () => {
         sidGetDomain.mockReturnValue("ivan.bnb");
-        expect(await sidBscResolverService.reverse("0x123")).toEqual([{ domain: "ivan.bnb", network: "bsc", from: "sid", }]);
+        expect(await sidBscResolverService.reverse(address)).toEqual([{ domain: "ivan.bnb", network: "bsc", from: "sid", }]);
     });
 
     test('SHOULD get arbitrum-one domain for address with network IF is valid', async () => {
         sidGetDomain.mockReturnValue("ivan.arb");
-        expect(await sidArbOneResolverService.reverse("0x123")).toEqual([{ domain: "ivan.arb", network: "arbitrum-one", from: "sid", }]);
+        expect(await sidArbOneResolverService.reverse(address)).toEqual([{ domain: "ivan.arb", network: "arbitrum-one", from: "sid", }]);
     });
 
     test('SHOULD get arbitrum-nova domain for address with network IF is valid', async () => {
         sidGetDomain.mockReturnValue("ivan.arb");
-        expect(await sidArbNovaResolverService.reverse("0x321")).toEqual([{ domain: "ivan.arb", network: "arbitrum-nova", from: "sid", }]);
+        expect(await sidArbNovaResolverService.reverse(address)).toEqual([{ domain: "ivan.arb", network: "arbitrum-nova", from: "sid", }]);
+    });
+
+    test('SHOULD throw error IF address is invalid', async () => {
+        expect(sidBscResolverService.reverse("qweEWQ")).rejects.toThrow("SID Error: Invalid address: qweEWQ")
     });
 });

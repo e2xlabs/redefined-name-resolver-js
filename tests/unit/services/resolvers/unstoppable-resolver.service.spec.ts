@@ -28,4 +28,8 @@ describe('unstoppable-resolver.service', () => {
     test('SHOULD get domain for address IF it is registered and available', async () => {
         expect(await unstoppableResolverService.reverse("0x88bc9b6c56743a38223335fac05825d9355e9f83")).toEqual([{ domain: "jim.crypto", network: "evm", from: "unstoppable"}])
     });
+
+    test('SHOULD throw error IF address is invalid', async () => {
+        expect(unstoppableResolverService.reverse("qweEWQ")).rejects.toThrow("Unstoppable Error: Invalid address: qweEWQ")
+    });
 });

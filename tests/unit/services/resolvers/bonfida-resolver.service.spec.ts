@@ -97,6 +97,6 @@ describe('bonfida-resolver.service', () => {
     });
 
     test('SHOULD do not get domains for address IF it is invalid', async () => {
-        expect(bonfidaResolverService.reverse("0x123")).rejects.toThrow("Bonfida Error: 0x123 is not supported");
+        expect(bonfidaResolverService.reverse("0x123")).rejects.toThrow("Bonfida Error: Invalid address: 0x123");
     });
 });

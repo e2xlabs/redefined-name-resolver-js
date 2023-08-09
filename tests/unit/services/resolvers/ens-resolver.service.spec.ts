@@ -16,7 +16,6 @@ describe('ens-resolver.service', () => {
         spyGetResolver.mockReset();
         spyEthersGetAddress.mockReset();
         spyEthersGetAddress.mockImplementation(async () => "0x123")
-        spyLookupAddress.mockImplementation(async () => "ricmoo.eth")
     })
 
     test('SHOULD get addresses for domain with network IF is valid', async () => {
@@ -24,6 +23,11 @@ describe('ens-resolver.service', () => {
     });
 
     test('SHOULD get domain for address with network IF is valid', async () => {
+        spyLookupAddress.mockImplementation(async () => "ricmoo.eth")
         expect(await ensResolverService.reverse("0x5555763613a12D8F3e73be831DFf8598089d3dCa")).toEqual([{ domain: "ricmoo.eth", network: "evm", from: "ens", }]);
+    });
+
+    test('SHOULD throw error IF address is invalid', async () => {
+        expect(ensResolverService.reverse("qweEWQ")).rejects.toThrow("ENS Error: Invalid address: qweEWQ")
     });
 });
