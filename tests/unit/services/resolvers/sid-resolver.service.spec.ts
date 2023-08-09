@@ -1,7 +1,7 @@
 import config from "@resolver/config";
 import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.service";
 import { SidChainId, SidResolverData } from "@resolver/models/types";
-import { sidGetAddress } from "../../../moks/siddomains";
+import { sidGetAddress, sidGetDomain } from "../../../moks/siddomains";
 
 describe('sid-resolver.service', () => {
     const sidBscResolverService = new SidResolverService(config.SID_BSC_NODE, SidChainId.BSC, "bsc");
@@ -31,11 +31,26 @@ describe('sid-resolver.service', () => {
     });
 
     test('SHOULD get error IF getAddress failed', async () => {
-        
-        sidGetAddress.mockImplementation(()=> { 
+
+        sidGetAddress.mockImplementation(()=> {
             throw new Error("Invalid name")
         });
 
         expect(sidBscResolverService.resolve("ivan_+!@dasd")).rejects.toThrow("SID Error: Invalid name");
+    });
+
+    test('SHOULD get bsc domain for address with network IF is valid', async () => {
+        sidGetDomain.mockReturnValue("ivan.bnb");
+        expect(await sidBscResolverService.reverse("0x123")).toEqual([{ domain: "ivan.bnb", network: "bsc", from: "sid", }]);
+    });
+
+    test('SHOULD get arbitrum-one domain for address with network IF is valid', async () => {
+        sidGetDomain.mockReturnValue("ivan.arb");
+        expect(await sidArbOneResolverService.reverse("0x123")).toEqual([{ domain: "ivan.arb", network: "arbitrum-one", from: "sid", }]);
+    });
+
+    test('SHOULD get arbitrum-nova domain for address with network IF is valid', async () => {
+        sidGetDomain.mockReturnValue("ivan.arb");
+        expect(await sidArbNovaResolverService.reverse("0x321")).toEqual([{ domain: "ivan.arb", network: "arbitrum-nova", from: "sid", }]);
     });
 });
