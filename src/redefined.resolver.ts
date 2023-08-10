@@ -113,12 +113,12 @@ export class RedefinedResolver {
                     try {
                         data.response.push(...await resolver.reverse(address));
                     } catch (e: any) {
-                        data.errors.push({ vendor: resolver.vendor, error: e.message })
+                        data.errors.push({ vendor: resolver.vendor, error: e.message });
                     }
                 })
         );
 
-        return data
+        return data;
     }
 
     static createDefaultResolvers(options?: ResolversParams) {
