@@ -7,7 +7,7 @@ describe('sid-resolver.service', () => {
     const sidBscResolverService = new SidResolverService(config.SID_BSC_NODE, SidChainId.BSC, "bsc");
     const sidArbOneResolverService = new SidResolverService(config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-one", SidResolverData.ARB1);
     const sidArbNovaResolverService = new SidResolverService(config.SID_ARB_ONE_NODE, SidChainId.ARB, "arbitrum-nova", SidResolverData.ARB_NOVA);
-    const address = "0x742d35Cc6634C0532925a3b844Bc454e4438f44e";
+    const address = "0x0000000000000000000000000000000000000000";
 
     beforeEach(() => {
         sidGetAddress.mockReturnValue(address)

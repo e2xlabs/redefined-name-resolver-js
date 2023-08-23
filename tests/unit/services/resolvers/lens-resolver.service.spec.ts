@@ -67,7 +67,7 @@ describe('lens-resolver.service', () => {
             }
         })
 
-        expect(await lensResolverService.reverse("0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04"))
+        expect(await lensResolverService.reverse("0x0000000000000000000000000000000000000000"))
             .toEqual(handles.map(it => ({
                 domain: it.handle,
                 from: "lens"
@@ -80,8 +80,8 @@ describe('lens-resolver.service', () => {
             data: {}
         })
 
-        expect(lensResolverService.reverse("0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04"))
-            .rejects.toThrow("Lens Error: 0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04 is not registered")
+        expect(lensResolverService.reverse("0x0000000000000000000000000000000000000000"))
+            .rejects.toThrow("Lens Error: 0x0000000000000000000000000000000000000000 is not registered")
     });
 
     test('SHOULD throw error IF address is invalid', async () => {

@@ -70,7 +70,7 @@ describe('redefined-username-resolver.service', () => {
             }
         ]);
 
-        expect(await redefinedUsernameResolverService.reverse("0xf2C7Fb534Bd93F3d8c65696ABD864f0f086dC704"))
+        expect(await redefinedUsernameResolverService.reverse("0x0000000000000000000000000000000000000000"))
             .toEqual([
                 { domain: "example", from: "redefined-username", },
                 { domain: "username", from: "redefined-username", },
@@ -79,6 +79,6 @@ describe('redefined-username-resolver.service', () => {
 
     test('SHOULD NOT return domain for address IF it is NOT registered and available', async () => {
         spyReverseAddress.mockImplementation(async () => []);
-        expect(await redefinedUsernameResolverService.reverse("0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04")).toEqual([])
+        expect(await redefinedUsernameResolverService.reverse("0x0000000000000000000000000000000000000000")).toEqual([])
     });
 });
