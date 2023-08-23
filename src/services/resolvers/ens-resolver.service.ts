@@ -18,7 +18,7 @@ export class EnsResolverService extends ResolverService implements SupportRevers
         public node: string,
     ) {
         super();
-        this.provider = new ethers.providers.JsonRpcProvider(this.node);
+        this.provider = new ethers.providers.StaticJsonRpcProvider(this.node);
     }
 
     async resolve(domain: string): Promise<Account[]> {
