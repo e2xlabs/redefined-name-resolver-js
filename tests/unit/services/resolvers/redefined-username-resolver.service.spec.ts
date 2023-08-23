@@ -1,6 +1,5 @@
 import config from "@resolver/config";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
-import { BN } from "ethereumjs-util";
 
 describe('redefined-username-resolver.service', () => {
     const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.REDEFINED_NODE, true);
