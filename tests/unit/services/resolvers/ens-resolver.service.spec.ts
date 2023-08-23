@@ -24,7 +24,7 @@ describe('ens-resolver.service', () => {
 
     test('SHOULD get domain for address with network IF is valid', async () => {
         spyLookupAddress.mockImplementation(async () => "ricmoo.eth")
-        expect(await ensResolverService.reverse("0x5555763613a12D8F3e73be831DFf8598089d3dCa")).toEqual([{ domain: "ricmoo.eth", from: "ens" }]);
+        expect(await ensResolverService.reverse("0x0000000000000000000000000000000000000000")).toEqual([{ domain: "ricmoo.eth", from: "ens" }]);
     });
 
     test('SHOULD throw error IF address is invalid', async () => {
