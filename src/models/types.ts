@@ -1,5 +1,4 @@
 import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { BN } from "ethereumjs-util";
 
 export type ResolverVendor = "redefined-username" | "redefined-email" | "ens" | "unstoppable" | "lens" | "bonfida" | "sid" | string
 
