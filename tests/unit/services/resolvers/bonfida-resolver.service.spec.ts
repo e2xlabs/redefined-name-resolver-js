@@ -24,6 +24,11 @@ jest.spyOn(SolWeb3Service, "getWeb3").mockImplementation(() => {
     return {} as Connection
 })
 
+const ZERO_ADDRESS = "1nc1nerator11111111111111111111111111111111"
+
+const ADDRESS_A = "FcRTh2D4Jip59xMfQxJiE7DAZ1Q1ZPnE39ow9a1cVD8V"
+const ADDRESS_B = "BFbCgHxJasyZ4XCYBft7oQqozwGybrgjzVtixdBdds6F"
+
 describe('bonfida-resolver.service', () => {
     const bonfidaResolverService = new BonfidaResolverService(config.SOLANA_NODE);
 
@@ -36,13 +41,13 @@ describe('bonfida-resolver.service', () => {
     test('SHOULD use address for domain from registry.owner IF is valid AND nftOwner is empty', async () => {
         spyRetrieve.mockImplementation(async (connection: Connection, pubKey: PublicKey) => ({
             registry: {
-                owner: new PublicKey("4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i")
+                owner: new PublicKey(ADDRESS_A)
             } as NameRegistryState,
             nftOwner: undefined
         }));
 
         expect(await bonfidaResolverService.resolve("nick.sol")).toEqual([{
-            address: "4DbiZPib1MvFZAecn8rQZtfVHiVQLFGwFTk2ZUawyG2i",
+            address: ADDRESS_A,
             network: "sol",
             from: "bonfida"
         }]);
@@ -51,13 +56,13 @@ describe('bonfida-resolver.service', () => {
     test('SHOULD use address for domain from nftOwner IF is valid AND nftOwner is not empty', async () => {
         spyRetrieve.mockImplementation(async (connection: Connection, pubKey: PublicKey) => ({
             registry: {
-                owner: new PublicKey("FcRTh2D4Jip59xMfQxJiE7DAZ1Q1ZPnE39ow9a1cVD8V")
+                owner: new PublicKey(ADDRESS_A)
             } as NameRegistryState,
-            nftOwner: new PublicKey("BFbCgHxJasyZ4XCYBft7oQqozwGybrgjzVtixdBdds6F")
+            nftOwner: new PublicKey(ADDRESS_B)
         }));
 
         expect(await bonfidaResolverService.resolve("tag.sol")).toEqual([{
-            address: "BFbCgHxJasyZ4XCYBft7oQqozwGybrgjzVtixdBdds6F",
+            address: ADDRESS_B,
             network: "sol",
             from: "bonfida"
         }]);
@@ -85,14 +90,14 @@ describe('bonfida-resolver.service', () => {
             from: "bonfida"
         }))
 
-        expect(await bonfidaResolverService.reverse("3zb99Jou1MUaZLckY4soaz7NwpEg92pjjwkHVDoNNknB"))
+        expect(await bonfidaResolverService.reverse(ZERO_ADDRESS))
             .toEqual(result);
     });
 
     test('SHOULD do not get domains for address IF bonfida reverse rejected', async () => {
         mockedReverseLookup.mockRejectedValue(new Error("Invalid name account provided"));
 
-        expect(bonfidaResolverService.reverse("BFbCgHxJasyZ4XCYBft7oQqozwGybrgjzVtixdBdds6F")).rejects.toThrow("Bonfida Error: Invalid name account provided");
+        expect(bonfidaResolverService.reverse(ZERO_ADDRESS)).rejects.toThrow("Bonfida Error: Invalid name account provided");
     });
 
     test('SHOULD do not get domains for address IF it is invalid', async () => {
