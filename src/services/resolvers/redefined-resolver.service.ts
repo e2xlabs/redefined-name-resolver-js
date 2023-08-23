@@ -8,7 +8,7 @@ export abstract class RedefinedResolverService extends ResolverService {
     abstract readonly vendor: ResolverVendor
 
     protected constructor(
-      public allowDefaultEvmResolves: boolean,
+        public allowDefaultEvmResolves: boolean,
     ) {
         super();
     }
@@ -22,7 +22,7 @@ export abstract class RedefinedResolverService extends ResolverService {
                 network: it.network,
                 from: this.vendor,
             }));
-            
+
             if (!accounts.length) {
                 throw Error(`No records found for domain ${domain}`)
             }

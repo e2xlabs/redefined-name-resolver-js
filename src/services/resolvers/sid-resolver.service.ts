@@ -1,11 +1,11 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
-import type { Account } from "@resolver/models/types";
+import { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
+import type { Account, ReverseAccount } from "@resolver/models/types";
 import { ResolverVendor, SidChainId, SidResolverData } from "@resolver/models/types";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 // @ts-ignore sidjs does not support typescript
 import SID, { getSidAddress } from '@siddomains/sidjs'
 
-export class SidResolverService extends ResolverService {
+export class SidResolverService extends ResolverService implements SupportReverse {
     
     sid: any;
     
@@ -34,6 +34,23 @@ export class SidResolverService extends ResolverService {
             return [{
                 address,
                 network: this.network,
+                from: this.vendor
+            }]
+        } catch (e: any) {
+            throw Error(`SID Error: ${e.message}`);
+        }
+    }
+
+    async reverse(address: string): Promise<ReverseAccount[]> {
+        try {
+            if (!EvmWeb3Service.isValidAddress(address)) {
+                throw Error(`Invalid address: ${address}`);
+            }
+
+            const domain = await this.sid.getName(address);
+
+            return [{
+                domain,
                 from: this.vendor
             }]
         } catch (e: any) {

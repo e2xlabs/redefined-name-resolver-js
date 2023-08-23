@@ -13,9 +13,9 @@ import { mockConfigResolvers } from "../test-fixtures/config-resolvers-response"
 import config from "@resolver/config";
 
 global.fetch = jest.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve(mockConfigResolvers),
-    }),
+  Promise.resolve({
+    json: () => Promise.resolve(mockConfigResolvers),
+  }),
 ) as jest.Mock;
 
 describe('redefined.resolver', () => {
@@ -26,12 +26,20 @@ describe('redefined.resolver', () => {
   const spySidResolve = jest.spyOn(SidResolverService.prototype, 'resolve');
   const spySolResolve = jest.spyOn(BonfidaResolverService.prototype, 'resolve');
   const spyLensResolve = jest.spyOn(LensResolverService.prototype, 'resolve');
+  const spyUnsReverse = jest.spyOn(UnstoppableResolverService.prototype, 'reverse');
+  const spySolReverse = jest.spyOn(BonfidaResolverService.prototype, 'reverse');
+  const spyEnsReverse = jest.spyOn(EnsResolverService.prototype, 'reverse');
+  const spyLensReverse = jest.spyOn(LensResolverService.prototype, 'reverse');
+  const spySidReverse = jest.spyOn(SidResolverService.prototype, 'reverse');
 
   function resetRedefinedImplementationWithNetworks(networks: string[]) {
     spyRedefinedUsernameResolve.mockReset()
     spyRedefinedEmailResolve.mockReset()
 
-    spyRedefinedUsernameResolve.mockImplementation(async () => networks.map(network => ({ addr: "0xUsername", network })));
+    spyRedefinedUsernameResolve.mockImplementation(async () => networks.map(network => ({
+      addr: "0xUsername",
+      network
+    })));
     spyRedefinedEmailResolve.mockImplementation(async () => networks.map(network => ({ addr: "0xEmail", network })));
   }
 
@@ -43,6 +51,11 @@ describe('redefined.resolver', () => {
     spySidResolve.mockReset();
     spySolResolve.mockReset();
     spyLensResolve.mockReset();
+    spyEnsReverse.mockReset();
+    spyUnsReverse.mockReset();
+    spySolReverse.mockReset();
+    spyLensReverse.mockReset();
+    spySidReverse.mockReset();
 
     spyRedefinedUsernameResolve.mockImplementation(async () => [{ addr: "0xUsername", network: "eth" }]);
     spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail", network: "eth" }]);
@@ -51,6 +64,11 @@ describe('redefined.resolver', () => {
     spySidResolve.mockImplementation(async () => [{ address: "0x123", network: "bsc", from: "sid" }]);
     spySolResolve.mockImplementation(async () => [{ address: "4DbiZPib1MvF", network: "sol", from: "bonfida" }]);
     spyLensResolve.mockImplementation(async () => [{ address: "0x123", network: "evm", from: "lens" }]);
+    spyEnsReverse.mockImplementation(async () => [{ domain: "nick.eth", from: "ens" }]);
+    spyUnsReverse.mockImplementation(async () => [{ domain: "example.crypto", from: "unstoppable" }]);
+    spySolReverse.mockImplementation(async () => [{ domain: "666.sol", from: "bonfida" }]);
+    spyLensReverse.mockImplementation(async () => [{ domain: "aaa.lens", from: "lens" }]);
+    spySidReverse.mockImplementation(async () => [{ domain: "bbb.bsc", from: "sid" }]);
   })
 
   test('SHOULD call resolvers IF provided', async () => {
@@ -137,13 +155,20 @@ describe('redefined.resolver', () => {
 
     spyRedefinedEmailResolve.mockImplementation(async () => [{ addr: "0xEmail.sol", network: "sol" }]);
 
-    spySolResolve.mockImplementation(async (address) => address == "0xEmail.sol" ? [{ address: "4DbiZPib1MvF", network: "sol", from: "bonfida" }] : []);
+    spySolResolve.mockImplementation(async (address) => address == "0xEmail.sol" ? [{
+      address: "4DbiZPib1MvF",
+      network: "sol",
+      from: "bonfida"
+    }] : []);
 
     const result = await resolver.resolve("testA");
 
     expect(spyRedefinedEmailResolve).toHaveBeenCalled()
     expect(spySolResolve).toHaveBeenCalledTimes(2)
-    expect(result).toEqual({"errors": [], "response": [{"address": "4DbiZPib1MvF", "from": "bonfida", "network": "sol"}]})
+    expect(result).toEqual({
+      "errors": [],
+      "response": [{ "address": "4DbiZPib1MvF", "from": "bonfida", "network": "sol" }]
+    })
   });
 
   test('SHOULD NOT reresolve .sol IF provided from redefined resolvers AND not in sol network', async () => {
@@ -237,7 +262,7 @@ describe('redefined.resolver', () => {
   });
 
   test('SHOULD resolve only with target network IF provided', async () => {
-    const networks= ["eth", "sol", "zil", "bsc"];
+    const networks = ["eth", "sol", "zil", "bsc"];
 
     const resolver = new RedefinedResolver({
       resolvers: [RedefinedResolver.createRedefinedUsernameResolver(), RedefinedResolver.createRedefinedEmailResolver()]
@@ -322,7 +347,7 @@ describe('redefined.resolver', () => {
       ]
     });
 
-    await resolver.resolve("ivan.eth", undefined, { throwErrorOnInvalidDomain: true,});
+    await resolver.resolve("ivan.eth", undefined, { throwErrorOnInvalidDomain: true });
 
     expect(spyRedefinedEmailResolve).toHaveBeenCalled()
     expect(spyRedefinedUsernameResolve).toHaveBeenCalled()
@@ -434,11 +459,97 @@ describe('redefined.resolver', () => {
     const mainResolverFile = 'src/redefined.resolver.ts';
 
     const resolverFilesNames = fs.readdirSync(resolversFolder)
-        .filter(it => it.includes("-resolver.service.ts") && it !== "redefined-resolver.service.ts")
-        .map(it => it.slice(0, it.length - 3));
+      .filter(it => it.includes("-resolver.service.ts") && it !== "redefined-resolver.service.ts")
+      .map(it => it.slice(0, it.length - 3));
 
     const resolverFileText = fs.readFileSync(mainResolverFile, 'utf8');
 
     expect(resolverFilesNames.every(it => resolverFileText.includes(it))).toBe(true)
+  });
+
+  test('SHOULD reverse unstoppable only IF vendors args is set to ["unstoppable"]', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [
+        RedefinedResolver.createUnstoppableResolver(),
+        RedefinedResolver.createRedefinedEmailResolver(),
+        RedefinedResolver.createBonfidaResolver(),
+      ]
+    })
+
+    await resolver.reverse("0x123", ["unstoppable"]);
+
+    expect(spyUnsReverse).toHaveBeenCalled();
+    expect(spyRedefinedEmailResolve).not.toHaveBeenCalled();
+    expect(spySolReverse).not.toHaveBeenCalled();
+  });
+
+  test('SHOULD reverse all vendors IF vendors args not set', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [
+        RedefinedResolver.createUnstoppableResolver(),
+        RedefinedResolver.createEnsResolver(),
+        RedefinedResolver.createBonfidaResolver(),
+      ]
+    })
+
+    await resolver.reverse("0x123");
+
+    expect(spyUnsReverse).toHaveBeenCalled();
+    expect(spyEnsReverse).toHaveBeenCalled();
+    expect(spySolReverse).toHaveBeenCalled();
+  });
+
+  test('SHOULD reverse address and return correct result IF address reversable in at least one vendor', async () => {
+    const resolver = new RedefinedResolver({
+      resolvers: [
+        RedefinedResolver.createUnstoppableResolver(),
+        RedefinedResolver.createEnsResolver(),
+        RedefinedResolver.createBonfidaResolver(),
+        RedefinedResolver.createLensResolver(),
+      ]
+    })
+
+    jest.spyOn(UnstoppableResolverService.prototype, 'reverse').mockImplementation(async () => {
+      throw Error("Custom error")
+    });
+    jest.spyOn(BonfidaResolverService.prototype, 'reverse').mockImplementation(async () => {
+      throw Error("Custom error")
+    });
+    jest.spyOn(LensResolverService.prototype, 'reverse').mockImplementation(async () => {
+      throw Error("Custom error")
+    });
+
+    const result = await resolver.reverse("0x123");
+
+    expect(spyUnsReverse).toHaveBeenCalled();
+    expect(spyEnsReverse).toHaveBeenCalled();
+    expect(spySolReverse).toHaveBeenCalled();
+    expect(spyLensReverse).toHaveBeenCalled();
+
+    expect(result.response).toEqual(
+      [
+        {
+          domain: "nick.eth",
+          from: "ens"
+        }
+      ]
+    );
+
+    expect(result.errors).toEqual(expect.arrayContaining(
+      [
+        {
+          error: "Custom error",
+          vendor: "unstoppable"
+        },
+        {
+          error: "Custom error",
+          vendor: "lens"
+        },
+        {
+          error: "Custom error",
+          vendor: "bonfida"
+        }
+      ]
+    ))
   });
 });

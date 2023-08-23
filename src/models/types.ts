@@ -12,6 +12,11 @@ export type Account = {
     from: ResolverVendor,
 }
 
+export type ReverseAccount = {
+    domain: string,
+    from: ResolverVendor,
+}
+
 export type AccountRecord = {
     addr: string,
     network: string,
@@ -28,6 +33,11 @@ export type ResolverServiceError = {
 
 export type ResolverResponse = {
     response: Account[],
+    errors:  ResolverServiceError[],
+}
+
+export type ResolverReverseResponse = {
+    response: ReverseAccount[],
     errors:  ResolverServiceError[],
 }
 

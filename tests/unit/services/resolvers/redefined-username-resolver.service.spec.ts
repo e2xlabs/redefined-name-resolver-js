@@ -5,9 +5,11 @@ describe('redefined-username-resolver.service', () => {
     const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedUsernameResolverService, "resolveDomain");
+    const spyReverseAddress = jest.spyOn(redefinedUsernameResolverService, "reverse");
 
     function mockResolve(cb: () => any) {
         spyResolveDomain.mockReset();
+        spyReverseAddress.mockReset();
 
         spyResolveDomain.mockImplementation(async () => cb())
     }
@@ -53,5 +55,29 @@ describe('redefined-username-resolver.service', () => {
             err = e.message;
         }
         expect(err).toBe("redefined Error: No records found for domain @badass-ivan");
+    });
+
+    test('SHOULD return domain for address IF it is registered and available', async () => {
+        spyReverseAddress.mockImplementation(async () => [
+            {
+                domain: "example",
+                from: "redefined-username"
+            },
+            {
+                domain: "username",
+                from: "redefined-username"
+            }
+        ]);
+
+        expect(await redefinedUsernameResolverService.reverse("0x0000000000000000000000000000000000000000"))
+            .toEqual([
+                { domain: "example", from: "redefined-username", },
+                { domain: "username", from: "redefined-username", },
+            ]);
+    });
+
+    test('SHOULD NOT return domain for address IF it is NOT registered and available', async () => {
+        spyReverseAddress.mockImplementation(async () => []);
+        expect(await redefinedUsernameResolverService.reverse("0x0000000000000000000000000000000000000000")).toEqual([])
     });
 });

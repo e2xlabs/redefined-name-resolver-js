@@ -1,11 +1,14 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
 import type { Account } from "@resolver/models/types";
-import { ResolverVendor } from "@resolver/models/types";
+import { ResolverVendor, ReverseAccount } from "@resolver/models/types";
 import { ethers } from 'ethers'
+import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 
 const ETH_COIN_TYPE = 60;
 
-export class EnsResolverService extends ResolverService {
+export class EnsResolverService extends ResolverService implements SupportReverse {
+
+    private provider;
 
     get vendor(): ResolverVendor {
         return "ens";
@@ -15,13 +18,12 @@ export class EnsResolverService extends ResolverService {
         public node: string,
     ) {
         super();
+        this.provider = new ethers.providers.StaticJsonRpcProvider(this.node);
     }
 
     async resolve(domain: string): Promise<Account[]> {
-        const provider = new ethers.providers.JsonRpcProvider(this.node);
-
         try {
-            const resolver = await provider.getResolver(domain);
+            const resolver = await this.provider.getResolver(domain);
 
             if (!resolver) {
                 throw Error(`Cant resolve ${domain}`)
@@ -36,6 +38,27 @@ export class EnsResolverService extends ResolverService {
             return [{
                 address,
                 network: "evm",
+                from: this.vendor,
+            }];
+        } catch (e: any) {
+            throw Error(`ENS Error: ${e.message}`);
+        }
+    }
+
+    async reverse(address: string): Promise<ReverseAccount[]> {
+        try {
+            if (!EvmWeb3Service.isValidAddress(address)) {
+                throw Error(`Invalid address: ${address}`);
+            }
+
+            const domain = await this.provider.lookupAddress(address);
+
+            if (!domain) {
+                throw Error(`Cant reverse ${address}`)
+            }
+
+            return [{
+                domain,
                 from: this.vendor,
             }];
         } catch (e: any) {

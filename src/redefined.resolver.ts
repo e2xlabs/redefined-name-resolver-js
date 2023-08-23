@@ -1,6 +1,13 @@
-import type { BonfidaParams, LensParams, RedefinedParams, SidParams, UnstoppableParams } from "@resolver/models/types";
+import type {
+    BonfidaParams,
+    LensParams,
+    RedefinedParams,
+    ResolverReverseResponse,
+    SidParams,
+    UnstoppableParams
+} from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
-import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
@@ -17,6 +24,7 @@ import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-res
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
 import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
 import { remove } from "lodash";
+import { instanceOfSupportReverse } from "./services/resolvers/resolver.service"
 
 export class RedefinedResolver {
 
@@ -88,6 +96,31 @@ export class RedefinedResolver {
         );
 
         return data
+    }
+
+    async reverse(address: string, vendors?: string[]): Promise<ResolverReverseResponse> {
+        if (!this.resolvers.length) {
+            this.resolvers = RedefinedResolver.createDefaultResolvers(await this.config);
+        }
+
+        const data: ResolverReverseResponse = {
+            response: [],
+            errors: [],
+        }
+
+        await Promise.all(
+            this.resolvers.filter(it => !vendors || vendors.includes(it.vendor))
+                .map(async resolver => {
+                    try {
+                        if(!instanceOfSupportReverse(resolver)) return [];
+                        data.response.push(...await resolver.reverse(address));
+                    } catch (e: any) {
+                        data.errors.push({ vendor: resolver.vendor, error: e.message });
+                    }
+                })
+        );
+
+        return data;
     }
 
     static createDefaultResolvers(options?: ResolversParams) {

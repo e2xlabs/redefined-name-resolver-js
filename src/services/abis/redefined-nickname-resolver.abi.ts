@@ -1,437 +1,770 @@
 import type { AbiItem } from "web3-utils";
 
 export const redefinedNicknameResolverAbi: AbiItem[] = [
-  {
-    "inputs": [],
-    "stateMutability": "nonpayable",
-    "type": "constructor"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "uint8",
-        "name": "version",
-        "type": "uint8"
-      }
-    ],
-    "name": "Initialized",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "previousOwner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "OwnershipTransferred",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "key",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "network",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "addr",
-            "type": "string"
-          }
+    {
+        "inputs":[
+            
         ],
-        "indexed": false,
-        "internalType": "struct NickNameService.Record[]",
-        "name": "_records",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "RegisterDomain",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "key",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "network",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "addr",
-            "type": "string"
-          }
+        "stateMutability":"nonpayable",
+        "type":"constructor"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":false,
+                "internalType":"string",
+                "name":"addr",
+                "type":"string"
+            },
+            {
+                "indexed":false,
+                "internalType":"string",
+                "name":"domain",
+                "type":"string"
+            }
         ],
-        "indexed": false,
-        "internalType": "struct NickNameService.Record[]",
-        "name": "_records",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "UpdateDomain",
-    "type": "event"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
-      }
-    ],
-    "name": "calcNicknamePrice",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "domainsCount",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getLatestPrice",
-    "outputs": [
-      {
-        "internalType": "int256",
-        "name": "",
-        "type": "int256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_bnbUsdFeedAddr",
-        "type": "address"
-      },
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "length",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          }
+        "name":"AddReverseBinding",
+        "type":"event"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":false,
+                "internalType":"uint8",
+                "name":"version",
+                "type":"uint8"
+            }
         ],
-        "internalType": "struct NickNameService.PriceEntry[]",
-        "name": "_prices",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "initialize",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
-      }
-    ],
-    "name": "isVirgin",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "owner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "pricesPerLengthInUsd",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "network",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "addr",
-            "type": "string"
-          }
+        "name":"Initialized",
+        "type":"event"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":true,
+                "internalType":"address",
+                "name":"previousOwner",
+                "type":"address"
+            },
+            {
+                "indexed":true,
+                "internalType":"address",
+                "name":"newOwner",
+                "type":"address"
+            }
         ],
-        "internalType": "struct NickNameService.Record[]",
-        "name": "_records",
-        "type": "tuple[]"
-      },
-      {
-        "components": [
-          {
-            "internalType": "int256",
-            "name": "version",
-            "type": "int256"
-          },
-          {
-            "internalType": "string",
-            "name": "data",
-            "type": "string"
-          }
+        "name":"OwnershipTransferStarted",
+        "type":"event"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":true,
+                "internalType":"address",
+                "name":"previousOwner",
+                "type":"address"
+            },
+            {
+                "indexed":true,
+                "internalType":"address",
+                "name":"newOwner",
+                "type":"address"
+            }
         ],
-        "internalType": "struct NickNameService.Reverse",
-        "name": "newReverse",
-        "type": "tuple"
-      }
-    ],
-    "name": "register",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "renounceOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
-      }
-    ],
-    "name": "resolve",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "network",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "addr",
-            "type": "string"
-          }
+        "name":"OwnershipTransferred",
+        "type":"event"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":false,
+                "internalType":"string",
+                "name":"key",
+                "type":"string"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "indexed":false,
+                "internalType":"struct NickNameService.Record[]",
+                "name":"_records",
+                "type":"tuple[]"
+            }
         ],
-        "internalType": "struct NickNameService.Record[]",
-        "name": "",
-        "type": "tuple[]"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "reverse",
-    "outputs": [
-      {
-        "internalType": "int256",
-        "name": "",
-        "type": "int256"
-      },
-      {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_addr",
-        "type": "address"
-      }
-    ],
-    "name": "setBnbUsdAggregatorAddress",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "length",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          }
+        "name":"RegisterDomain",
+        "type":"event"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":false,
+                "internalType":"string",
+                "name":"addr",
+                "type":"string"
+            },
+            {
+                "indexed":false,
+                "internalType":"string",
+                "name":"domain",
+                "type":"string"
+            }
         ],
-        "internalType": "struct NickNameService.PriceEntry[]",
-        "name": "_prices",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "setPricesPerLengthInUsd",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "newOwner",
-        "type": "address"
-      }
-    ],
-    "name": "transferOwnership",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
-      },
-      {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "network",
-            "type": "string"
-          },
-          {
-            "internalType": "string",
-            "name": "addr",
-            "type": "string"
-          }
+        "name":"RemoveReverseBinding",
+        "type":"event"
+    },
+    {
+        "anonymous":false,
+        "inputs":[
+            {
+                "indexed":false,
+                "internalType":"string",
+                "name":"key",
+                "type":"string"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "indexed":false,
+                "internalType":"struct NickNameService.Record[]",
+                "name":"_records",
+                "type":"tuple[]"
+            }
         ],
-        "internalType": "struct NickNameService.Record[]",
-        "name": "_records",
-        "type": "tuple[]"
-      }
-    ],
-    "name": "update",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address payable",
-        "name": "_target",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "withdraw",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
+        "name":"UpdateDomain",
+        "type":"event"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"acceptOwnership",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"",
+                "type":"string"
+            },
+            {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+            }
+        ],
+        "name":"addressesToBindedDomains",
+        "outputs":[
+            {
+                "internalType":"string",
+                "name":"",
+                "type":"string"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            }
+        ],
+        "name":"calcNicknamePrice",
+        "outputs":[
+            {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            }
+        ],
+        "name":"checkIsAvailableForRegister",
+        "outputs":[
+            
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"address",
+                "name":"targetOwner",
+                "type":"address"
+            },
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Record[]",
+                "name":"_records",
+                "type":"tuple[]"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"int256",
+                        "name":"version",
+                        "type":"int256"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"data",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Reverse",
+                "name":"newReverse",
+                "type":"tuple"
+            }
+        ],
+        "name":"dedicatedRegister",
+        "outputs":[
+            
+        ],
+        "stateMutability":"payable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Record[]",
+                "name":"_records",
+                "type":"tuple[]"
+            },
+            {
+                "internalType":"bytes",
+                "name":"_argsSig",
+                "type":"bytes"
+            }
+        ],
+        "name":"dedicatedUpdate",
+        "outputs":[
+            
+        ],
+        "stateMutability":"payable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"",
+                "type":"string"
+            }
+        ],
+        "name":"domainUpdateNonces",
+        "outputs":[
+            {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"domainsCount",
+        "outputs":[
+            {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"addr",
+                "type":"string"
+            }
+        ],
+        "name":"fetchBindedDomainsToAddress",
+        "outputs":[
+            {
+                "internalType":"string[]",
+                "name":"",
+                "type":"string[]"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"getLatestPrice",
+        "outputs":[
+            {
+                "internalType":"int256",
+                "name":"",
+                "type":"int256"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"address",
+                "name":"_bnbUsdFeedAddr",
+                "type":"address"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"uint256",
+                        "name":"length",
+                        "type":"uint256"
+                    },
+                    {
+                        "internalType":"uint256",
+                        "name":"price",
+                        "type":"uint256"
+                    }
+                ],
+                "internalType":"struct NickNameService.PriceEntry[]",
+                "name":"_prices",
+                "type":"tuple[]"
+            }
+        ],
+        "name":"initialize",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            }
+        ],
+        "name":"isVirgin",
+        "outputs":[
+            {
+                "internalType":"bool",
+                "name":"",
+                "type":"bool"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"owner",
+        "outputs":[
+            {
+                "internalType":"address",
+                "name":"",
+                "type":"address"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"pendingOwner",
+        "outputs":[
+            {
+                "internalType":"address",
+                "name":"",
+                "type":"address"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+            }
+        ],
+        "name":"pricesPerLengthInUsd",
+        "outputs":[
+            {
+                "internalType":"uint256",
+                "name":"",
+                "type":"uint256"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Record[]",
+                "name":"_records",
+                "type":"tuple[]"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"int256",
+                        "name":"version",
+                        "type":"int256"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"data",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Reverse",
+                "name":"newReverse",
+                "type":"tuple"
+            }
+        ],
+        "name":"register",
+        "outputs":[
+            
+        ],
+        "stateMutability":"payable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"renounceOwnership",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "components":[
+                    {
+                        "internalType":"bytes32",
+                        "name":"domainHash",
+                        "type":"bytes32"
+                    },
+                    {
+                        "internalType":"address",
+                        "name":"targetOwner",
+                        "type":"address"
+                    }
+                ],
+                "internalType":"struct NickNameService.ReserveEntry[]",
+                "name":"entries",
+                "type":"tuple[]"
+            }
+        ],
+        "name":"reserve",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            }
+        ],
+        "name":"resolve",
+        "outputs":[
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Record[]",
+                "name":"",
+                "type":"tuple[]"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            
+        ],
+        "name":"reverse",
+        "outputs":[
+            {
+                "internalType":"int256",
+                "name":"",
+                "type":"int256"
+            },
+            {
+                "internalType":"string",
+                "name":"",
+                "type":"string"
+            }
+        ],
+        "stateMutability":"view",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"address",
+                "name":"_addr",
+                "type":"address"
+            }
+        ],
+        "name":"setBnbUsdAggregatorAddress",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "components":[
+                    {
+                        "internalType":"uint256",
+                        "name":"length",
+                        "type":"uint256"
+                    },
+                    {
+                        "internalType":"uint256",
+                        "name":"price",
+                        "type":"uint256"
+                    }
+                ],
+                "internalType":"struct NickNameService.PriceEntry[]",
+                "name":"_prices",
+                "type":"tuple[]"
+            }
+        ],
+        "name":"setPricesPerLengthInUsd",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"address",
+                "name":"newOwner",
+                "type":"address"
+            }
+        ],
+        "name":"transferOwnership",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"string",
+                "name":"_key",
+                "type":"string"
+            },
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"network",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    }
+                ],
+                "internalType":"struct NickNameService.Record[]",
+                "name":"_records",
+                "type":"tuple[]"
+            }
+        ],
+        "name":"update",
+        "outputs":[
+            
+        ],
+        "stateMutability":"payable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "components":[
+                    {
+                        "internalType":"string",
+                        "name":"addr",
+                        "type":"string"
+                    },
+                    {
+                        "internalType":"string[]",
+                        "name":"domains",
+                        "type":"string[]"
+                    }
+                ],
+                "internalType":"struct NickNameService.DomainsToAddressReverseEntry[]",
+                "name":"_entries",
+                "type":"tuple[]"
+            }
+        ],
+        "name":"updateAddressesToBindedDomains",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "inputs":[
+            {
+                "internalType":"address payable",
+                "name":"_target",
+                "type":"address"
+            },
+            {
+                "internalType":"uint256",
+                "name":"_amount",
+                "type":"uint256"
+            }
+        ],
+        "name":"withdraw",
+        "outputs":[
+            
+        ],
+        "stateMutability":"nonpayable",
+        "type":"function"
+    },
+    {
+        "stateMutability":"payable",
+        "type":"receive"
+    }
 ];
 
 export default redefinedNicknameResolverAbi;
