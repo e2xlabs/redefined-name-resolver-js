@@ -7,7 +7,7 @@ import type {
     UnstoppableParams
 } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
-import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
@@ -24,6 +24,7 @@ import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-res
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
 import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
 import { remove } from "lodash";
+import { instanceOfSupportReverse } from "./services/resolvers/resolver.service"
 
 export class RedefinedResolver {
 
@@ -111,6 +112,7 @@ export class RedefinedResolver {
             this.resolvers.filter(it => !vendors || vendors.includes(it.vendor))
                 .map(async resolver => {
                     try {
+                        if(!instanceOfSupportReverse(resolver)) return [];
                         data.response.push(...await resolver.reverse(address));
                     } catch (e: any) {
                         data.errors.push({ vendor: resolver.vendor, error: e.message });

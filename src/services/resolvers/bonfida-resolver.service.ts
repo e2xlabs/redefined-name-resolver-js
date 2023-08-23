@@ -1,4 +1,4 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
 import type { Account, ReverseAccount } from "@resolver/models/types";
 import { ResolverVendor } from "@resolver/models/types";
 import {
@@ -10,7 +10,7 @@ import {
 import SolWeb3Service from "@resolver/services/web3/sol-web3.service";
 import { Connection, PublicKey } from "@solana/web3.js";
 
-export class BonfidaResolverService extends ResolverService {
+export class BonfidaResolverService extends ResolverService implements SupportReverse {
 
     private readonly connection: Connection;
 

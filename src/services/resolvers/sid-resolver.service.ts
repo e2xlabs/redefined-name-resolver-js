@@ -1,11 +1,11 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
 import type { Account, ReverseAccount } from "@resolver/models/types";
 import { ResolverVendor, SidChainId, SidResolverData } from "@resolver/models/types";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 // @ts-ignore sidjs does not support typescript
 import SID, { getSidAddress } from '@siddomains/sidjs'
 
-export class SidResolverService extends ResolverService {
+export class SidResolverService extends ResolverService implements SupportReverse {
     
     sid: any;
     

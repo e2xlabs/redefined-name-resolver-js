@@ -1,6 +1,5 @@
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
-import type { AccountRecord, RedefinedReverseResponse } from "@resolver/models/types";
-import { BN } from "ethereumjs-util";
+import type { AccountRecord, ReverseAccount } from "@resolver/models/types";
 
 EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
   (node: string) => ({
@@ -17,10 +16,19 @@ EvmWeb3Service.getWeb3 = jest.fn().mockImplementation(
               },
             }
           },
-          reverse() {
+          fetchBindedDomainsToAddress(address: string) {
             return {
-              async call(): Promise<RedefinedReverseResponse> {
-                return [new BN(1000), "[\"example\", \"username\"]"]
+              async call(): Promise<ReverseAccount[]> {
+                return [
+                  {
+                    domain: "example",
+                    from: "redefined-username"
+                  },
+                  {
+                    domain: "username",
+                    from: "redefined-username"
+                  }
+                ]
               },
             }
           }

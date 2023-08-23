@@ -6,5 +6,12 @@ export abstract class ResolverService {
     abstract readonly vendor: ResolverVendor;
 
     abstract resolve(domain: string, networks?: string[], options?: CustomResolverServiceOptions): Promise<Account[]>;
-    abstract reverse(address: string): Promise<ReverseAccount[]>;
+}
+
+export interface SupportReverse {
+    reverse(address: string): Promise<ReverseAccount[]>;
+}
+
+export function instanceOfSupportReverse(object: any): object is SupportReverse {
+    return "reverse" in object;
 }

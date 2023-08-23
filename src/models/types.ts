@@ -18,8 +18,6 @@ export type ReverseAccount = {
     from: ResolverVendor,
 }
 
-export type RedefinedReverseResponse = [BN, string]
-
 export type AccountRecord = {
     addr: string,
     network: string,

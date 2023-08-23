@@ -1,34 +1,38 @@
-import type { AccountRecord } from "@resolver/models/types";
+import type { AccountRecord, ReverseAccount } from "@resolver/models/types";
 import config from "@resolver/config";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 import redefinedNicknameResolverAbi from "@resolver/services/abis/redefined-nickname-resolver.abi";
 import { RedefinedResolverService } from "@resolver/services/resolvers/redefined-resolver.service";
-import { RedefinedReverseResponse, ResolverVendor } from "@resolver/models/types";
-import { ContractInterface, ethers, VoidSigner } from "ethers";
+import { ResolverVendor } from "@resolver/models/types";
+import { SupportReverse } from "./resolver.service";
 
-export class RedefinedUsernameResolverService extends RedefinedResolverService {
+export class RedefinedUsernameResolverService extends RedefinedResolverService implements SupportReverse {
     
     get vendor(): ResolverVendor {
         return "redefined-username";
     }
+
+    private contract: any;
+
     
     constructor(
         public node: string,
         public allowDefaultEvmResolves: boolean,
     ) {
         super(allowDefaultEvmResolves);
+
+        const web3 = EvmWeb3Service.getWeb3(this.node);
+        this.contract = new web3.eth.Contract(redefinedNicknameResolverAbi, config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS);
     }
 
     async resolveDomain(domain: string): Promise<AccountRecord[]> {
-        const web3 = EvmWeb3Service.getWeb3(this.node);
-        const contract = new web3.eth.Contract(redefinedNicknameResolverAbi, config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS);
-        return await contract.methods.resolve(domain).call();
+        return await this.contract.methods.resolve(domain).call();
     }
 
-    async reverseAddress(address: string): Promise<RedefinedReverseResponse> {
-        const provider = new ethers.providers.StaticJsonRpcProvider(config.REDEFINED_NODE);
-        const signer = new VoidSigner(address, provider);
-        const contract = new ethers.Contract(config.REDEFINED_NICKNAME_RESOLVER_CONTRACT_ADDRESS, redefinedNicknameResolverAbi as ContractInterface, signer);
-        return await contract.callStatic.reverse();
+    async reverse(address: string): Promise<ReverseAccount[]> {
+        return (await this.contract.methods.fetchBindedDomainsToAddress(address).call()).map((it: string) => ({
+            domain: it,
+            vendor: this.vendor
+        }));
     }
 }

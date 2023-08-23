@@ -1,4 +1,4 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { instanceOfSupportReverse, ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { Account, CustomResolverServiceOptions, ResolverVendor, ReverseAccount } from "@resolver/models/types";
 
 export class BulkProxy<C extends any, R extends ResolverService> implements ResolverService {
@@ -53,17 +53,18 @@ export class BulkProxy<C extends any, R extends ResolverService> implements Reso
   }
 
     async reverse(address: string): Promise<ReverseAccount[]> {
-        let lastError: any;
-        for (let resolver of this.configuredResolvers) {
-            try {
-                return await resolver.reverse(address);
-            } catch (e: any) {
-                if (this.allowableErrorMessages.get(this.vendor)?.some(msg => e.message.includes(msg))) {
-                    throw e;
-                }
-                lastError = e;
-            }
+      let lastError: any;
+      for (let resolver of this.configuredResolvers) {
+        try {
+          if(!instanceOfSupportReverse(resolver)) return [];
+          return await resolver.reverse(address);
+        } catch (e: any) {
+          if (this.allowableErrorMessages.get(this.vendor)?.some(msg => e.message.includes(msg))) {
+              throw e;
+          }
+          lastError = e;
         }
-        throw lastError
+      }
+      throw lastError
     }
 }

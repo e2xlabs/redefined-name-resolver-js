@@ -1,10 +1,10 @@
-import { ResolverService } from "@resolver/services/resolvers/resolver.service";
+import { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
 import type { Account, ReverseAccount } from "@resolver/models/types";
 import Resolution from "@unstoppabledomains/resolution";
 import { ResolverVendor } from "@resolver/models/types";
 import EvmWeb3Service from "@resolver/services/web3/evm-web3.service";
 
-export class UnstoppableResolverService extends ResolverService {
+export class UnstoppableResolverService extends ResolverService implements SupportReverse {
 
     get vendor(): ResolverVendor {
         return "unstoppable";

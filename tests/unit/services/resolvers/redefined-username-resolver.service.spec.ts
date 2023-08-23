@@ -6,7 +6,7 @@ describe('redefined-username-resolver.service', () => {
     const redefinedUsernameResolverService = new RedefinedUsernameResolverService(config.REDEFINED_NODE, true);
 
     const spyResolveDomain = jest.spyOn(redefinedUsernameResolverService, "resolveDomain");
-    const spyReverseAddress = jest.spyOn(redefinedUsernameResolverService, "reverseAddress");
+    const spyReverseAddress = jest.spyOn(redefinedUsernameResolverService, "reverse");
 
     function mockResolve(cb: () => any) {
         spyResolveDomain.mockReset();
@@ -59,7 +59,16 @@ describe('redefined-username-resolver.service', () => {
     });
 
     test('SHOULD return domain for address IF it is registered and available', async () => {
-        spyReverseAddress.mockImplementation(async () => ([new BN(1000), "[\"example\", \"username\"]"]));
+        spyReverseAddress.mockImplementation(async () => [
+            {
+                domain: "example",
+                from: "redefined-username"
+            },
+            {
+                domain: "username",
+                from: "redefined-username"
+            }
+        ]);
 
         expect(await redefinedUsernameResolverService.reverse("0xf2C7Fb534Bd93F3d8c65696ABD864f0f086dC704"))
             .toEqual([
@@ -69,11 +78,7 @@ describe('redefined-username-resolver.service', () => {
     });
 
     test('SHOULD NOT return domain for address IF it is NOT registered and available', async () => {
-        expect(redefinedUsernameResolverService.reverse("0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04"))
-            .rejects.toThrow("redefined Error: No records found for address 0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04")
-    });
-
-    test('SHOULD throw error IF address is invalid', async () => {
-        expect(redefinedUsernameResolverService.reverse("qweEWQ")).rejects.toThrow("redefined Error: Invalid address: qweEWQ")
+        spyReverseAddress.mockImplementation(async () => []);
+        expect(await redefinedUsernameResolverService.reverse("0x6BdfC9Fb0102ddEFc2C7eb44cf62e96356D55d04")).toEqual([])
     });
 });
