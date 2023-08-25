@@ -41,17 +41,17 @@ describe('sid-resolver.service', () => {
     });
 
     test('SHOULD get bsc domain for address with network IF is valid', async () => {
-        sidGetDomain.mockReturnValue("ivan.bnb");
+        sidGetDomain.mockReturnValue({ name: "ivan.bnb" });
         expect(await sidBscResolverService.reverse(address)).toEqual([{ domain: "ivan.bnb", from: "sid" }]);
     });
 
     test('SHOULD get arbitrum-one domain for address with network IF is valid', async () => {
-        sidGetDomain.mockReturnValue("ivan.arb");
+        sidGetDomain.mockReturnValue({ name: "ivan.arb" });
         expect(await sidArbOneResolverService.reverse(address)).toEqual([{ domain: "ivan.arb", from: "sid" }]);
     });
 
     test('SHOULD get arbitrum-nova domain for address with network IF is valid', async () => {
-        sidGetDomain.mockReturnValue("ivan.arb");
+        sidGetDomain.mockReturnValue({ name: "ivan.arb" });
         expect(await sidArbNovaResolverService.reverse(address)).toEqual([{ domain: "ivan.arb", from: "sid" }]);
     });
 
