@@ -49,7 +49,7 @@ export class SidResolverService extends ResolverService implements SupportRevers
 
             const domain = await this.sid.getName(address);
 
-            if(!domain.name) throw Error("Reverse not found!")
+            if(!domain.name) return [];
 
             return [{
                 domain: domain.name,
