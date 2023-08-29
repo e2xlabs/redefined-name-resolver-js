@@ -30,9 +30,12 @@ export class RedefinedUsernameResolverService extends RedefinedResolverService i
     }
 
     async reverse(address: string): Promise<ReverseAccount[]> {
-        return (await this.contract.methods.fetchBindedDomainsToAddress(address).call()).map((it: string) => ({
+        return [
+            ...(await this.contract.methods.fetchBindedDomainsToAddress(address).call()),
+            ...(await this.contract.methods.fetchBindedDomainsToAddress(address.toLocaleLowerCase()).call())
+        ].map((it: string) => ({
             domain: it,
-            vendor: this.vendor
+            from: this.vendor
         }));
     }
 }
