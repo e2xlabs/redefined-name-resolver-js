@@ -7,7 +7,7 @@ import type {
     UnstoppableParams
 } from "@resolver/models/types";
 import type { ResolverOptions } from "@resolver/models/types";
-import type { ResolverService, SupportReverse } from "@resolver/services/resolvers/resolver.service";
+import type { ResolverService } from "@resolver/services/resolvers/resolver.service";
 import { RedefinedUsernameResolverService } from "@resolver/services/resolvers/redefined-username-resolver.service";
 import { RedefinedEmailResolverService } from "@resolver/services/resolvers/redefined-email-resolver.service";
 import { EnsResolverService } from "@resolver/services/resolvers/ens-resolver.service";
@@ -23,7 +23,7 @@ import { SidResolverService } from "@resolver/services/resolvers/sid-resolver.se
 import { BonfidaResolverService } from "@resolver/services/resolvers/bonfida-resolver.service";
 import { LensResolverService } from "./services/resolvers/lens-resolver.service";
 import { BulkProxy } from "@resolver/services/proxies/bulk-resolver.service";
-import { remove } from "lodash";
+import { remove, uniqBy } from "lodash";
 import { instanceOfSupportReverse } from "./services/resolvers/resolver.service"
 
 export class RedefinedResolver {
@@ -120,7 +120,10 @@ export class RedefinedResolver {
                 })
         );
 
-        return data;
+        return {
+            response: uniqBy(data.response, (it)=> `${it.domain}-${it.from}`),
+            errors: data.errors
+        };
     }
 
     static createDefaultResolvers(options?: ResolversParams) {
