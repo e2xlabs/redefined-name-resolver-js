@@ -20,8 +20,13 @@ jest.mock("@resolver/services/resolvers/ens-resolver.service", () => {
 describe('bulk-resolver.service', () => {
 
     beforeEach(() => {
+        jest.useFakeTimers();
         mockResolveResult.mockClear();
-    })
+    });
+
+    afterEach(() => {
+        jest.useRealTimers();
+    });
 
     test('SHOULD set resolver vendor IF create proxy resolver', async () => {
         const instanceRef = (conf: EnsParams | undefined) => new EnsResolverService(conf?.node || config.ENS_NODE);
@@ -116,5 +121,20 @@ describe('bulk-resolver.service', () => {
 
         expect(EnsResolverService).toHaveBeenCalledTimes(4);
         expect(await proxy.resolve("domain")).toEqual([{address: "0x123", network: "eth", from: "ens"}])
+    });
+
+    test('SHOULD throw timeout error IF promise takes too long', async () => {
+        mockResolveResult.mockImplementation( () => new Promise((resolve, reject) => {
+            resolve({})
+        }).then(() => jest.advanceTimersByTime(7000)));
+
+        const instanceRef = (conf: EnsParams | undefined) => new EnsResolverService(conf?.node || config.ENS_NODE);
+
+        const proxy = new BulkProxy<EnsParams | undefined, EnsResolverService>(mockConfigResolvers.ens, instanceRef);
+        try {
+            await proxy.resolve("domain");
+        } catch (e: any) {
+            expect(e.message).toEqual("Request execution time exceeded the limit");
+        }
     });
 });
